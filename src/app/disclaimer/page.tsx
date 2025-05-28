@@ -32,7 +32,7 @@ export default function DisclaimerPage() {
             <Typography variant="h5" component="h2" gutterBottom sx={{ fontWeight: 'medium' }}>
               {section.title}
             </Typography>
-            <Typography variant="body1" paragraph sx={{ lineHeight: 1.75, textAlign: 'justify', whiteSpace: 'pre-line' }}>
+            <Typography variant="body1" sx={{ lineHeight: 1.75, textAlign: 'justify', whiteSpace: 'pre-line' }}>
               {section.content}
             </Typography>
           </Box>

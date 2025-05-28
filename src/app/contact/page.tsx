@@ -58,7 +58,7 @@ export default function ContactPage() {
       </Typography>
       <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
         <Grid container spacing={3}> {/* Increased spacing for better visual separation */}
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <TextField
               fullWidth
               label="Name"
@@ -69,7 +69,7 @@ export default function ContactPage() {
               aria-describedby="name-helper-text"
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <TextField
               fullWidth
               label="Email"
@@ -81,7 +81,7 @@ export default function ContactPage() {
               aria-describedby="email-helper-text"
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid size={{ xs: 12 }}>
             <TextField
               fullWidth
               label="Subject"
@@ -91,7 +91,7 @@ export default function ContactPage() {
               aria-describedby="subject-helper-text"
             />
           </Grid>
-          <Grid item xs={12}>
+          <Grid size={{ xs: 12 }}>
             <TextField
               fullWidth
               label="Message"
@@ -104,7 +104,7 @@ export default function ContactPage() {
               aria-describedby="message-helper-text"
             />
           </Grid>
-          <Grid item xs={12} sx={{ textAlign: 'center', mt: 2 }}> {/* Added margin top for the button */}
+          <Grid size={{ xs: 12 }} sx={{ textAlign: 'center', mt: 2 }}> {/* Added margin top for the button */}
             <Button type="submit" variant="contained" color="primary" disabled={submitting} size="large">
               {submitting ? 'Submitting...' : 'Send Message'}
             </Button>

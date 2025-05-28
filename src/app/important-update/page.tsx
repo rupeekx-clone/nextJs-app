@@ -56,7 +56,6 @@ export default function ImportantUpdatePage() {
               <Divider sx={{my:1.5}} /> {/* Divider between title and content */}
               <Typography 
                 variant="body1" 
-                paragraph // Adds bottom margin
                 sx={{ 
                   lineHeight: 1.75, // Improved line height
                   mb:0 // Remove default paragraph bottom margin if Paper provides enough

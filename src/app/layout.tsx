@@ -37,8 +37,8 @@ export default function RootLayout({
             <AppBar position="static" sx={{ backgroundColor: 'primary.main' }}>
               <Toolbar>
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                  <Link href="/" passHref legacyBehavior>
-                    <Button component="a" sx={{ color: 'white', textDecoration: 'none', '&:hover': { backgroundColor: 'primary.dark' } }}>
+                  <Link href="/">
+                    <Button sx={{ color: 'white', textDecoration: 'none', '&:hover': { backgroundColor: 'primary.dark' } }}>
                       Rupeekx Clone
                     </Button>
                   </Link>
@@ -55,10 +55,7 @@ export default function RootLayout({
                 py: 3,
                 px: 2,
                 mt: 'auto', // Pushes footer to the bottom
-                backgroundColor: (theme) =>
-                  theme.palette.mode === 'light'
-                    ? theme.palette.grey[200]
-                    : theme.palette.grey[800],
+                backgroundColor: '#f5f5f5', // Static color to avoid function in Server Component
                 textAlign: 'center',
               }}
             >
@@ -67,12 +64,12 @@ export default function RootLayout({
                   {'© '}
                   {new Date().getFullYear()}{' '}
                   Rupeekx Clone. All rights reserved. | 
-                  <Link href="/privacy-policy" passHref legacyBehavior>
-                     <Button component="a" sx={{ color: 'text.secondary', ml: 0.5, textTransform: 'none'}}>Privacy Policy</Button>
+                  <Link href="/privacy-policy">
+                    <Button sx={{ color: 'text.secondary', ml: 0.5, textTransform: 'none'}}>Privacy Policy</Button>
                   </Link>
                    | 
-                  <Link href="/terms-conditions" passHref legacyBehavior>
-                    <Button component="a" sx={{ color: 'text.secondary', ml: 0.5, textTransform: 'none'}}>Terms & Conditions</Button>
+                  <Link href="/terms-conditions">
+                    <Button sx={{ color: 'text.secondary', ml: 0.5, textTransform: 'none'}}>Terms & Conditions</Button>
                   </Link>
                 </Typography>
               </Container>

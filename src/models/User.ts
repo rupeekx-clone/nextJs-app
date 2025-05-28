@@ -21,6 +21,9 @@ export interface IUser extends Document {
   status: 'pending_verification' | 'active' | 'suspended';
 
   comparePassword(candidatePassword: string): Promise<boolean>;
+
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 const userSchema: Schema<IUser> = new Schema(

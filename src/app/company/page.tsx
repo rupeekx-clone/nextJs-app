@@ -25,12 +25,12 @@ export default function CompanyPage() {
       </Typography>
       
       <Grid container spacing={5} justifyContent="center">
-        <Grid item xs={12} md={8}> {/* Main text column */}
+        <Grid size={{ xs: 12, md: 8 }}> {/* Main text column */}
           <Typography variant="body1" paragraph sx={{ lineHeight: 1.8, fontSize: '1.1rem', textAlign: 'justify' }}>
             Welcome to Rupeekx.com, we are the number one loan provider consult. We're dedicated to helping you in getting loans through membership cards, with an emphasis on saving your time and money. Get the best results on loans through multiple banks or NBFCs. We are aimed to provide easy quick loan approval. The company has garnered a great volume of acclaim due to its authentic services in giving the industry-best loan offerings.
           </Typography>
         </Grid>
-        <Grid item xs={12} md={10}> {/* Centered list below the main text */}
+        <Grid size={{ xs: 12, md: 10 }}> {/* Centered list below the main text */}
           <Typography variant="h6" component="h3" textAlign="center" gutterBottom sx={{ fontWeight: 'medium', mt: {xs: 1, md: 3}, mb: 2 }}>
             Our Commitment & Features
           </Typography>

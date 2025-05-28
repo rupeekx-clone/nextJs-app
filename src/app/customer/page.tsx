@@ -64,12 +64,12 @@ export default function CustomerLoginPage() {
             Sign In
           </Button>
           <Grid container>
-            <Grid item xs>
+            <Grid size={{ xs: 12 }}>
               <MuiLink component={NextLink} href="#" variant="body2">
                 Forgot password?
               </MuiLink>
             </Grid>
-            <Grid item>
+            <Grid size={{ xs: 12 }}>
               <MuiLink component={NextLink} href="#" variant="body2"> {/* Link to a future signup page */}
                 {"Don't have an account? Sign Up"}
               </MuiLink>

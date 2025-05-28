@@ -28,7 +28,7 @@ export default function RaiseRequestPage() {
         
         <Box component="form" onSubmit={handleSubmit} noValidate>
           <Grid container spacing={2.5}> {/* Consistent spacing */}
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField 
                 fullWidth 
                 label="Full Name" 
@@ -37,7 +37,7 @@ export default function RaiseRequestPage() {
                 autoComplete="name" 
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField 
                 fullWidth 
                 label="Email Address" 
@@ -47,14 +47,14 @@ export default function RaiseRequestPage() {
                 autoComplete="email" 
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <TextField 
                 fullWidth 
                 label="Customer ID (Optional)" 
                 name="customerId" 
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <FormControl fullWidth required>
                 <InputLabel id="request-type-label">Request Type</InputLabel>
                 <Select 
@@ -67,7 +67,7 @@ export default function RaiseRequestPage() {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <TextField 
                 fullWidth 
                 label="Subject" 
@@ -75,7 +75,7 @@ export default function RaiseRequestPage() {
                 required 
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <TextField
                 fullWidth
                 label="Describe Your Request"

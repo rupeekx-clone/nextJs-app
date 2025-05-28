@@ -40,7 +40,7 @@ export default function CareerPage() {
         </Typography>
         <Grid container spacing={3} justifyContent="center"> {/* Increased spacing */}
             {benefits.map((benefit, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
+              <Grid size={{ xs: 12, sm: 6, md: 4 }} key={index}>
                 <Paper elevation={2} sx={{p:2.5, display: 'flex', alignItems: 'center', height: '100%', borderRadius: '8px' }}> {/* Slightly more padding and rounded corners */}
                     <ListItemIcon sx={{minWidth: 38, color: 'primary.dark'}}> {/* Adjusted icon size and color */}
                         <CheckCircleOutline fontSize="medium" />
@@ -59,7 +59,7 @@ export default function CareerPage() {
         {jobOpenings.length > 0 ? (
           <Grid container spacing={3}>
             {jobOpenings.map((job, index) => (
-              <Grid item xs={12} md={6} key={index}>
+              <Grid size={{ xs: 12, md: 6 }} key={index}>
                 <Paper elevation={3} sx={{ p: 3, borderRadius: 2, height: '100%', display: 'flex', flexDirection: 'column', transition: 'box-shadow 0.3s', '&:hover': {boxShadow: 6} }}>
                   <Typography variant="h6" component="h3" gutterBottom sx={{ fontWeight: 'medium' }}>
                     {job.title}
