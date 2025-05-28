@@ -6,6 +6,20 @@ import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Link from 'next/link'; // Import NextLink
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
+import Drawer from '@mui/material/Drawer';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import Collapse from '@mui/material/Collapse';
+import Divider from '@mui/material/Divider';
+import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
+import ListItemButton from '@mui/material/ListItemButton';
 
 // Define navigation items
 interface NavItem {
@@ -47,6 +61,10 @@ const navItems: NavItem[] = [
 const Navbar: React.FC = () => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [currentMenu, setCurrentMenu] = React.useState<string | null>(null);
+  const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const [drawerOpenMenus, setDrawerOpenMenus] = React.useState<{ [key: string]: boolean }>({});
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, label: string) => {
     setAnchorEl(event.currentTarget);
@@ -58,54 +76,125 @@ const Navbar: React.FC = () => {
     setCurrentMenu(null);
   };
 
-  return (
-    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-      {navItems.map((item) => (
-        <Box key={item.label} sx={{ mx: 1 }}>
-          {item.children ? (
-            <>
-              <Button
-                aria-controls={currentMenu === item.label ? 'simple-menu' : undefined}
-                aria-haspopup="true"
-                aria-expanded={currentMenu === item.label ? 'true' : undefined}
-                onClick={(e) => handleMenuOpen(e, item.label)}
-                color="inherit"
-              >
-                {item.label}
-              </Button>
-              <Menu
-                id="simple-menu"
-                anchorEl={anchorEl}
-                open={currentMenu === item.label}
-                onClose={handleMenuClose}
-                MenuListProps={{
-                  'aria-labelledby': 'basic-button',
-                }}
-              >
-                {item.children.map((child) => (
-                  <MenuItem
-                    key={child.label}
-                    onClick={handleMenuClose}
-                    component={Link} // Use NextLink for navigation
-                    href={child.path || '#'} // Ensure path is defined
-                  >
-                    {child.label}
-                  </MenuItem>
-                ))}
-              </Menu>
-            </>
-          ) : (
-            <Button
-              color="inherit"
-              component={Link} // Use NextLink for navigation
-              href={item.path || '#'} // Ensure path is defined
-            >
-              {item.label}
-            </Button>
-          )}
-        </Box>
-      ))}
+  const handleDrawerToggle = () => {
+    setDrawerOpen((prev) => !prev);
+  };
+
+  const handleDrawerMenuToggle = (label: string) => {
+    setDrawerOpenMenus((prev) => ({ ...prev, [label]: !prev[label] }));
+  };
+
+  // Drawer navigation rendering
+  const renderDrawerNav = () => (
+    <Box sx={{ width: 250 }} role="presentation" onClick={() => setDrawerOpen(false)}>
+      <List>
+        {navItems.map((item) => (
+          <React.Fragment key={item.label}>
+            {item.children ? (
+              <>
+                <ListItem disablePadding>
+                  <ListItemButton onClick={e => { e.stopPropagation(); handleDrawerMenuToggle(item.label); }}>
+                    <ListItemText primary={item.label} />
+                  </ListItemButton>
+                </ListItem>
+                <Collapse in={!!drawerOpenMenus[item.label]} timeout="auto" unmountOnExit>
+                  <List component="div" disablePadding>
+                    {item.children.map((child) => (
+                      <ListItem disablePadding key={child.label}>
+                        <Link href={child.path || '#'} passHref legacyBehavior>
+                          <ListItemButton component="a" sx={{ pl: 4 }}>
+                            <ListItemText primary={child.label} />
+                          </ListItemButton>
+                        </Link>
+                      </ListItem>
+                    ))}
+                  </List>
+                </Collapse>
+              </>
+            ) : (
+              <ListItem disablePadding>
+                <Link href={item.path || '#'} passHref legacyBehavior>
+                  <ListItemButton component="a">
+                    <ListItemText primary={item.label} />
+                  </ListItemButton>
+                </Link>
+              </ListItem>
+            )}
+            <Divider />
+          </React.Fragment>
+        ))}
+      </List>
     </Box>
+  );
+
+  return (
+    <AppBar position="static" color="default" elevation={1}>
+      <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        {/* Left: Rupeex clone icon or text */}
+        <Typography variant="h6" component={Link} href="/" sx={{ textDecoration: 'none', color: 'inherit', fontWeight: 'bold' }}>
+          Rupeex
+        </Typography>
+        {/* Desktop Nav */}
+        {!isMobile && (
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            {navItems.map((item) => (
+              <Box key={item.label} sx={{ mx: 1 }}>
+                {item.children ? (
+                  <>
+                    <Button
+                      aria-controls={currentMenu === item.label ? 'simple-menu' : undefined}
+                      aria-haspopup="true"
+                      aria-expanded={currentMenu === item.label ? 'true' : undefined}
+                      onClick={(e) => handleMenuOpen(e, item.label)}
+                      color="inherit"
+                    >
+                      {item.label}
+                    </Button>
+                    <Menu
+                      id="simple-menu"
+                      anchorEl={anchorEl}
+                      open={currentMenu === item.label}
+                      onClose={handleMenuClose}
+                      MenuListProps={{
+                        'aria-labelledby': 'basic-button',
+                      }}
+                    >
+                      {item.children.map((child) => (
+                        <MenuItem
+                          key={child.label}
+                          onClick={handleMenuClose}
+                          component={Link}
+                          href={child.path || '#'}
+                        >
+                          {child.label}
+                        </MenuItem>
+                      ))}
+                    </Menu>
+                  </>
+                ) : (
+                  <Button
+                    color="inherit"
+                    component={Link}
+                    href={item.path || '#'}
+                  >
+                    {item.label}
+                  </Button>
+                )}
+              </Box>
+            ))}
+          </Box>
+        )}
+        {/* Mobile Hamburger */}
+        {isMobile && (
+          <IconButton edge="end" color="inherit" aria-label="menu" onClick={handleDrawerToggle}>
+            <MenuIcon />
+          </IconButton>
+        )}
+        <Drawer anchor="right" open={drawerOpen} onClose={handleDrawerToggle}>
+          {renderDrawerNav()}
+        </Drawer>
+      </Toolbar>
+    </AppBar>
   );
 };
 

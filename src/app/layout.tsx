@@ -34,18 +34,7 @@ export default function RootLayout({
       <body>
         <ThemeRegistry>
           <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-            <AppBar position="static" sx={{ backgroundColor: 'primary.main' }}>
-              <Toolbar>
-                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                  <Link href="/">
-                    <Button sx={{ color: 'white', textDecoration: 'none', '&:hover': { backgroundColor: 'primary.dark' } }}>
-                      Rupeekx Clone
-                    </Button>
-                  </Link>
-                </Typography>
-                <Navbar /> {/* Integrate the Navbar component */}
-              </Toolbar>
-            </AppBar>
+            <Navbar />
             <Container component="main" sx={{ flexGrow: 1, mt: 3, mb: 3 }}> {/* Added some margin top and bottom */}
               {children}
             </Container>
