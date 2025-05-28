@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from 'next/server';
 import User from '@/models/User'; // Adjust path as per your project structure
-import connectMongoDB from '@/lib/mongodb'; // Adjust path
+import { connectToDatabase } from '@/lib/mongodb'; // Adjust path
 import { withAuth } from '@/lib/authMiddleware'; // Adjust path
 import { AuthPayload } from '@/lib/jwt'; // Adjust path
 
@@ -21,7 +21,7 @@ const profileHandler = async (req: NextRequestWithAuth) => {
     const userId = authUser.userId;
 
     // 2. Connect to MongoDB
-    await connectMongoDB();
+    await connectToDatabase();
 
     // 3. Fetch User Data
     // Explicitly exclude the password field. Other fields are returned by default.

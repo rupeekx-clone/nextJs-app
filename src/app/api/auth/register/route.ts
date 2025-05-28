@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import User, { IUser } from '@/models/User';
-import connectMongoDB from '@/lib/mongodb';
+import { connectToDatabase } from '@/lib/mongodb';
 import { generateOtp, sendOtp } from '@/lib/otpService';
 
 // Retrieve OTP validity duration from environment variables, default to 10 minutes
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
         );
     }
 
-    await connectMongoDB();
+    await connectToDatabase();
 
     const existingUser = await User.findOne({ phone_number })
                                    .select('+phone_otp +phone_otp_expires_at +status +password'); 
