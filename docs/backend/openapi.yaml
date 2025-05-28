@@ -1,0 +1,487 @@
+openapi: 3.0.0
+info:
+  title: FinTech Loan and Membership Platform API
+  version: v1.0.0
+  description: |
+    API for managing users, loan applications, memberships, and related functionalities
+    for the FinTech platform.
+servers:
+  - url: http://localhost:8000/api # Replace with actual production/staging server URL
+    description: Development server
+
+components:
+  schemas:
+    # User Schemas
+    UserBase:
+      type: object
+      properties:
+        full_name:
+          type: string
+          example: "John Doe"
+        email:
+          type: string
+          format: email
+          example: "john.doe@example.com"
+        phone_number:
+          type: string
+          example: "+919876543210"
+        address_line1:
+          type: string
+          nullable: true
+          example: "123 Main St"
+        address_line2:
+          type: string
+          nullable: true
+          example: "Apt 4B"
+        city:
+          type: string
+          nullable: true
+          example: "Anytown"
+        pincode:
+          type: string
+          nullable: true
+          example: "110001"
+    UserRegistrationRequest:
+      allOf:
+        - $ref: '#/components/schemas/UserBase'
+        - type: object
+          required:
+            - full_name
+            - email
+            - phone_number
+            - password
+          properties:
+            password:
+              type: string
+              format: password
+              example: "strongpassword123"
+            user_type:
+              type: string
+              enum: [customer, cash_lending_customer]
+              default: customer
+              example: "customer"
+    UserResponse:
+      allOf:
+        - $ref: '#/components/schemas/UserBase'
+        - type: object
+          properties:
+            user_id:
+              type: string
+              format: uuid
+              example: "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+            user_type:
+              type: string
+              enum: [customer, cash_lending_customer, admin]
+              example: "customer"
+            email_verified_at:
+              type: string
+              format: date-time
+              nullable: true
+            phone_verified_at:
+              type: string
+              format: date-time
+              nullable: true
+            created_at:
+              type: string
+              format: date-time
+            updated_at:
+              type: string
+              format: date-time
+    UserLoginRequest:
+      type: object
+      required:
+        - email_or_phone
+        - password
+      properties:
+        email_or_phone:
+          type: string
+          example: "john.doe@example.com"
+        password:
+          type: string
+          format: password
+          example: "strongpassword123"
+    UserLoginResponse:
+      type: object
+      properties:
+        user_id:
+          type: string
+          format: uuid
+        full_name:
+          type: string
+        email:
+          type: string
+          format: email
+        user_type:
+          type: string
+          enum: [customer, cash_lending_customer, admin]
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+        message:
+          type: string
+
+    # Loan Application Schemas
+    LoanApplicationRequest:
+      type: object
+      required:
+        - loan_type
+        - amount_requested
+        - tenure_months_requested
+      properties:
+        loan_type:
+          type: string
+          enum: [personal, business]
+          example: "personal"
+        amount_requested:
+          type: number
+          format: decimal
+          example: 50000.00
+        tenure_months_requested:
+          type: integer
+          example: 12
+        documents_submitted:
+          type: object
+          properties:
+            pan_card_url:
+              type: string
+              format: url
+              nullable: true
+            aadhaar_card_url:
+              type: string
+              format: url
+              nullable: true
+            # Add other document types as needed
+          nullable: true
+    LoanApplicationResponse:
+      type: object
+      properties:
+        application_id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        loan_type:
+          type: string
+          enum: [personal, business]
+        amount_requested:
+          type: number
+          format: decimal
+        amount_approved:
+          type: number
+          format: decimal
+          nullable: true
+        interest_rate_proposed:
+          type: number
+          format: decimal
+          nullable: true
+        interest_rate_final:
+          type: number
+          format: decimal
+          nullable: true
+        tenure_months_requested:
+          type: integer
+        tenure_months_final:
+          type: integer
+          nullable: true
+        status:
+          type: string
+          enum: [draft, submitted, under_review, requires_documents, approved, rejected, disbursed, closed, cancelled]
+        application_date:
+          type: string
+          format: date-time
+        documents_submitted:
+          type: object
+          nullable: true
+        admin_remarks:
+          type: string
+          nullable: true
+        # ... other fields from api_endpoints.md
+
+    # Error Schema
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+        details:
+          type: object
+          nullable: true
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+paths:
+  /auth/register:
+    post:
+      summary: Register User
+      description: Register a new user.
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistrationRequest'
+      responses:
+        '201':
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/UserLoginResponse' # Contains tokens and user info
+                  - type: object
+                    properties:
+                      message:
+                        type: string
+                        example: "Registration successful. Please verify your email/phone."
+        '400':
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: User already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/login:
+    post:
+      summary: Login User
+      description: Login an existing user and return JWT tokens.
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLoginResponse'
+        '400':
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /users/me:
+    get:
+      summary: Get User Profile
+      description: Retrieve the profile information of the authenticated user.
+      tags:
+        - User Profile
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Successful retrieval of user profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          description: User not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: User profile not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /loans/apply:
+    post:
+      summary: Apply for Loan
+      description: Submit a new loan application.
+      tags:
+        - Loan Applications
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanApplicationRequest'
+      responses:
+        '201':
+          description: Loan application submitted successfully
+          content:
+            application/json:
+              schema: # A subset of LoanApplicationResponse or a specific "submission success" schema
+                type: object
+                properties:
+                  application_id:
+                    type: string
+                    format: uuid
+                  user_id:
+                    type: string
+                    format: uuid
+                  loan_type:
+                    type: string
+                  amount_requested:
+                    type: number
+                  tenure_months_requested:
+                    type: integer
+                  status:
+                    type: string
+                  application_date:
+                    type: string
+                    format: date-time
+                  message:
+                    type: string
+                    example: "Loan application submitted successfully."
+        '400':
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: User not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  # Add more paths here following the pattern above.
+  # Example for a path with parameters:
+  # /loans/{application_id}:
+  #   get:
+  #     summary: Get Specific Loan Application Details
+  #     tags:
+  #       - Loan Applications
+  #     security:
+  #       - BearerAuth: []
+  #     parameters:
+  #       - name: application_id
+  #         in: path
+  #         required: true
+  #         description: ID of the loan application to retrieve
+  #         schema:
+  #           type: string
+  #           format: uuid
+  #     responses:
+  #       '200':
+  #         description: Detailed loan application data
+  #         content:
+  #           application/json:
+  #             schema:
+  #               $ref: '#/components/schemas/LoanApplicationResponse' # Full response schema
+  #       '401':
+  #         $ref: '#/components/responses/UnauthorizedError' # Example of reusable response
+  #       '403':
+  #         $ref: '#/components/responses/ForbiddenError'
+  #       '404':
+  #         $ref: '#/components/responses/NotFoundError'
+
+# You can also define reusable responses in components:
+# components:
+#   responses:
+#     NotFoundError:
+#       description: The specified resource was not found.
+#       content:
+#         application/json:
+#           schema:
+#             $ref: '#/components/schemas/ErrorResponse'
+#     UnauthorizedError:
+#       description: Authentication information is missing or invalid.
+#       content:
+#         application/json:
+#           schema:
+#             $ref: '#/components/schemas/ErrorResponse'
+#     ForbiddenError:
+#       description: Authenticated user does not have permission to access this resource.
+#       content:
+#         application/json:
+#           schema:
+#             $ref: '#/components/schemas/ErrorResponse'
+
+# This is a starting point. A complete OpenAPI specification would require:
+# 1. Defining schemas for ALL request and response bodies mentioned in api_endpoints.md.
+#    - UserProfileUpdateRequest, MembershipCardTypeResponse, MembershipPurchaseRequest, etc.
+# 2. Defining paths and operations for ALL endpoints listed in api_endpoints.md.
+#    - Including all CRUD operations for admin sections.
+#    - Correctly defining path parameters, query parameters for all list endpoints (pagination, filters).
+# 3. Ensuring all enums from schema.md are correctly reflected in the OpenAPI schemas.
+# 4. Applying the BearerAuth security scheme to all protected endpoints.
+# 5. Detailing out all possible error responses (400, 401, 403, 404, 409, 500) for each endpoint.
+#    - Consider using reusable responses from components.responses for common errors.
+# 6. For file uploads (documents_submitted in LoanApplications), the actual mechanism (e.g., multipart/form-data)
+#    would need to be specified, which might differ from simple JSON URLs.
+#    The current example assumes URLs are provided in JSON after separate upload.
+
+# To complete this:
+# - Iterate through each endpoint in api_endpoints.md.
+# - For each endpoint:
+#   - Create schema definitions in components.schemas for its request body and all possible response bodies (success and error).
+#   - Create a path item in paths.
+#   - Define the operation (get, post, put, delete) under that path.
+#   - Add summary, description, tags.
+#   - If applicable, add parameters (path, query).
+#   - Reference the requestBody schema.
+#   - Reference all response schemas with their HTTP status codes.
+#   - Add security if the endpoint requires authentication.
+# - Ensure data types in OpenAPI schemas match those in schema.md (e.g., string, integer, number, boolean, object, array, uuid, date-time).
+# - For ENUM types, list the allowed values.
+# - For decimal types, use type: number, format: decimal (or float/double as appropriate).
+# - For UUIDs, use type: string, format: uuid.
+# - For timestamps, use type: string, format: date-time.
+```
