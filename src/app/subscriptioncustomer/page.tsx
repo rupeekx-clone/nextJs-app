@@ -63,12 +63,12 @@ export default function SubscriptionCustomerLoginPage() { // Function name chang
             Sign In
           </Button>
           <Grid container>
-            <Grid item xs>
+            <Grid size={{ xs: 12 }}>
               <MuiLink component={NextLink} href="#" variant="body2">
                 Forgot password?
               </MuiLink>
             </Grid>
-            <Grid item>
+            <Grid size={{ xs: 12 }}>
               <MuiLink component={NextLink} href="#" variant="body2"> {/* Link to a future signup page or subscription info */}
                 {"Don't have a subscription? Learn More"} {/* Text can be adjusted */}
               </MuiLink>

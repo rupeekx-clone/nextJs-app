@@ -19,7 +19,7 @@ export default function GoldMembershipCardPage() {
       <Paper elevation={3} sx={{ p: { xs: 2, md: 4 }, borderRadius: 2 }}>
         <Grid container spacing={4} alignItems="center">
           {/* Optional Image/Icon Column */}
-          <Grid item xs={12} md={4} sx={{ textAlign: 'center' }}>
+          <Grid size={{ xs: 12, md: 4 }} sx={{ textAlign: 'center' }}>
             <Box 
               sx={{ 
                 width: '100%', 
@@ -36,7 +36,7 @@ export default function GoldMembershipCardPage() {
           </Grid>
 
           {/* Content Column */}
-          <Grid item xs={12} md={8}>
+          <Grid size={{ xs: 12, md: 8 }}>
             <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
               Gold Membership Card
             </Typography>
