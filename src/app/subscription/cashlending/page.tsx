@@ -26,10 +26,10 @@ export default function SubscriptionCashlendingPage() {
             Your Details
           </Typography>
           <Grid container spacing={2.5}>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Full Name" name="fullName" required autoComplete="name" /></Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Mobile Number" name="mobile" type="tel" required autoComplete="tel" /></Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Email Address" name="email" type="email" required autoComplete="email" /></Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="PAN Card Number" name="pan" required /></Grid>
+            <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="Full Name" name="fullName" required autoComplete="name" /></Grid>
+            <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="Mobile Number" name="mobile" type="tel" required autoComplete="tel" /></Grid>
+            <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="Email Address" name="email" type="email" required autoComplete="email" /></Grid>
+            <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="PAN Card Number" name="pan" required /></Grid>
           </Grid>
 
           {/* Subscription Choice Section */}
@@ -37,7 +37,7 @@ export default function SubscriptionCashlendingPage() {
             Subscription Choice
           </Typography>
           <Grid container spacing={2.5}>
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <FormControl fullWidth required>
                 <InputLabel id="subscription-plan-label">Choose Subscription Plan</InputLabel>
                 <Select labelId="subscription-plan-label" label="Choose Subscription Plan" name="subscriptionPlan" defaultValue="">
@@ -52,12 +52,12 @@ export default function SubscriptionCashlendingPage() {
             Create Your Account
           </Typography>
           <Grid container spacing={2.5}>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Create Password" name="password" type="password" required /></Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Confirm Password" name="confirmPassword" type="password" required /></Grid>
+            <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="Create Password" name="password" type="password" required /></Grid>
+            <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="Confirm Password" name="confirmPassword" type="password" required /></Grid>
           </Grid>
 
           {/* Terms and Conditions Section */}
-          <Grid item xs={12} sx={{ mt: 3, mb:1 }}> {/* Adjusted margin */}
+          <Grid size={{ xs: 12 }} sx={{ mt: 3, mb:1 }}> {/* Adjusted margin */}
             <FormControlLabel
               control={<Checkbox name="agreeTerms" required />}
               label={

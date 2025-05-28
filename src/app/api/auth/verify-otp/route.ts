@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import User, { IUser } from '@/models/User';
-import connectMongoDB from '@/lib/mongodb';
+import { connectToDatabase } from '@/lib/mongodb';
 import { generateAccessToken, generateRefreshToken, AuthPayload } from '@/lib/jwt';
 
 export async function POST(request: Request) {
@@ -16,7 +16,7 @@ export async function POST(request: Request) {
     }
 
     // 2. Connect to MongoDB
-    await connectMongoDB();
+    await connectToDatabase();
 
     // 3. Find User and Validate OTP conditions
     const user = await User.findOne({ phone_number })
@@ -67,7 +67,7 @@ export async function POST(request: Request) {
 
     // 5. Generate JWTs
     const tokenPayload: AuthPayload = {
-      userId: user._id.toString(),
+      userId: (user._id as string),
       userType: user.user_type, // Assuming user_type is part of IUser and schema
       // Add other relevant details to payload if needed, like email if it were present
     };

@@ -51,7 +51,7 @@ export default function HomePage() {
             Get personal & business loan offers from multiple banks
           </Typography>
           <Grid container spacing={2} justifyContent="center" sx={{ mt: { xs: 2, sm: 3 } }}>
-            <Grid item xs={12} sm="auto"> {/* Full width on extra small, auto on small and up */}
+            <Grid size={{ xs: 12, sm: 'auto' }}> {/* Full width on extra small, auto on small and up */}
               <Button 
                 variant="contained" 
                 color="primary" 
@@ -67,7 +67,7 @@ export default function HomePage() {
                 Personal Loan
               </Button>
             </Grid>
-            <Grid item xs={12} sm="auto"> {/* Full width on extra small, auto on small and up */}
+            <Grid size={{ xs: 12, sm: 'auto' }}> {/* Full width on extra small, auto on small and up */}
               <Button 
                 variant="contained" 
                 color="secondary" 
@@ -98,7 +98,7 @@ export default function HomePage() {
           </Typography>
           <Grid container spacing={4} justifyContent="center">
             {/* Personal Loans Card */}
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}> {/* Full width on extra small, auto on small and up */}
               <Card sx={{ display: 'flex', flexDirection: 'column', height: '100%', boxShadow: 3 }}> {/* Added shadow */}
                 <CardContent sx={{ flexGrow: 1 }}>
                   <Typography variant="h6" component="h3" gutterBottom sx={{ fontWeight: 'medium' }}>
@@ -116,7 +116,7 @@ export default function HomePage() {
               </Card>
             </Grid>
             {/* Business Loans Card */}
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}> {/* Full width on extra small, auto on small and up */}
               <Card sx={{ display: 'flex', flexDirection: 'column', height: '100%', boxShadow: 3 }}> {/* Added shadow */}
                 <CardContent sx={{ flexGrow: 1 }}>
                   <Typography variant="h6" component="h3" gutterBottom sx={{ fontWeight: 'medium' }}>
@@ -142,7 +142,7 @@ export default function HomePage() {
         <Container maxWidth="lg">
           <Grid container spacing={4} alignItems="center"> {/* alignItems="center" for vertical alignment */}
             {/* Textual Content */}
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}> {/* Full width on extra small, auto on small and up */}
               <Typography variant="h4" component="h2" gutterBottom sx={{ fontWeight: 'bold' }}>
                 About us
               </Typography>
@@ -157,7 +157,7 @@ export default function HomePage() {
               </Button>
             </Grid>
             {/* Key Features List */}
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}> {/* Full width on extra small, auto on small and up */}
               <List>
                 {[
                   "Available in 5000+ Indian Cities",
@@ -193,7 +193,7 @@ export default function HomePage() {
           </Typography>
           <Grid container spacing={4} justifyContent="center">
             {/* Silver Membership Card */}
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}> {/* Full width on extra small, auto on small and up */}
               <Card sx={{ display: 'flex', flexDirection: 'column', height: '100%', boxShadow: 3 }}>
                 <CardContent sx={{ flexGrow: 1 }}>
                   <Typography variant="h6" component="h3" gutterBottom sx={{ fontWeight: 'medium' }}>
@@ -211,7 +211,7 @@ export default function HomePage() {
               </Card>
             </Grid>
             {/* Gold Membership Card */}
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}> {/* Full width on extra small, auto on small and up */}
               <Card sx={{ display: 'flex', flexDirection: 'column', height: '100%', boxShadow: 3 }}>
                 <CardContent sx={{ flexGrow: 1 }}>
                   <Typography variant="h6" component="h3" gutterBottom sx={{ fontWeight: 'medium' }}>
@@ -244,7 +244,7 @@ export default function HomePage() {
               "Werise", "Money View", "KREDITBEE", "Upward", 
               "Incred", "PaySense", "IIFL", "Yes Bank"
             ].map((partnerName, index) => (
-              <Grid item key={index} xs={6} sm={4} md={2}> {/* Adjusted for 12 items: 2 on xs, 3 on sm, 6 on md */}
+              <Grid size={{ xs: 6, sm: 4, md: 2 }} key={index}> {/* Adjusted for 12 items: 2 on xs, 3 on sm, 6 on md */}
                 <Paper 
                   variant="outlined" 
                   sx={{ 
@@ -278,7 +278,7 @@ export default function HomePage() {
           </Typography>
           <Grid container spacing={4} justifyContent="center">
             {[1, 2, 3].map((item) => ( // Creating 3 placeholder testimonials
-              <Grid item key={item} xs={12} sm={6} md={4}>
+              <Grid size={{ xs: 12, sm: 6, md: 4 }} key={item}>
                 <Card sx={{ display: 'flex', flexDirection: 'column', height: '100%', boxShadow: 3 }}>
                   <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}> {/* Centering card content */}
                     <Avatar sx={{ mx: 'auto', mb: 2, bgcolor: 'primary.main' }}>

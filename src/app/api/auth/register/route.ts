@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { connectToDatabase } from '@/lib/mongodb';
-import User from '@/models/User'; // Assuming User model is default export from User.ts
 import bcrypt from 'bcryptjs'; // Corrected import
 import { generateAccessToken, generateRefreshToken } from '@/lib/jwt'; // Assuming these are the correct function names
+import User, { IUser } from '@/models/User';
+import { connectToDatabase } from '@/lib/mongodb';
+import { generateOtp, sendOtp } from '@/lib/otpService';
 
 export async function POST(req: NextRequest) {
   try {
@@ -31,6 +32,7 @@ export async function POST(req: NextRequest) {
     if (password.length < 8) {
       return NextResponse.json({ message: 'Password must be at least 8 characters long' }, { status: 400 });
     }
+    await connectToDatabase();
 
     // Pincode validation (Indian format)
     if (pincode && !/^[1-9][0-9]{5}$/.test(pincode)) {

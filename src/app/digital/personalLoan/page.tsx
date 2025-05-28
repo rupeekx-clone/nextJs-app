@@ -111,13 +111,13 @@ export default function PersonalLoanPage() {
             Personal Details
           </Typography>
           <Grid container spacing={2.5}> {/* Slightly increased spacing */}
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Full Name" name="fullName" required autoComplete="name" /></Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Date of Birth" name="dob" type="date" InputLabelProps={{ shrink: true }} required /></Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="PAN Card Number" name="pan" required /></Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Aadhaar Number" name="aadhaar" required /></Grid>
-            <Grid item xs={12}><TextField fullWidth label="Current Address" name="address" multiline rows={3} required autoComplete="street-address" /></Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Mobile Number" name="mobile" type="tel" required autoComplete="tel" /></Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Email Address" name="email" type="email" required autoComplete="email" /></Grid>
+            <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="Full Name" name="fullName" required autoComplete="name" /></Grid>
+            <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="Date of Birth" name="dob" type="date" InputLabelProps={{ shrink: true }} required /></Grid>
+            <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="PAN Card Number" name="pan" required /></Grid>
+            <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="Aadhaar Number" name="aadhaar" required /></Grid>
+            <Grid size={{ xs: 12 }}><TextField fullWidth label="Current Address" name="address" multiline rows={3} required autoComplete="street-address" /></Grid>
+            <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="Mobile Number" name="mobile" type="tel" required autoComplete="tel" /></Grid>
+            <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="Email Address" name="email" type="email" required autoComplete="email" /></Grid>
           </Grid>
 
           {/* Employment Information Section */}
@@ -125,7 +125,7 @@ export default function PersonalLoanPage() {
             Employment Information
           </Typography>
           <Grid container spacing={2.5}>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <FormControl fullWidth required>
                 <InputLabel id="employment-type-label">Employment Type</InputLabel>
                 <Select labelId="employment-type-label" label="Employment Type" name="employmentType" defaultValue="">
@@ -133,10 +133,10 @@ export default function PersonalLoanPage() {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Company Name (if salaried/employed)" name="companyName" /></Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Designation (if salaried/employed)" name="designation" /></Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Years in Current Employment/Business" name="yearsInService" type="number" required InputProps={{ inputProps: { min: 0 } }} /></Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Monthly Income (INR)" name="monthlyIncome" type="number" required InputProps={{ inputProps: { min: 0 } }} /></Grid>
+            <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="Company Name (if salaried/employed)" name="companyName" /></Grid>
+            <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="Designation (if salaried/employed)" name="designation" /></Grid>
+            <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="Years in Current Employment/Business" name="yearsInService" type="number" required InputProps={{ inputProps: { min: 0 } }} /></Grid>
+            <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="Monthly Income (INR)" name="monthlyIncome" type="number" required InputProps={{ inputProps: { min: 0 } }} /></Grid>
           </Grid>
 
           {/* Loan Requirements Section */}
@@ -144,21 +144,9 @@ export default function PersonalLoanPage() {
             Loan Requirements
           </Typography>
           <Grid container spacing={2.5}>
-            <Grid item xs={12} sm={6}>
-            <TextField 
-              fullWidth 
-              label="Loan Amount Requested (INR)" 
-              name="loanAmount" 
-              type="number" 
-              required 
-              InputProps={{ inputProps: { min: 1000 } }} 
-              value={loanAmount}
-              onChange={(e) => setLoanAmount(e.target.value)}
-              disabled={isLoading}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-              <FormControl fullWidth required disabled={isLoading}>
+            <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="Loan Amount Requested (INR)" name="loanAmount" type="number" required InputProps={{ inputProps: { min: 1000 } }} /></Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+                <FormControl fullWidth required>
                     <InputLabel id="loan-tenure-label">Preferred Loan Tenure (Months)</InputLabel>
                   <Select 
                     labelId="loan-tenure-label" 
@@ -171,7 +159,7 @@ export default function PersonalLoanPage() {
                     </Select>
                 </FormControl>
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <FormControl fullWidth required>
                 <InputLabel id="loan-purpose-label">Purpose of Loan</InputLabel>
                 <Select labelId="loan-purpose-label" label="Purpose of Loan" name="loanPurpose" defaultValue="">
@@ -182,7 +170,7 @@ export default function PersonalLoanPage() {
           </Grid>
 
           {message && (
-            <Grid item xs={12} sx={{ mt: 2 }}>
+            <Grid size={{ xs: 12 }} sx={{ mt: 2 }}>
               <Alert severity={message.type} onClose={() => setMessage(null)}>{message.text}</Alert>
             </Grid>
           )}

@@ -32,13 +32,13 @@ export default function BusinessLoanPage() { // Renamed function
             Applicant / Promoter Details
           </Typography>
           <Grid container spacing={2.5}>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Full Name (Primary Applicant/Promoter)" name="fullName" required autoComplete="name" /></Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Date of Birth" name="dob" type="date" InputLabelProps={{ shrink: true }} required /></Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="PAN Card Number (Personal PAN)" name="pan" required /></Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Aadhaar Number" name="aadhaar" required /></Grid>
-            <Grid item xs={12}><TextField fullWidth label="Current Residential Address" name="address" multiline rows={3} required autoComplete="street-address" /></Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Mobile Number" name="mobile" type="tel" required autoComplete="tel" /></Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Email Address" name="email" type="email" required autoComplete="email" /></Grid>
+            <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="Full Name (Primary Applicant/Promoter)" name="fullName" required autoComplete="name" /></Grid>
+            <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="Date of Birth" name="dob" type="date" InputLabelProps={{ shrink: true }} required /></Grid>
+            <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="PAN Card Number (Personal PAN)" name="pan" required /></Grid>
+            <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="Aadhaar Number" name="aadhaar" required /></Grid>
+            <Grid size={{ xs: 12 }}><TextField fullWidth label="Current Residential Address" name="address" multiline rows={3} required autoComplete="street-address" /></Grid>
+            <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="Mobile Number" name="mobile" type="tel" required autoComplete="tel" /></Grid>
+            <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="Email Address" name="email" type="email" required autoComplete="email" /></Grid>
           </Grid>
 
           {/* Business Information Section */}
@@ -46,8 +46,8 @@ export default function BusinessLoanPage() { // Renamed function
             Business Information
           </Typography>
           <Grid container spacing={2.5}>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Registered Business Name" name="businessName" required /></Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="Registered Business Name" name="businessName" required /></Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
               <FormControl fullWidth required>
                 <InputLabel id="business-type-label">Type of Business</InputLabel>
                 <Select labelId="business-type-label" label="Type of Business" name="businessType" defaultValue="">
@@ -55,12 +55,12 @@ export default function BusinessLoanPage() { // Renamed function
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Years in Business" name="yearsInBusiness" type="number" required InputProps={{ inputProps: { min: 0 } }} /></Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Business PAN Number" name="businessPan" required /></Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="GST Number (if applicable)" name="gstNumber" /></Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Nature of Business / Industry" name="industry" required /></Grid>
-            <Grid item xs={12}><TextField fullWidth label="Annual Business Turnover (INR)" name="annualTurnover" type="number" required InputProps={{ inputProps: { min: 0 } }} /></Grid>
-            <Grid item xs={12}><TextField fullWidth label="Business Office Address" name="businessAddress" multiline rows={3} required /></Grid>
+            <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="Years in Business" name="yearsInBusiness" type="number" required InputProps={{ inputProps: { min: 0 } }} /></Grid>
+            <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="Business PAN Number" name="businessPan" required /></Grid>
+            <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="GST Number (if applicable)" name="gstNumber" /></Grid>
+            <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="Nature of Business / Industry" name="industry" required /></Grid>
+            <Grid size={{ xs: 12 }}><TextField fullWidth label="Annual Business Turnover (INR)" name="annualTurnover" type="number" required InputProps={{ inputProps: { min: 0 } }} /></Grid>
+            <Grid size={{ xs: 12 }}><TextField fullWidth label="Business Office Address" name="businessAddress" multiline rows={3} required /></Grid>
           </Grid>
 
           {/* Loan Requirements Section */}
@@ -68,8 +68,8 @@ export default function BusinessLoanPage() { // Renamed function
             Loan Requirements
           </Typography>
           <Grid container spacing={2.5}>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Loan Amount Requested (INR)" name="loanAmount" type="number" required InputProps={{ inputProps: { min: 50000 } }} /></Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid size={{ xs: 12, sm: 6 }}><TextField fullWidth label="Loan Amount Requested (INR)" name="loanAmount" type="number" required InputProps={{ inputProps: { min: 50000 } }} /></Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
                 <FormControl fullWidth required>
                     <InputLabel id="loan-tenure-label">Preferred Loan Tenure (Months)</InputLabel>
                     <Select labelId="loan-tenure-label" label="Preferred Loan Tenure (Months)" name="loanTenure" defaultValue="">
@@ -77,7 +77,7 @@ export default function BusinessLoanPage() { // Renamed function
                     </Select>
                 </FormControl>
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <FormControl fullWidth required>
                 <InputLabel id="loan-purpose-label">Purpose of Loan</InputLabel>
                 <Select labelId="loan-purpose-label" label="Purpose of Loan" name="loanPurpose" defaultValue="">
