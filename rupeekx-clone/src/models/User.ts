@@ -4,7 +4,6 @@ import bcrypt from 'bcryptjs';
 // Interface for User document
 export interface IUser extends Document {
   full_name: string;
-  email: string;
   phone_number: string;
   password?: string; // Optional because it will be removed in toJSON
   user_type: 'customer' | 'cash_lending_customer' | 'admin';
@@ -12,15 +11,17 @@ export interface IUser extends Document {
   address_line2?: string;
   city?: string;
   pincode?: string;
-  email_verified_at?: Date;
-  phone_verified_at?: Date;
+  
+  // OTP and Verification fields
+  phone_otp?: string;
+  phone_otp_expires_at?: Date;
+  is_phone_verified: boolean;
+  
+  // User status
+  status: 'pending_verification' | 'active' | 'suspended';
+
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
-
-// Interface for User model statics (if any needed in future)
-// interface IUserModel extends Model<IUser> {
-//   // findBySomething(param: string): Promise<IUser | null>;
-// }
 
 const userSchema: Schema<IUser> = new Schema(
   {
@@ -29,23 +30,12 @@ const userSchema: Schema<IUser> = new Schema(
       required: [true, 'Full name is required.'],
       trim: true,
     },
-    email: {
-      type: String,
-      required: [true, 'Email is required.'],
-      unique: true,
-      lowercase: true,
-      trim: true,
-      match: [
-        /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
-        'Please fill a valid email address',
-      ],
-    },
     phone_number: {
       type: String,
       required: [true, 'Phone number is required.'],
       unique: true,
       trim: true,
-      // Add a regex for Indian phone numbers if necessary, e.g.,
+      // Example regex for Indian phone numbers (adjust as needed)
       // match: [/^[6-9]\d{9}$/, 'Please fill a valid Indian phone number']
     },
     password: {
@@ -73,13 +63,28 @@ const userSchema: Schema<IUser> = new Schema(
     pincode: {
       type: String,
       trim: true,
-      // Add pincode validation if necessary
     },
-    email_verified_at: {
-      type: Date,
+    phone_otp: {
+      type: String,
+      required: false,
+      select: false,
     },
-    phone_verified_at: {
+    phone_otp_expires_at: {
       type: Date,
+      required: false,
+      select: false,
+    },
+    is_phone_verified: {
+      type: Boolean,
+      default: false,
+      required: true,
+    },
+    status: {
+      type: String,
+      enum: ['pending_verification', 'active', 'suspended'],
+      default: 'pending_verification',
+      required: true,
+      index: true, // Add index to status field
     },
   },
   {
@@ -88,6 +93,8 @@ const userSchema: Schema<IUser> = new Schema(
       virtuals: true,
       transform(doc, ret) {
         delete ret.password; // Do not send password hash to client
+        delete ret.phone_otp; // Do not send OTP to client
+        delete ret.phone_otp_expires_at; // Do not send OTP expiry to client
         delete ret.__v;
         return ret;
       },
@@ -96,6 +103,8 @@ const userSchema: Schema<IUser> = new Schema(
       virtuals: true,
       transform(doc, ret) {
         delete ret.password;
+        delete ret.phone_otp;
+        delete ret.phone_otp_expires_at;
         delete ret.__v;
         return ret;
       },
@@ -105,7 +114,6 @@ const userSchema: Schema<IUser> = new Schema(
 
 // Pre-save hook to hash password
 userSchema.pre<IUser>('save', async function (next) {
-  // Only hash the password if it has been modified (or is new)
   if (!this.isModified('password') || !this.password) {
     return next();
   }
@@ -128,9 +136,6 @@ userSchema.methods.comparePassword = async function (
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-// Export the model, handling Next.js hot-reloading
-// The IUserModel type can be used here if statics were defined
 const User: Model<IUser> = mongoose.models.User || mongoose.model<IUser>('User', userSchema);
 
 export default User;
-```

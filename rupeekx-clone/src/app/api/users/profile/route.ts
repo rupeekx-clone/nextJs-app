@@ -42,19 +42,18 @@ const profileHandler = async (req: NextRequestWithAuth) => {
 
     return NextResponse.json(
       {
-        user_id: userProfile._id, // or userProfile.user_id if transformed by toJSON
+        user_id: userProfile._id,
         full_name: userProfile.full_name,
-        email: userProfile.email,
         phone_number: userProfile.phone_number,
         address_line1: userProfile.address_line1,
         address_line2: userProfile.address_line2,
         city: userProfile.city,
         pincode: userProfile.pincode,
         user_type: userProfile.user_type,
-        email_verified_at: userProfile.email_verified_at,
-        phone_verified_at: userProfile.phone_verified_at,
-        created_at: userProfile.createdAt, // from timestamps
-        updated_at: userProfile.updatedAt, // from timestamps
+        is_phone_verified: userProfile.is_phone_verified, // Added this field
+        status: userProfile.status, // Added this field
+        created_at: userProfile.createdAt,
+        updated_at: userProfile.updatedAt,
       },
       { status: 200 }
     );
@@ -74,4 +73,3 @@ const profileHandler = async (req: NextRequestWithAuth) => {
 
 // Protect the Route
 export const GET = withAuth(profileHandler);
-```

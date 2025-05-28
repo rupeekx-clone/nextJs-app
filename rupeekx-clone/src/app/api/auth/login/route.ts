@@ -1,17 +1,20 @@
 import { NextResponse } from 'next/server';
-import { NextResponse } from 'next/server';
-import User, { IUser } from '@/models/User'; // Adjusted path assuming src is baseUrl or similar setup
-import connectMongoDB from '@/lib/mongodb';   // Adjusted path
-import { generateAccessToken, generateRefreshToken, AuthPayload } from '@/lib/jwt'; // Import actual JWT functions
+import User, { IUser } from '@/models/User';
+import connectMongoDB from '@/lib/mongodb';
+import { generateAccessToken, generateRefreshToken, AuthPayload } from '@/lib/jwt';
+import { generateOtp, sendOtp } from '@/lib/otpService';
+
+// Retrieve OTP validity duration from environment variables, default to 10 minutes
+const OTP_VALIDITY_MINUTES = parseInt(process.env.OTP_VALIDITY_MINUTES || '10', 10);
 
 export async function POST(request: Request) {
   try {
-    const { email_or_phone, password } = await request.json();
+    const { phone_number, password } = await request.json();
 
     // 1. Input Validation
-    if (!email_or_phone || !password) {
+    if (!phone_number || !password) {
       return NextResponse.json(
-        { error: 'Validation failed', details: { message: 'Email/Phone and password are required.' } },
+        { success: false, message: 'Phone number and password are required.' },
         { status: 400 }
       );
     }
@@ -19,63 +22,97 @@ export async function POST(request: Request) {
     // 2. Connect to MongoDB
     await connectMongoDB();
 
-    // 3. Find User by Email or Phone
-    // Need to fetch password explicitly as it's select: false in schema
-    const user = await User.findOne({ 
-      $or: [{ email: email_or_phone }, { phone_number: email_or_phone }] 
-    }).select('+password');
+    // 3. Find User and Validate Password
+    const user = await User.findOne({ phone_number })
+                           .select('+password +is_phone_verified +status +phone_otp +phone_otp_expires_at');
 
     if (!user) {
       return NextResponse.json(
-        { error: 'Invalid credentials' },
-        { status: 401 } // 401 Unauthorized
+        { success: false, message: 'Invalid credentials.' }, // Generic message for security
+        { status: 401 }
       );
     }
 
-    // 4. Verify Password
-    // The user object from findOne().select('+password') will have the password field.
-    // The comparePassword method is defined in the User model.
-    const isMatch = await user.comparePassword(password);
-
-    if (!isMatch) {
+    const isPasswordMatch = await user.comparePassword(password);
+    if (!isPasswordMatch) {
       return NextResponse.json(
-        { error: 'Invalid credentials' },
-        { status: 401 } // 401 Unauthorized
+        { success: false, message: 'Invalid credentials.' }, // Generic message
+        { status: 401 }
       );
     }
 
-    // 5. Generate JWT
-    const tokenPayload: AuthPayload = {
-      userId: user._id.toString(), // Ensure userId is a string
-      email: user.email, // email is already part of AuthPayload if you extend a base interface
-      userType: user.user_type,
-    };
-    const accessToken = generateAccessToken(tokenPayload);
-    const refreshToken = generateRefreshToken(tokenPayload);
+    // 4. Handle Password Validation Success
+    if (user.status === 'active' && user.is_phone_verified === true) {
+      // User is fully active and verified
+      const tokenPayload: AuthPayload = {
+        userId: user._id.toString(),
+        userType: user.user_type,
+      };
+      const accessToken = generateAccessToken(tokenPayload);
+      const refreshToken = generateRefreshToken(tokenPayload);
 
-    // 6. Return Response
-    // The toJSON method in the schema handles removing the password and __v
-    const userResponse = user.toJSON();
+      const serializedUser = user.toJSON(); // Excludes sensitive fields via model's toJSON
 
-    return NextResponse.json(
-      {
-        user_id: userResponse._id, // In MongoDB, the ID is _id. This is consistent.
-        full_name: userResponse.full_name,
-        email: userResponse.email,
-        user_type: userResponse.user_type,
-        access_token: accessToken, // Use the actual generated token
-        refresh_token: refreshToken, // Use the actual generated token
-        message: 'Login successful',
-      },
-      { status: 200 } // 200 OK
-    );
+      return NextResponse.json(
+        {
+          success: true,
+          message: 'Login successful.',
+          tokens: { accessToken, refreshToken },
+          user: { // Construct user object as per API design
+              user_id: serializedUser._id,
+              full_name: serializedUser.full_name,
+              phone_number: serializedUser.phone_number,
+              user_type: serializedUser.user_type,
+              is_phone_verified: serializedUser.is_phone_verified,
+              status: serializedUser.status,
+              created_at: serializedUser.createdAt,
+              updated_at: serializedUser.updatedAt,
+          }
+        },
+        { status: 200 }
+      );
+    } else {
+      // Account needs phone verification (e.g., status is 'pending_verification' or phone not verified)
+      const newOtp = generateOtp();
+      const otpExpiresAt = new Date(Date.now() + OTP_VALIDITY_MINUTES * 60000);
+
+      user.phone_otp = newOtp;
+      user.phone_otp_expires_at = otpExpiresAt;
+      // Ensure status is pending_verification if it wasn't already (e.g. if it was suspended and we allow re-verification this way)
+      user.status = 'pending_verification'; 
+      user.is_phone_verified = false; // Ensure this is false until OTP is verified
+
+      await user.save();
+
+      // Prefix with +91 for Indian numbers when sending OTP
+      const otpSentResult = await sendOtp(`+91${user.phone_number}`, newOtp);
+      if (!otpSentResult.success) {
+        console.error('Failed to send OTP during login for unverified user:', otpSentResult.error);
+        // Even if OTP sending fails, the user's OTP fields are updated.
+        // They can try verifying later or request OTP again via another mechanism if available.
+        return NextResponse.json(
+          { success: false, message: 'Account pending verification. Error sending OTP, please try registering again to get a new OTP or contact support.' },
+          { status: 500 } // Internal server error because OTP should have been sent
+        );
+      }
+
+      return NextResponse.json(
+        {
+          success: false, // Or a specific code indicating OTP verification is needed
+          message: 'Account pending verification. New OTP sent to your mobile number.',
+          verification_required: true,
+          phone_number: user.phone_number, // Return phone_number to assist client if needed
+        },
+        { status: 403 } // 403 Forbidden - user is known, but not allowed access yet
+      );
+    }
 
   } catch (error: any) {
-    console.error('Login error:', error);
+    console.error('Login API error:', error);
     return NextResponse.json(
-      { error: 'An unexpected error occurred', details: error.message },
+      { success: false, message: 'An unexpected error occurred during login.', details: error.message },
       { status: 500 }
     );
   }
 }
-```
+

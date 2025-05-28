@@ -1,118 +1,131 @@
 import { NextResponse } from 'next/server';
-import { NextResponse } from 'next/server';
-import User, { IUser } from '@/models/User'; // Adjusted path if src is baseUrl
-import connectMongoDB from '@/lib/mongodb'; // Adjusted path if src is baseUrl
-import { generateAccessToken, generateRefreshToken, AuthPayload } from '@/lib/jwt'; // Import actual JWT functions
+import User, { IUser } from '@/models/User';
+import connectMongoDB from '@/lib/mongodb';
+import { generateOtp, sendOtp } from '@/lib/otpService';
+
+// Retrieve OTP validity duration from environment variables, default to 10 minutes
+const OTP_VALIDITY_MINUTES = parseInt(process.env.OTP_VALIDITY_MINUTES || '10', 10);
 
 export async function POST(request: Request) {
   try {
-    const { full_name, email, phone_number, password, user_type, address_line1, address_line2, city, pincode } = await request.json();
+    const { full_name, phone_number, password } = await request.json();
 
     // 1. Input Validation
-    if (!full_name || !email || !phone_number || !password) {
+    if (!full_name || !phone_number || !password) {
       return NextResponse.json(
-        { error: 'Validation failed', details: { message: 'Full name, email, phone number, and password are required.' } },
+        { success: false, message: 'Full name, phone number, and password are required.' },
         { status: 400 }
       );
     }
 
-    // Basic email format validation
-    const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { error: 'Validation failed', details: { email: 'Invalid email format.' } },
-        { status: 400 }
-      );
-    }
-
-    // Basic password strength validation (e.g., min 8 characters)
     if (password.length < 8) {
       return NextResponse.json(
-        { error: 'Validation failed', details: { password: 'Password must be at least 8 characters long.' } },
+        { success: false, message: 'Password must be at least 8 characters long.' },
         { status: 400 }
       );
     }
     
-    // Basic phone number validation (e.g. Indian numbers)
-    const phoneRegex = /^[6-9]\d{9}$/;
+    const phoneRegex = /^[6-9]\d{9}$/; 
     if (!phoneRegex.test(phone_number)) {
         return NextResponse.json(
-            { error: 'Validation failed', details: { phone_number: 'Invalid Indian phone number format.' } },
+            { success: false, message: 'Invalid Indian phone number format. It should be 10 digits starting with 6, 7, 8, or 9.' },
             { status: 400 }
         );
     }
 
-
-    // 2. Connect to MongoDB
     await connectMongoDB();
 
-    // 3. Check for Existing User
-    const existingUser = await User.findOne({ $or: [{ email }, { phone_number }] });
+    const existingUser = await User.findOne({ phone_number })
+                                   .select('+phone_otp +phone_otp_expires_at +status +password'); 
+
+    const newOtp = generateOtp();
+    const otpExpiresAt = new Date(Date.now() + OTP_VALIDITY_MINUTES * 60000);
+
     if (existingUser) {
+      if (existingUser.status === 'active') {
+        return NextResponse.json(
+          { success: false, message: 'Phone number already registered and active.' },
+          { status: 409 }
+        );
+      }
+
+      existingUser.phone_otp = newOtp;
+      existingUser.phone_otp_expires_at = otpExpiresAt;
+      existingUser.status = 'pending_verification'; 
+      existingUser.is_phone_verified = false;
+
+      // If password is provided in the payload, update it.
+      // The pre-save hook in the User model will hash it if it's modified.
+      if (password) {
+        existingUser.password = password;
+      }
+
+      await existingUser.save();
+
+      // Prefix with +91 for Indian numbers when sending OTP
+      const otpSentResult = await sendOtp(`+91${phone_number}`, newOtp); 
+      if (!otpSentResult.success) {
+        console.error('Failed to send OTP for existing user:', otpSentResult.error);
+        return NextResponse.json(
+          { success: false, message: 'Error sending OTP. Please try again.' },
+          { status: 500 }
+        );
+      }
+
       return NextResponse.json(
-        { error: 'User with this email or phone number already exists' },
-        { status: 409 } // 409 Conflict
+        { success: true, message: 'OTP re-sent. Please verify to complete registration.' },
+        { status: 200 }
       );
     }
 
-    // 4. Create and Save New User
+    // New User
     const newUserPayload: Partial<IUser> = {
       full_name,
-      email,
       phone_number,
-      password, // Password will be hashed by the pre-save hook in the model
-      user_type: user_type || 'customer', // Default to 'customer' if not provided
-      address_line1,
-      address_line2,
-      city,
-      pincode,
+      password, 
+      phone_otp: newOtp,
+      phone_otp_expires_at: otpExpiresAt,
+      status: 'pending_verification',
+      is_phone_verified: false,
     };
 
     const newUser = new User(newUserPayload);
     await newUser.save();
 
-    // 5. Generate JWT
-    const tokenPayload: AuthPayload = {
-      userId: newUser._id.toString(), // Ensure userId is a string
-      email: newUser.email, // email is already part of AuthPayload if you extend a base interface
-      userType: newUser.user_type,
-    };
-    const accessToken = generateAccessToken(tokenPayload);
-    const refreshToken = generateRefreshToken(tokenPayload);
-
-
-    // 6. Return Response
-    // The toJSON method in the schema handles removing the password
-    const userResponse = newUser.toJSON();
+    const otpSentResult = await sendOtp(`+91${phone_number}`, newOtp);
+    if (!otpSentResult.success) {
+      console.error('Failed to send OTP for new user:', otpSentResult.error);
+      // Optional: Attempt to delete the user if OTP sending fails critically
+      // await User.deleteOne({ _id: newUser._id });
+      return NextResponse.json(
+        { success: false, message: 'User created, but failed to send OTP. Please try verifying later or contact support.' },
+        { status: 500 } 
+      );
+    }
 
     return NextResponse.json(
-      {
-        user_id: userResponse._id, // In MongoDB, the ID is _id. This is consistent.
-        full_name: userResponse.full_name,
-        email: userResponse.email,
-        phone_number: userResponse.phone_number,
-        user_type: userResponse.user_type,
-        access_token: accessToken, // Use the actual generated token
-        refresh_token: refreshToken, // Use the actual generated token
-        message: 'Registration successful. Please verify your email/phone.',
-      },
-      { status: 201 } // 201 Created
+      { success: true, message: 'OTP sent to your mobile number. Please verify to complete registration.' },
+      { status: 201 }
     );
 
   } catch (error: any) {
     console.error('Registration error:', error);
-    // Check for Mongoose validation error
     if (error.name === 'ValidationError') {
       const errors = Object.values(error.errors).map((err: any) => err.message);
       return NextResponse.json(
-        { error: 'Validation failed', details: errors },
+        { success: false, message: 'Validation failed', details: errors },
         { status: 400 }
       );
     }
+    if (error.code === 11000 && error.keyPattern && error.keyPattern.phone_number) {
+        return NextResponse.json(
+            { success: false, message: "This phone number is already registered." },
+            { status: 409 }
+        );
+    }
     return NextResponse.json(
-      { error: 'An unexpected error occurred', details: error.message },
+      { success: false, message: 'An unexpected error occurred during registration.', details: error.message },
       { status: 500 }
     );
   }
 }
-```
