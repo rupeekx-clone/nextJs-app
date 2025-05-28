@@ -151,4 +151,4 @@ export const withAuth = (handler: AppRouterApiHandler): AppRouterApiHandler => {
 // for use within the same Node.js runtime context of an API handler, especially if you are not using Edge.
 // For App Router API Routes (which can be Node.js or Edge runtime), passing data via headers from middleware.ts
 // or using the HOF pattern are both viable. The HOF can be more straightforward for adding `req.user`.
-```
+

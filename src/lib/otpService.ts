@@ -89,4 +89,3 @@ export const sendOtp = async (
     return { success: false, error: errorMessage };
   }
 };
-```
