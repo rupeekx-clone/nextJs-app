@@ -59,7 +59,7 @@ export default function FaqsPage() {
               aria-controls={`panel${index}a-content`}
               id={`panel${index}a-header`}
               sx={{ 
-                backgroundColor: index % 2 === 0 ? 'grey.50' : 'grey.100', // Alternating summary background
+                backgroundColor: index % 2 === 0 ? 'alternate.main' : 'alternate.light',
                 minHeight: 56, // Ensure consistent height
                 '& .MuiAccordionSummary-content': { // Target content area for margin
                   margin: '12px 0',

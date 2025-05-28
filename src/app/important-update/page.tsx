@@ -72,7 +72,7 @@ export default function ImportantUpdatePage() {
           sx={{
             p:{xs: 2, sm:3, md:4}, 
             textAlign: 'center', 
-            backgroundColor: 'grey.50', // Lighter background for the message
+            backgroundColor: 'alternate.main', // Lighter background for the message
             borderRadius: 2
           }}
         >

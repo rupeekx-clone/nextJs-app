@@ -25,7 +25,7 @@ export default function CareerPage() {
         Careers at Rupeekx Clone
       </Typography>
       
-      <Paper elevation={0} sx={{ p: {xs: 2, sm: 3, md:4}, backgroundColor: 'grey.50', borderRadius: 2, mb: {xs:4, sm:5, md:6} }}>
+      <Paper elevation={0} sx={{ p: {xs: 2, sm: 3, md:4}, backgroundColor: 'alternate.main', borderRadius: 2, mb: {xs:4, sm:5, md:6} }}>
         <Typography variant="h5" component="h2" gutterBottom sx={{ fontWeight: 'medium', color: 'primary.main' }}>
           Join Our Mission
         </Typography>
@@ -75,7 +75,7 @@ export default function CareerPage() {
             ))}
           </Grid>
         ) : (
-          <Paper elevation={1} sx={{p:{xs:2, sm:3, md:4}, textAlign: 'center', backgroundColor: 'grey.100', borderRadius: 2}}>
+          <Paper elevation={1} sx={{p:{xs:2, sm:3, md:4}, textAlign: 'center', backgroundColor: 'alternate.light', borderRadius: 2}}>
             <Typography variant="h6" component="p" gutterBottom sx={{fontWeight: 'medium'}}>
               We are constantly growing!
             </Typography>

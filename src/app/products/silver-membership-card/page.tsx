@@ -24,7 +24,7 @@ export default function SilverMembershipCardPage() {
               sx={{ 
                 width: '100%', 
                 height: {xs: 200, md: 300}, 
-                backgroundColor: 'grey.200', 
+                backgroundColor: 'alternate.dark', 
                 display: 'flex', 
                 alignItems: 'center', 
                 justifyContent: 'center',
