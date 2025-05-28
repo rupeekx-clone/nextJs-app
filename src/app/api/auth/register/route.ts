@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     if (password.length < 8) {
       return NextResponse.json({ message: 'Password must be at least 8 characters long' }, { status: 400 });
     }
-    await connectToDatabase();
+    const db = await connectToDatabase();
 
     // Pincode validation (Indian format)
     if (pincode && !/^[1-9][0-9]{5}$/.test(pincode)) {
@@ -43,9 +43,6 @@ export async function POST(req: NextRequest) {
     if (user_type && !['customer', 'cash_lending_customer'].includes(user_type)) {
         return NextResponse.json({ message: 'Invalid user type' }, { status: 400 });
     }
-
-
-    const { db } = await connectToDatabase();
 
     // Check if user already exists
     const existingUser = await db.collection('users').findOne({ $or: [{ email }, { phone_number }] });
@@ -80,8 +77,8 @@ export async function POST(req: NextRequest) {
 
 
     // Generate tokens
-    const access_token = generateAccessToken({ userId: createdUser._id.toString(), email: createdUser.email, user_type: createdUser.user_type });
-    const refresh_token = generateRefreshToken({ userId: createdUser._id.toString() });
+    const access_token = generateAccessToken({ userId: createdUser._id.toString(), email: createdUser.email, userType: createdUser.user_type });
+    const refresh_token = generateRefreshToken({ userId: createdUser._id.toString(), userType: createdUser.user_type });
 
     return NextResponse.json({
       message: 'User registered successfully',
