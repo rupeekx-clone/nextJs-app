@@ -73,4 +73,3 @@ const profileHandler = async (req: NextRequestWithAuth) => {
 
 // Protect the Route
 export const GET = withAuth(profileHandler);
-```
