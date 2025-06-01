@@ -330,7 +330,7 @@ export default function HomePage() {
                 {/* Step Bubble - absolutely centered on the vertical line for md+ */}
                 <Box
                   sx={{
-                    display: { xs: 'flex', md: 'block' },
+                    display: { xs: 'none', md: 'block' }, // Only show on md+
                     justifyContent: 'center',
                     alignItems: 'center',
                     position: { xs: 'static', md: 'absolute' },
