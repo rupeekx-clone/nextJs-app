@@ -1,7 +1,8 @@
 'use client'; // For form interactions
 
 import { useState, useEffect } from 'react'; // Added useEffect
-import { Container, Typography, Box, TextField, Button, Grid, Paper, FormControl, InputLabel, Select, MenuItem, Alert, Stepper, Step, StepLabel, Slider, ToggleButtonGroup, ToggleButton, IconButton } from '@mui/material'; // Added Slider, ToggleButton, ToggleButtonGroup, IconButton
+import { Container, Typography, Box, TextField, Button, Grid, Paper, FormControl, InputLabel, Select, MenuItem, Alert, Stepper, Step, StepLabel, Slider, ToggleButtonGroup, ToggleButton, IconButton, SelectChangeEvent } from '@mui/material'; // Added SelectChangeEvent
+import { Checkbox, FormControlLabel, Card, CardContent, CardMedia, Stack } from '@mui/material';
 import CheckCircleOutline from '@mui/icons-material/CheckCircleOutline';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
@@ -12,9 +13,10 @@ import UploadFileIcon from '@mui/icons-material/UploadFile'; // Added UploadFile
 const steps = ['Loan Explorer', 'Quick Identity Check', 'Smart Employment Profiler', 'Location & Contact', 'Final Review'];
 
 // Loan Explorer Step Component
+type LoanExplorerFormData = typeof initialFormData & { customInterestRate: string };
 interface LoanExplorerStepProps {
-  formData: typeof initialFormData;
-  handleGenericChange: (field: keyof typeof initialFormData, value: any) => void;
+  formData: LoanExplorerFormData;
+  handleGenericChange: (field: keyof LoanExplorerFormData, value: any) => void;
   loanPurposes: string[];
 }
 
@@ -41,6 +43,20 @@ const LoanExplorerStep = ({ formData, handleGenericChange, loanPurposes }: LoanE
     }
   };
 
+  const handleInterestRateChange = (event: SelectChangeEvent<string>) => {
+    handleGenericChange('interestRate', event.target.value as string);
+    if (event.target.value !== 'custom') {
+      handleGenericChange('customInterestRate', '');
+    }
+  };
+
+  const handleCustomInterestRateFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    if (/^\d*\.?\d*$/.test(value) && value.length <= 5) {
+      handleGenericChange('customInterestRate', value);
+    }
+  };
+
   const calculateEMI = (principal: number, annualRate: number, timeInMonths: number): string => {
     if (principal <= 0 || timeInMonths <= 0 || annualRate <= 0) {
       return '0.00';
@@ -52,22 +68,25 @@ const LoanExplorerStep = ({ formData, handleGenericChange, loanPurposes }: LoanE
 
   useEffect(() => {
     const principal = formData.loanAmount;
-    const annualInterestRate = 12; // Placeholder 12%
+    let annualInterestRate = 12;
+    if (formData.interestRate === 'custom') {
+      annualInterestRate = parseFloat(formData.customInterestRate) || 0;
+    } else {
+      annualInterestRate = parseFloat(formData.interestRate) || 0;
+    }
     let tenureInMonths = 0;
-
     if (formData.tenure === 'custom') {
       tenureInMonths = parseInt(formData.customTenure, 10);
     } else {
       tenureInMonths = parseInt(formData.tenure, 10);
     }
-
-    if (principal > 0 && tenureInMonths > 0) {
+    if (principal > 0 && tenureInMonths > 0 && annualInterestRate > 0) {
       const emi = calculateEMI(principal, annualInterestRate, tenureInMonths);
       setCalculatedEMI(emi);
     } else {
       setCalculatedEMI('0.00');
     }
-  }, [formData.loanAmount, formData.tenure, formData.customTenure]);
+  }, [formData.loanAmount, formData.tenure, formData.customTenure, formData.interestRate, formData.customInterestRate]);
 
   return (
     <Box sx={{ py: 3, px:1 }}> {/* Added more padding to step content box */}
@@ -76,40 +95,41 @@ const LoanExplorerStep = ({ formData, handleGenericChange, loanPurposes }: LoanE
       </Typography>
       <Grid container spacing={3.5}> {/* Increased spacing */}
         {/* Loan Amount */}
-        <Grid item xs={12}>
+        <Grid sx={{xs:12}}>
           <Typography gutterBottom sx={{ fontWeight: 'medium', fontSize: '1.1rem' }}>Loan Amount: <Typography component="span" sx={{fontWeight:'bold', color:'secondary.main'}}>₹{formData.loanAmount.toLocaleString()}</Typography></Typography> {/* Enhanced Label */}
           <Slider
             value={formData.loanAmount}
             onChange={handleSliderChange}
             aria-labelledby="loan-amount-slider"
             valueLabelDisplay="auto"
-            step={10000}
-            min={50000}
-            max={5000000}
+            step={1000}
+            min={10000}
+            max={500000}
             sx={{mt: 1, color: 'secondary.main'}}
           />
         </Grid>
 
-        {/* Tenure Selector */}
-        <Grid item xs={12}>
-          <Typography gutterBottom sx={{ fontWeight: 'medium', fontSize: '1.1rem' }}>Tenure</Typography> {/* Enhanced Label */}
-          <ToggleButtonGroup
-            value={formData.tenure}
-            exclusive
-            onChange={handleTenureToggleChange}
-            aria-label="loan tenure"
-            fullWidth
-            sx={{ mb: 1.5 }} /* Increased margin */
-          >
-            {['12', '24', '36', '48', '60'].map((t) => (
-              <ToggleButton key={t} value={t} aria-label={`${t} months`} sx={{flexGrow:1}}> {/* Ensure buttons grow */}
-                {t}mo
-              </ToggleButton>
-            ))}
-            <ToggleButton value="custom" aria-label="custom tenure" sx={{flexGrow:1}}>
-              Custom
-            </ToggleButton>
-          </ToggleButtonGroup>
+        {/* Tenure Selector (Refactored to Select) */}
+        <Grid sx={{xs:12}}>
+          <Typography gutterBottom sx={{ fontWeight: 'medium', fontSize: '1.1rem' }}>Tenure</Typography>
+          <FormControl fullWidth variant="outlined" sx={{ mb: 1.5 }}>
+            <InputLabel id="tenure-label">Select Tenure</InputLabel>
+            <Select
+              labelId="tenure-label"
+              id="tenure-select"
+              value={formData.tenure}
+              label="Select Tenure"
+              onChange={(e) => {
+                handleGenericChange('tenure', e.target.value);
+                if (e.target.value !== 'custom') handleGenericChange('customTenure', '');
+              }}
+            >
+              {[12, 24, 36, 48, 60].map((t) => (
+                <MenuItem key={t} value={t.toString()}>{t} months</MenuItem>
+              ))}
+              <MenuItem value="custom">Custom</MenuItem>
+            </Select>
+          </FormControl>
           {formData.tenure === 'custom' && (
             <TextField
               fullWidth
@@ -120,25 +140,59 @@ const LoanExplorerStep = ({ formData, handleGenericChange, loanPurposes }: LoanE
               variant="outlined"
               size="small"
               inputProps={{ maxLength: 3 }}
+              sx={{ mt: 1 }}
+            />
+          )}
+        </Grid>
+
+        {/* Interest Rate Selector */}
+        <Grid sx={{xs:12}}>
+          <Typography gutterBottom sx={{ fontWeight: 'medium', fontSize: '1.1rem' }}>Interest Rate</Typography>
+          <FormControl fullWidth variant="outlined" sx={{ mb: 1.5 }}>
+            <InputLabel id="interest-rate-label">Select Rate</InputLabel>
+            <Select
+              labelId="interest-rate-label"
+              id="interest-rate-select"
+              value={formData.interestRate}
+              label="Select Rate"
+              onChange={handleInterestRateChange}
+            >
+              {[10, 12, 14, 16, 18].map((rate) => (
+                <MenuItem key={rate} value={rate.toString()}>{rate}%</MenuItem>
+              ))}
+              <MenuItem value="custom">Custom</MenuItem>
+            </Select>
+          </FormControl>
+          {formData.interestRate === 'custom' && (
+            <TextField
+              fullWidth
+              label="Custom Interest Rate (%)"
+              value={formData.customInterestRate}
+              onChange={handleCustomInterestRateFieldChange}
+              type="tel"
+              variant="outlined"
+              size="small"
+              inputProps={{ maxLength: 5 }}
+              sx={{ mt: 1 }}
             />
           )}
         </Grid>
 
         {/* EMI Display */}
-        <Grid item xs={12} sx={{ textAlign: 'center', my: 2.5 }}> {/* Increased margin */}
-          <Paper elevation={2} sx={{p:2.5, borderRadius: '8px', background: 'linear-gradient(to right, #e3f2fd, #f3e5f5)'}}> {/* Added Paper for distinct background */}
-            <Typography variant="h5" component="p" sx={{ fontWeight: 'bold', color: 'primary.dark' }}> {/* Enhanced EMI text */}
+        <Grid sx={{xs:12, textAlign:'center', my:2.5}}>
+          <Paper elevation={2} sx={{p:2.5, borderRadius: '8px', background: 'linear-gradient(to right, #e3f2fd, #f3e5f5)'}}> 
+            <Typography variant="h5" component="p" sx={{ fontWeight: 'bold', color: 'primary.dark' }}>
               Your Estimated EMI: ₹{calculatedEMI}/month
             </Typography>
             <Typography variant="caption" display="block" sx={{mt: 0.5, color: 'text.secondary'}}>
-              (Calculated at a placeholder 12% annual interest rate)
+              (Calculated at {formData.interestRate === 'custom' ? formData.customInterestRate || '0' : formData.interestRate}% annual interest rate)
             </Typography>
           </Paper>
         </Grid>
 
         {/* Loan Purpose */}
-        <Grid item xs={12}>
-         <Typography gutterBottom sx={{ fontWeight: 'medium', fontSize: '1.1rem', mb:1 }}>Loan Purpose</Typography> {/* Added Label */}
+        <Grid sx={{xs:12}}>
+         <Typography gutterBottom sx={{ fontWeight: 'medium', fontSize: '1.1rem', mb:1 }}>Loan Purpose</Typography>
           <FormControl fullWidth variant="outlined"> {/* Ensured variant for consistency */}
             <InputLabel id="loan-purpose-label">Select Purpose</InputLabel>
             <Select
@@ -178,16 +232,27 @@ const IdentityCheckStep = ({ formData, handleFileMetaChange }: IdentityCheckStep
 
   return (
     <Box sx={{ py: 3, px:1 }}> {/* Consistent padding */}
-      <Typography variant="body2" sx={{ textAlign: 'center', mb: 1, color: 'text.secondary', fontWeight:'bold' }}> {/* Styled progress */}
-        Progress: <Box component="span" sx={{color: 'primary.main'}}>● ●</Box> ○ ○ ○
-      </Typography>
       <Typography variant="h5" component="h2" textAlign="center" gutterBottom sx={{ mb: 4, fontWeight: 'bold' }}> {/* Enhanced Title */}
         Let's Verify Your Identity
       </Typography>
+                
+      <Typography variant="h6" gutterBottom sx={{ mt: 2, mb: 2.5, borderBottom: 1, borderColor: 'divider', pb:1, fontWeight:'medium' }}>
+            Personal Details
+          </Typography>
+          <Grid container spacing={2.5}>
+            <Grid sx={{xs:12, sm:6}}><TextField fullWidth label="Full Name" name="fullName" required autoComplete="name" /></Grid>
+            <Grid sx={{xs:12, sm:6}}><TextField fullWidth label="Date of Birth" name="dob" type="date" InputLabelProps={{ shrink: true }} required /></Grid>
+            <Grid sx={{xs:12, sm:6}}><TextField fullWidth label="PAN Card Number" name="pan" required /></Grid>
+            <Grid sx={{xs:12, sm:6}}><TextField fullWidth label="Aadhaar Number" name="aadhaar" required /></Grid>
+            <Grid sx={{xs:12}}><TextField fullWidth label="Current Address" name="address" multiline rows={3} required autoComplete="street-address" /></Grid>
+            <Grid sx={{xs:12, sm:6}}><TextField fullWidth label="Mobile Number" name="mobile" type="tel" required autoComplete="tel" /></Grid>
+            <Grid sx={{xs:12, sm:6}}><TextField fullWidth label="Email Address" name="email" type="email" required autoComplete="email" /></Grid>
+          </Grid>
+
 
       <Grid container spacing={3}>
         {/* PAN Card Upload */}
-        <Grid item xs={12}>
+        <Grid sx={{xs:12}}>
           <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'medium', mb:1 }}>PAN Card Upload</Typography>
           <Button variant="outlined" component="label" fullWidth startIcon={<UploadFileIcon />}> {/* Added Icon */}
             Upload PAN Card
@@ -200,17 +265,17 @@ const IdentityCheckStep = ({ formData, handleFileMetaChange }: IdentityCheckStep
         </Grid>
 
         {/* Aadhaar Upload */}
-        <Grid item xs={12}>
+        <Grid sx={{xs:12}}>
           <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'medium', mt:2, mb:1 }}>Aadhaar Upload</Typography>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
+            <Grid sx={{xs:12, sm:6}}>
               <Button variant="outlined" component="label" fullWidth startIcon={<UploadFileIcon />}> {/* Added Icon */}
                 Upload Aadhaar Front
                 <input type="file" hidden accept="image/*,.pdf" onChange={(e) => handleFileChange(e, 'aadhaarFrontFile')} />
               </Button>
               {formData.aadhaarFrontFile && <Typography variant="body2" sx={{ mt: 1, textAlign:'center', color:'success.main' }}>Selected: {formData.aadhaarFrontFile.name}</Typography>}
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid sx={{xs:12, sm:6}}>
               <Button variant="outlined" component="label" fullWidth startIcon={<UploadFileIcon />}> {/* Added Icon */}
                 Upload Aadhaar Back
                 <input type="file" hidden accept="image/*,.pdf" onChange={(e) => handleFileChange(e, 'aadhaarBackFile')} />
@@ -224,7 +289,7 @@ const IdentityCheckStep = ({ formData, handleFileMetaChange }: IdentityCheckStep
         </Grid>
 
         {/* Autofilled Information */}
-        <Grid item xs={12} sx={{ mt: 3 }}>
+        {/* <Grid sx={{xs:12, mt:3}}>
           <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'medium', color: 'text.secondary' }}>
             AUTOFILLED FROM DOCUMENTS (Conceptual):
           </Typography>
@@ -256,7 +321,7 @@ const IdentityCheckStep = ({ formData, handleFileMetaChange }: IdentityCheckStep
                sx={{ mr: 0.5 }}
             />
           </Box>
-        </Grid>
+        </Grid> */}
       </Grid>
     </Box>
   );
@@ -296,58 +361,75 @@ const EmploymentProfilerStep = ({ formData, handleGenericChange, handleFileMetaC
 
   return (
     <Box sx={{ py: 3, px:1 }}> {/* Consistent padding */}
-      <Typography variant="body2" sx={{ textAlign: 'center', mb: 1, color: 'text.secondary', fontWeight:'bold' }}> {/* Styled progress */}
-        Progress: <Box component="span" sx={{color: 'primary.main'}}>● ● ●</Box> ○ ○
-      </Typography>
       <Typography variant="h5" component="h2" textAlign="center" gutterBottom sx={{ mb: 4, fontWeight: 'bold' }}> {/* Enhanced Title */}
         Tell Us About Your Work Life
       </Typography>
 
+      <Typography variant="h6" gutterBottom sx={{ mt: 4, mb: 2.5, borderBottom: 1, borderColor: 'divider', pb:1, fontWeight:'medium' }}>
+            Employment Information
+          </Typography>
+          <Grid container spacing={2.5}>
+            <Grid sx={{xs:12, sm:6}}>
+              <FormControl fullWidth required>
+                <InputLabel id="employment-type-label">Employment Type</InputLabel>
+                <Select labelId="employment-type-label" label="Employment Type" name="employmentType" defaultValue="">
+                 {employmentTypes.map((type) => (
+                  <MenuItem key={type} value={type}>{type}</MenuItem>
+                ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid sx={{xs:12, sm:6}}><TextField fullWidth label="Company Name (if salaried/employed)" name="companyName" /></Grid>
+            <Grid sx={{xs:12, sm:6}}><TextField fullWidth label="Designation (if salaried/employed)" name="designation" /></Grid>
+            <Grid sx={{xs:12, sm:6}}><TextField fullWidth label="Years in Current Employment/Business" name="yearsInService" type="number" required InputProps={{ inputProps: { min: 0 } }} /></Grid>
+            <Grid sx={{xs:12, sm:6}}><TextField fullWidth label="Monthly Income (INR)" name="monthlyIncome" type="number" required InputProps={{ inputProps: { min: 0 } }} /></Grid>
+          </Grid>
+
       <Grid container spacing={3}>
         {/* Employment Type */}
-        <Grid item xs={12}>
-          <FormControl fullWidth required variant="outlined"> {/* Ensured variant */}
+        {/* <Grid sx={{xs:12}}>
+          <FormControl fullWidth required variant="outlined">
             <InputLabel id="employment-type-label">Employment Type</InputLabel>
             <Select
               labelId="employment-type-label"
-              value={employmentType}
+              value={formData.employmentType}
               label="Employment Type"
-              onChange={(e) => setEmploymentType(e.target.value)}
+              onChange={(e) => handleGenericChange('employmentType', e.target.value)}
             >
               {employmentTypes.map((type) => (
                 <MenuItem key={type} value={type}>{type}</MenuItem>
               ))}
             </Select>
           </FormControl>
-        </Grid>
+        </Grid> */}
 
         {/* Conditional Fields for Salaried */}
-        {employmentType === 'Salaried' && (
+        {formData.employmentType === 'Salaried' && (
           <>
-            <Grid item xs={12} sm={6}>
+            <Grid sx={{xs:12, sm:6}}>
               <TextField
                 fullWidth
                 label="Company Name"
-                value={companyName}
-                onChange={(e) => setCompanyName(e.target.value)}
+                value={formData.companyName}
+                onChange={(e) => handleGenericChange('companyName', e.target.value)}
                 variant="outlined"
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid sx={{xs:12, sm:6}}>
               <TextField
                 fullWidth
                 label="Designation"
-                value={designation}
-                onChange={(e) => setDesignation(e.target.value)}
+                value={formData.designation}
+                onChange={(e) => handleGenericChange('designation', e.target.value)}
                 variant="outlined"
               />
             </Grid>
           </>
         )}
 
-        {employmentType === 'Self-Employed/Business' && (
+        {formData.employmentType === 'Self-Employed/Business' && (
           <>
-            <Grid item xs={12} sm={6}>
+            <Grid sx={{xs:12, sm:6}}>
               <TextField
                 fullWidth
                 label="Business Name"
@@ -357,7 +439,7 @@ const EmploymentProfilerStep = ({ formData, handleGenericChange, handleFileMetaC
                 helperText="Your registered business name"
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid sx={{xs:12, sm:6}}>
               <TextField
                 fullWidth
                 label="Nature of Business"
@@ -366,7 +448,7 @@ const EmploymentProfilerStep = ({ formData, handleGenericChange, handleFileMetaC
                 variant="outlined"
               />
             </Grid>
-             <Grid item xs={12}>
+             <Grid sx={{xs:12}}>
               <TextField
                 fullWidth
                 label="Years in Business"
@@ -380,37 +462,37 @@ const EmploymentProfilerStep = ({ formData, handleGenericChange, handleFileMetaC
         )}
 
         {/* Income Verification */}
-        <Grid item xs={12}>
+        <Grid sx={{xs:12}}>
           <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'medium', mt: 2, mb:1 }}>
             Income Verification
           </Typography>
           <Grid container spacing={2} alignItems="center">
-            <Grid item xs={12} sm={6}>
+            <Grid sx={{xs:12, sm:6}}>
               <Button variant="outlined" component="label" fullWidth startIcon={<UploadFileIcon />}> {/* Added Icon */}
                 Upload Salary Slip
-                <input type="file" hidden accept="image/*,.pdf" onChange={handleSalarySlipChange} />
+                <input type="file" hidden accept="image/*,.pdf" onChange={handleSalarySlipUpload} />
               </Button>
               {formData.salarySlipFile && <Typography variant="body2" sx={{ mt: 1, textAlign:'center', color:'success.main' }}>Selected: {formData.salarySlipFile.name}</Typography>}
             </Grid>
-            <Grid item xs={12} sm={6}>
-              <Button variant="outlined" color="secondary" fullWidth> {/* Kept secondary for distinction */}
+            {/* <Grid sx={{xs:12, sm:6}}>
+              <Button variant="outlined" color="secondary" fullWidth> 
                 Connect Bank Account
               </Button>
                <Typography variant="caption" display="block" sx={{ mt: 0.5, textAlign: 'center', color:'text.secondary' }}>
                 (Securely connect via Plaid/Setu - UI Only)
               </Typography>
-            </Grid>
+            </Grid> */}
           </Grid>
         </Grid>
 
         {/* Auto-calculated Monthly Income */}
-        <Grid item xs={12} sx={{ mt: 1 }}>
+        {/* <Grid sx={{xs:12, mt:1}}>
           <Typography variant="caption" display="block" color="text.secondary" sx={{mb:0.5}}>
             [Auto-calculated from upload/bank connection]
           </Typography>
           <TextField
             label="Monthly Income"
-            value={monthlyIncome}
+            value={monthlyIncomeDisplay}
             InputProps={{
               readOnly: true,
               // endAdornment: monthlyIncome.includes('✓') ? <CheckCircleOutline color="success" sx={{fontSize: '1.2rem'}} /> : null,
@@ -419,7 +501,7 @@ const EmploymentProfilerStep = ({ formData, handleGenericChange, handleFileMetaC
             fullWidth
             size="small"
           />
-        </Grid>
+        </Grid> */}
       </Grid>
     </Box>
   );
@@ -439,16 +521,13 @@ const LocationContactStep = ({ formData, handleGenericChange }: LocationContactS
 
   return (
     <Box sx={{ py: 3, px:1 }}> {/* Consistent padding */}
-      <Typography variant="body2" sx={{ textAlign: 'center', mb: 1, color: 'text.secondary', fontWeight:'bold' }}> {/* Styled progress */}
-        Progress: <Box component="span" sx={{color: 'primary.main'}}>● ● ● ●</Box> ○
-      </Typography>
       <Typography variant="h5" component="h2" textAlign="center" gutterBottom sx={{ mb: 4, fontWeight: 'bold' }}> {/* Enhanced Title */}
         Where Should We Reach You?
       </Typography>
 
       <Grid container spacing={3}>
         {/* Address Input UI */}
-        <Grid item xs={12}>
+        <Grid sx={{xs:12}}>
           <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'medium' }}>Enter Your Current Address</Typography>
           <Typography variant="caption" display="block" color="text.secondary" sx={{ mb: 1.5 }}>
             Alternatively, move pin to your exact location (Conceptual Map UI)
@@ -462,7 +541,7 @@ const LocationContactStep = ({ formData, handleGenericChange }: LocationContactS
             sx={{ mb: 2 }}
           />
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
+            <Grid sx={{xs:12, sm:6}}>
               <TextField
                 fullWidth
                 label="City"
@@ -471,7 +550,7 @@ const LocationContactStep = ({ formData, handleGenericChange }: LocationContactS
                 variant="outlined"
               />
             </Grid>
-            <Grid item xs={12} sm={6}>
+            <Grid sx={{xs:12, sm:6}}>
               <TextField
                 fullWidth
                 label="Pincode"
@@ -485,7 +564,7 @@ const LocationContactStep = ({ formData, handleGenericChange }: LocationContactS
         </Grid>
 
         {/* Auto-Filled Address Display (Conceptual) */}
-        <Grid item xs={12} sx={{ mt: 1 }}>
+        <Grid sx={{xs:12, mt:1}}>
           <Typography variant="caption" display="block" color="text.secondary" sx={{ fontWeight: 'medium' }}>
             AUTOFILLED ADDRESS (CONCEPTUAL):
           </Typography>
@@ -499,7 +578,7 @@ const LocationContactStep = ({ formData, handleGenericChange }: LocationContactS
         </Grid>
 
         {/* Contact Preferences UI */}
-        <Grid item xs={12} sx={{ mt: 2 }}>
+        <Grid sx={{xs:12, mt:2}}>
           <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'medium', mb:1.5 }}>Contact Preferences</Typography>
           {/* Mobile Number */}
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
@@ -545,7 +624,7 @@ const LocationContactStep = ({ formData, handleGenericChange }: LocationContactS
         </Grid>
 
         {/* Send OTP Button */}
-        <Grid item xs={12} sx={{ textAlign: 'center', mt: 2 }}>
+        <Grid sx={{xs:12, textAlign:'center', mt:2}}>
           <Button variant="contained" color="primary" sx={{px:5, py:1.5, fontWeight:'medium'}}> {/* Styled Button */}
             Send OTP & Continue
           </Button>
@@ -557,8 +636,6 @@ const LocationContactStep = ({ formData, handleGenericChange }: LocationContactS
     </Box>
   );
 };
-
-import { Checkbox, FormControlLabel, Card, CardContent, CardMedia, Stack } from '@mui/material'; // Added Checkbox, FormControlLabel, Card, CardContent, CardMedia, Stack
 
 // Final Review Step Component
 interface FinalReviewStepProps { // Ensure this interface is correctly defined or use inline props
@@ -577,9 +654,7 @@ const FinalReviewStep = ({ formData, handleGenericChange }: FinalReviewStepProps
 
   return (
     <Box sx={{ py: 3, px:1 }}> {/* Consistent padding */}
-      <Typography variant="body2" sx={{ textAlign: 'center', mb: 1, color: 'text.secondary', fontWeight:'bold' }}> {/* Styled progress */}
-        Progress: <Box component="span" sx={{color: 'primary.main'}}>● ● ● ● ●</Box>
-      </Typography>
+      
       <Typography variant="h5" component="h2" textAlign="center" gutterBottom sx={{ mb: 3, fontWeight: 'bold' }}> {/* Enhanced Title */}
         Review & Unlock Your Offers!
       </Typography>
@@ -590,7 +665,7 @@ const FinalReviewStep = ({ formData, handleGenericChange }: FinalReviewStepProps
       </Typography>
       <Grid container spacing={2.5}>
         {mockOffers.map((offer, index) => (
-          <Grid item xs={12} md={4} key={index}>
+          <Grid sx={{xs:12, md:4}} key={index}>
             <Card elevation={3} sx={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between', borderRadius: '12px', transition: '0.3s', '&:hover': {transform: 'translateY(-5px)', boxShadow:6} }}> {/* Added hover effect & border radius */}
               <CardMedia
                 component="img"
@@ -657,6 +732,8 @@ const initialFormData = {
   loanAmount: 500000,
   tenure: '24', // months or 'custom'
   customTenure: '', // months
+  interestRate: '12', // new field, default 12%
+  customInterestRate: '', // new field for custom rate
   loanPurpose: '',
   // Step 2: Identity Check
   panFile: null as FilePlaceholder | null,
@@ -861,84 +938,29 @@ export default function PersonalLoanPage() {
         </Typography>
 
         <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 4 }}>
-          {steps.map((label) => (
+          {steps.map((label, idx) => (
             <Step key={label}>
-              <StepLabel>{label}</StepLabel>
+              <StepLabel>
+                <Box
+                  component="span"
+                  onClick={() => setActiveStep(idx)}
+                  sx={{ cursor: 'pointer', display: 'inline-block', px: 1 }}
+                >
+                  {label}
+                </Box>
+              </StepLabel>
             </Step>
           ))}
         </Stepper>
 
         <Box component="form" onSubmit={activeStep === steps.length -1 ? handleSubmit : (e) => { e.preventDefault(); handleNext();}} noValidate>
           {message && (
-            <Grid item xs={12} sx={{ mb: 2 }}>
+            <Grid sx={{xs:12, mb:2}}>
               <Alert severity={message.type} onClose={() => setMessage(null)}>{message.text}</Alert>
             </Grid>
           )}
 
           {getStepContent(activeStep)}
-
-          {/* Commenting out the old form structure for now */}
-          {/*
-          <Typography variant="h6" gutterBottom sx={{ mt: 2, mb: 2.5, borderBottom: 1, borderColor: 'divider', pb:1, fontWeight:'medium' }}>
-            Personal Details
-          </Typography>
-          <Grid container spacing={2.5}>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Full Name" name="fullName" required autoComplete="name" /></Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Date of Birth" name="dob" type="date" InputLabelProps={{ shrink: true }} required /></Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="PAN Card Number" name="pan" required /></Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Aadhaar Number" name="aadhaar" required /></Grid>
-            <Grid item xs={12}><TextField fullWidth label="Current Address" name="address" multiline rows={3} required autoComplete="street-address" /></Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Mobile Number" name="mobile" type="tel" required autoComplete="tel" /></Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Email Address" name="email" type="email" required autoComplete="email" /></Grid>
-          </Grid>
-
-          <Typography variant="h6" gutterBottom sx={{ mt: 4, mb: 2.5, borderBottom: 1, borderColor: 'divider', pb:1, fontWeight:'medium' }}>
-            Employment Information
-          </Typography>
-          <Grid container spacing={2.5}>
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth required>
-                <InputLabel id="employment-type-label">Employment Type</InputLabel>
-                <Select labelId="employment-type-label" label="Employment Type" name="employmentType" defaultValue="">
-                  {/* {employmentTypes.map(type => <MenuItem key={type} value={type}>{type}</MenuItem>)} */}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Company Name (if salaried/employed)" name="companyName" /></Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Designation (if salaried/employed)" name="designation" /></Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Years in Current Employment/Business" name="yearsInService" type="number" required InputProps={{ inputProps: { min: 0 } }} /></Grid>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Monthly Income (INR)" name="monthlyIncome" type="number" required InputProps={{ inputProps: { min: 0 } }} /></Grid>
-          </Grid>
-
-          <Typography variant="h6" gutterBottom sx={{ mt: 4, mb: 2.5, borderBottom: 1, borderColor: 'divider', pb:1, fontWeight:'medium' }}>
-            Loan Requirements
-          </Typography>
-          <Grid container spacing={2.5}>
-            <Grid item xs={12} sm={6}><TextField fullWidth label="Loan Amount Requested (INR)" name="loanAmount" type="number" required InputProps={{ inputProps: { min: 1000 } }} value={loanAmountMain} onChange={(e) => setLoanAmountMain(e.target.value)}/></Grid>
-            <Grid item xs={12} sm={6}>
-                <FormControl fullWidth required>
-                    <InputLabel id="loan-tenure-label">Preferred Loan Tenure (Months)</InputLabel>
-                  <Select 
-                    labelId="loan-tenure-label" 
-                    label="Preferred Loan Tenure (Months)" 
-                    name="loanTenure" 
-                    value={loanTenureMain}
-                    onChange={(e) => setLoanTenureMain(e.target.value)}
-                  >
-                        {/* {loanTenures.map(tenure => <MenuItem key={tenure} value={tenure}>{tenure} Months</MenuItem>)} */}
-                    </Select>
-                </FormControl>
-            </Grid>
-            <Grid item xs={12}>
-              <FormControl fullWidth required>
-                <InputLabel id="loan-purpose-label">Purpose of Loan</InputLabel>
-                <Select labelId="loan-purpose-label" label="Purpose of Loan" name="loanPurpose" defaultValue="">
-                     {/* {loanPurposesList.map(purpose => <MenuItem key={purpose} value={purpose}>{purpose}</MenuItem>)} */}
-                </Select>
-              </FormControl>
-            </Grid>
-          </Grid>
-          */}
 
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 4 }}>
             <Button
@@ -948,20 +970,28 @@ export default function PersonalLoanPage() {
             >
               Back
             </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={activeStep === steps.length - 1 ? handleSubmit : handleNext}
-              disabled={isLoading || (activeStep === steps.length -1 && !formData.agreeToShare)} // Disable submit if not agreed
-              type={activeStep === steps.length - 1 ? "submit" : "button"}
-              sx={{px: 3, py:1}}
-            >
-              {isLoading
-                ? 'Submitting...'
-                : (activeStep === steps.length - 1
-                    ? 'Pay ₹499 & See All Offers'
-                    : 'Next')}
-            </Button>
+            {activeStep === steps.length - 1 ? (
+              <Button
+                variant="contained"
+                color="primary"
+                disabled={isLoading || !formData.agreeToShare}
+                type="submit"
+                sx={{px: 3, py:1}}
+              >
+                {isLoading ? 'Submitting...' : 'Pay ₹499 & See All Offers'}
+              </Button>
+            ) : (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleNext}
+                disabled={isLoading}
+                type="button"
+                sx={{px: 3, py:1}}
+              >
+                Next
+              </Button>
+            )}
           </Box>
         </Box>
       </Paper>
