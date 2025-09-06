@@ -1,11 +1,11 @@
 "use client";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Container, Typography, Box, TextField, Button, Paper } from "@mui/material";
 import { useAxios } from "@/lib/useAxios";
 import AuthBackgroundRotator from '@/components/AuthBackgroundRotator';
 
-export default function ResetPasswordPage() {
+function ResetPasswordForm() {
   const searchParams = useSearchParams();
   const mobile = searchParams.get("mobile") || "";
   const [password, setPassword] = useState("");
@@ -121,5 +121,13 @@ export default function ResetPasswordPage() {
         </Paper>
       </Container>
     </>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResetPasswordForm />
+    </Suspense>
   );
 } 

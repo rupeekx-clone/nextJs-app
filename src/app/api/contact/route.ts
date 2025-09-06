@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     }
 
     // Sanitize or provide default for optional fields
-    subject = subject || ''; // Ensure subject is not undefined if it's optional
+    const sanitizedSubject = subject || ''; // Ensure subject is not undefined if it's optional
 
     try {
       const db = await connectToDatabase();
@@ -27,7 +27,7 @@ export async function POST(request: Request) {
       const submissionData = {
         name,
         email,
-        subject,
+        subject: sanitizedSubject,
         message,
         submittedAt: new Date(),
       };

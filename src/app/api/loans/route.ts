@@ -1,8 +1,9 @@
-import { NextRequest, NextResponse, NextURL } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { verifyToken } from '@/lib/jwt'; // Assuming verifyToken is the correct function
 // LoanApplication model is not directly instantiated but its schema is relevant for querying 'loan_applications'
 import { ObjectId } from 'mongodb';
+import { NextURL } from 'next/dist/server/web/next-url';
 
 export async function GET(req: NextRequest) {
   try {
@@ -15,7 +16,7 @@ export async function GET(req: NextRequest) {
 
     let decodedToken;
     try {
-      decodedToken = verifyToken(token); // This should throw an error if invalid
+      decodedToken = verifyToken(token, process.env.ACCESS_TOKEN_SECRET || 'default-access-secret-key-for-dev-must-be-32-chars'); // This should throw an error if invalid
       if (!decodedToken || !decodedToken.userId) {
         return NextResponse.json({ message: 'Unauthorized: Invalid token payload' }, { status: 401 });
       }
@@ -52,7 +53,7 @@ export async function GET(req: NextRequest) {
       query.loan_type = loan_type;
     }
 
-    const { db } = await connectToDatabase();
+    const db  = await connectToDatabase();
     const loanApplicationsCollection = db.collection('loan_applications');
 
     // 4. Execute the query to find matching loan applications with pagination
@@ -65,7 +66,7 @@ export async function GET(req: NextRequest) {
     const total_pages = Math.ceil(total_entries / limit);
 
     // 6. Format the retrieved applications
-    const formattedApplications = applications.map(app => ({
+    const formattedApplications = applications.map((app: any) => ({
       application_id: app._id.toString(),
       user_id: app.user_id.toString(), // Ensure user_id is also stringified
       loan_type: app.loan_type,

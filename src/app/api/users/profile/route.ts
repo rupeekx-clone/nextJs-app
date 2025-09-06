@@ -1,24 +1,28 @@
 import { NextResponse, NextRequest } from 'next/server';
 import User from '@/models/User'; // Adjust path as per your project structure
 import { connectToDatabase } from '@/lib/mongodb'; // Adjust path
-import { withAuth } from '@/lib/authMiddleware'; // Adjust path
-import { AuthPayload } from '@/lib/jwt'; // Adjust path
+import { verifyToken } from '@/lib/jwt'; // Adjust path
 
-// Define a custom interface extending NextRequest to include the user property
-interface NextRequestWithAuth extends NextRequest {
-  user?: AuthPayload; // user property is optional as it's added by middleware
-}
-
-const profileHandler = async (req: NextRequestWithAuth) => {
+export async function GET(req: NextRequest) {
   try {
-    // 1. Access User ID from JWT payload
-    // The withAuth middleware should have already validated the token and attached the user payload.
-    const authUser = req.user;
-    if (!authUser || !authUser.userId) {
-      // This case should ideally be handled by withAuth, but as a safeguard:
-      return NextResponse.json({ error: 'Unauthorized: User information missing from token' }, { status: 401 });
+    // 1. Verify JWT token
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return NextResponse.json({ error: 'Unauthorized: No token provided' }, { status: 401 });
     }
-    const userId = authUser.userId;
+    const token = authHeader.split(' ')[1];
+    
+    let decodedToken;
+    try {
+      decodedToken = verifyToken(token, process.env.ACCESS_TOKEN_SECRET || 'default-access-secret-key-for-dev-must-be-32-chars');
+      if (!decodedToken || !decodedToken.userId) {
+        return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+      }
+    } catch {
+      return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+    }
+    
+    const userId = decodedToken.userId;
 
     // 2. Connect to MongoDB
     await connectToDatabase();
@@ -71,5 +75,3 @@ const profileHandler = async (req: NextRequestWithAuth) => {
   }
 };
 
-// Protect the Route
-export const GET = withAuth(profileHandler);
