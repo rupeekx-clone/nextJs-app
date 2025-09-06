@@ -10,7 +10,7 @@ export default function CustomerLoginPage() {
   const [mobile, setMobile] = useState('');
   const [password, setPassword] = useState('');
   const [success, setSuccess] = useState<string | null>(null);
-  const { loading, error, data, sendRequest } = useAxios();
+  const { loading, error, sendRequest } = useAxios();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -31,7 +31,7 @@ export default function CustomerLoginPage() {
         setSuccess(null);
         // Optionally redirect to OTP verification page
       }
-    } catch (err) {
+    } catch {
       setSuccess(null);
       // Error is handled by the hook
     }

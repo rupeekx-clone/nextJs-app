@@ -33,7 +33,7 @@ export default function VerifyOtpPage() {
           }
         }, 1200);
       }
-    } catch (err) {
+    } catch {
       setSuccess(null);
     }
   };

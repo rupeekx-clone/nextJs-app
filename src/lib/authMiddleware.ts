@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next'; // For traditional Next.js API routes if needed
+import { NextApiRequest } from 'next'; // For traditional Next.js API routes if needed
 import { NextRequest, NextResponse } from 'next/server'; // For Next.js Edge/Node.js runtimes (app router)
 import { verifyToken, AuthPayload } from './jwt'; // Assuming jwt.ts is in the same lib directory
 
@@ -22,10 +22,10 @@ const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET || 'default-access-s
  *                  It will receive a NextRequestWithUser object.
  * @returns A new handler function that includes authentication and authorization logic.
  */
-type AppRouterApiHandler = (req: NextRequestWithUser, params?: { params: any }) => Promise<NextResponse>;
+type AppRouterApiHandler = (req: NextRequestWithUser, params?: { params: Record<string, unknown> }) => Promise<NextResponse>;
 
 export const withAuth = (handler: AppRouterApiHandler): AppRouterApiHandler => {
-  return async (req: NextRequestWithUser, params?: { params: any }): Promise<NextResponse> => {
+  return async (req: NextRequestWithUser, params?: { params: Record<string, unknown> }): Promise<NextResponse> => {
     try {
       const authHeader = req.headers.get('Authorization');
 
@@ -55,12 +55,12 @@ export const withAuth = (handler: AppRouterApiHandler): AppRouterApiHandler => {
       // Call the original handler with the modified request
       return handler(req, params);
 
-    } catch (error: any) {
-      console.error('Auth error:', error.message);
-      if (error.name === 'TokenExpiredError') {
+    } catch (error: unknown) {
+      console.error('Auth error:', error instanceof Error ? error.message : 'Unknown error');
+      if (error instanceof Error && error.name === 'TokenExpiredError') {
         return NextResponse.json({ error: 'Unauthorized: Token expired' }, { status: 401 });
       }
-      if (error.name === 'JsonWebTokenError') {
+      if (error instanceof Error && error.name === 'JsonWebTokenError') {
         return NextResponse.json({ error: 'Unauthorized: Invalid token' }, { status: 401 });
       }
       return NextResponse.json({ error: 'Internal Server Error during authentication' }, { status: 500 });

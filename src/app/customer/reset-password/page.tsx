@@ -39,7 +39,7 @@ export default function ResetPasswordPage() {
           router.push("/customer");
         }, 1200);
       }
-    } catch (err) {
+    } catch {
       setSuccess(null);
     }
   };

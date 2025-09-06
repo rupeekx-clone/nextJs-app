@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     user.phone_otp_expires_at = undefined;
     await user.save();
     return NextResponse.json({ success: true, message: 'Password reset successful. You can now log in.' }, { status: 200 });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, message: 'An error occurred.', details: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    return NextResponse.json({ success: false, message: 'An error occurred.', details: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 });
   }
 } 

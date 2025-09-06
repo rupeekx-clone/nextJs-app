@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import User, { IUser } from '@/models/User';
+import User from '@/models/User';
 import { connectToDatabase } from '@/lib/mongodb';
 import { generateAccessToken, generateRefreshToken, AuthPayload } from '@/lib/jwt';
 import { generateOtp, sendOtp } from '@/lib/otpService';
@@ -107,10 +107,10 @@ export async function POST(request: Request) {
       );
     }
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Login API error:', error);
     return NextResponse.json(
-      { success: false, message: 'An unexpected error occurred during login.', details: error.message },
+      { success: false, message: 'An unexpected error occurred during login.', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

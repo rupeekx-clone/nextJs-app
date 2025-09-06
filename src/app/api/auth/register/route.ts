@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs'; // Corrected import
 import { generateAccessToken, generateRefreshToken } from '@/lib/jwt'; // Assuming these are the correct function names
-import User, { IUser } from '@/models/User';
 import { connectToDatabase } from '@/lib/mongodb';
-import { generateOtp, sendOtp } from '@/lib/otpService';
 
 export async function POST(req: NextRequest) {
   try {

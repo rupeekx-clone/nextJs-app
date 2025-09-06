@@ -4,7 +4,7 @@ import { connectToDatabase } from '@/lib/mongodb'; // Using import alias
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    let { name, email, subject, message } = body;
+    const { name, email, subject, message } = body;
 
     // Basic validation
     if (!name || !email || !message) {

@@ -58,14 +58,14 @@ const profileHandler = async (req: NextRequestWithAuth) => {
       { status: 200 }
     );
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Get User Profile error:', error);
     // Check if it's a CastError (e.g., invalid ObjectId format for userId)
-    if (error.name === 'CastError') {
+    if (error instanceof Error && error.name === 'CastError') {
       return NextResponse.json({ error: 'Invalid user ID format' }, { status: 400 });
     }
     return NextResponse.json(
-      { error: 'An unexpected error occurred while fetching the user profile.', details: error.message },
+      { error: 'An unexpected error occurred while fetching the user profile.', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

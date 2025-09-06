@@ -26,7 +26,7 @@ export default function ForgotPasswordPage() {
           router.push(`/customer/verify-otp?mobile=${encodeURIComponent(mobile)}&reset=1`);
         }, 1200);
       }
-    } catch (err) {
+    } catch {
       setSuccess(null);
     }
   };

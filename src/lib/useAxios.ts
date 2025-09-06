@@ -4,12 +4,12 @@ import axiosInstance from './axios';
 interface AxiosOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
   url: string;
-  data?: any;
-  params?: any;
-  headers?: any;
+  data?: Record<string, unknown>;
+  params?: Record<string, unknown>;
+  headers?: Record<string, string>;
 }
 
-export function useAxios<T = any>() {
+export function useAxios<T = unknown>() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<T | null>(null);
@@ -28,8 +28,14 @@ export function useAxios<T = any>() {
       });
       setData(response.data);
       return response.data;
-    } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Request failed');
+    } catch (err: unknown) {
+      setError(
+        (err && typeof err === 'object' && 'response' in err && 
+         err.response && typeof err.response === 'object' && 'data' in err.response &&
+         err.response.data && typeof err.response.data === 'object' && 'message' in err.response.data
+         ? (err.response.data as { message: string }).message
+         : err instanceof Error ? err.message : 'Request failed')
+      );
       throw err;
     } finally {
       setLoading(false);

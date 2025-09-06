@@ -7,7 +7,7 @@ export interface IMembershipCard extends Document {
   expiry_date: Date;
   payment_id?: string;
   status: 'active' | 'expired' | 'cancelled';
-  benefits_availed?: Record<string, any>;
+  benefits_availed?: Record<string, unknown>;
   createdAt?: Date;
   updatedAt?: Date;
 }

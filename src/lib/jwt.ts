@@ -32,8 +32,7 @@ export interface AuthPayload extends JwtPayload {
  * @returns The generated access token.
  */
 export const generateAccessToken = (payload: AuthPayload): string => {
-  const options: SignOptions = { expiresIn: ACCESS_TOKEN_EXPIRATION as any };
-  return jwt.sign(payload, ACCESS_TOKEN_SECRET as Secret, options);
+  return jwt.sign(payload, ACCESS_TOKEN_SECRET as Secret, { expiresIn: ACCESS_TOKEN_EXPIRATION } as SignOptions);
 };
 
 /**
@@ -42,8 +41,7 @@ export const generateAccessToken = (payload: AuthPayload): string => {
  * @returns The generated refresh token.
  */
 export const generateRefreshToken = (payload: AuthPayload): string => {
-  const options: SignOptions = { expiresIn: REFRESH_TOKEN_EXPIRATION as any };
-  return jwt.sign(payload, REFRESH_TOKEN_SECRET as Secret, options);
+  return jwt.sign(payload, REFRESH_TOKEN_SECRET as Secret, { expiresIn: REFRESH_TOKEN_EXPIRATION } as SignOptions);
 };
 
 /**

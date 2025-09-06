@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import User, { IUser } from '@/models/User';
+import User from '@/models/User';
 import { connectToDatabase } from '@/lib/mongodb';
 import { generateAccessToken, generateRefreshToken, AuthPayload } from '@/lib/jwt';
 
@@ -98,18 +98,18 @@ export async function POST(request: Request) {
       { status: 200 }
     );
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Verify OTP error:', error);
     // Check for Mongoose validation error (though less likely here unless save fails)
-    if (error.name === 'ValidationError') {
-      const errors = Object.values(error.errors).map((err: any) => err.message);
+    if (error instanceof Error && error.name === 'ValidationError') {
+      const errors = Object.values((error as any).errors).map((err: any) => err.message);
       return NextResponse.json(
         { success: false, message: 'Validation error during update.', details: errors },
         { status: 400 }
       );
     }
     return NextResponse.json(
-      { success: false, message: 'An unexpected error occurred during OTP verification.', details: error.message },
+      { success: false, message: 'An unexpected error occurred during OTP verification.', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

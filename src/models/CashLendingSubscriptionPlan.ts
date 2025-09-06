@@ -5,7 +5,7 @@ export interface ICashLendingSubscriptionPlan extends Document {
   description?: string;
   price: number;
   duration_days: number;
-  features?: Record<string, any>;
+  features?: Record<string, unknown>;
   is_active: boolean;
   createdAt?: Date;
   updatedAt?: Date;

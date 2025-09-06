@@ -3,8 +3,8 @@
 import * as React from 'react';
 import { 
   Container, Typography, Button, Grid, Box, Card, CardContent, CardActions,
-  List, ListItem, ListItemIcon, ListItemText, Paper, Avatar
-} from '@mui/material'; // Added Paper, Avatar
+  List, ListItem, ListItemIcon, ListItemText, Avatar
+} from '@mui/material'; // Added Avatar
 import Link from 'next/link';
 import CheckCircleOutline from '@mui/icons-material/CheckCircleOutline'; // Import the icon
 import PersonIcon from '@mui/icons-material/Person'; // Import PersonIcon
@@ -150,7 +150,7 @@ export default function HomePage() {
                 When it comes to lightning fast loan services – nothing beats Rupeekx!
               </Typography>
               <Typography variant="body1" paragraph>
-                Welcome to Rupeekx.com, we are the number one loan provider consult. We're dedicated to helping you in getting loans through membership cards, with an emphasis on saving your time and money. Get the best results on loans through multiple banks or NBFCs. We are aimed to provide easy quick loan approval. The company has garnered a great volume of acclaim due to its authentic services in giving the industry-best loan offerings.
+                Welcome to Rupeekx.com, we are the number one loan provider consult. We&apos;re dedicated to helping you in getting loans through membership cards, with an emphasis on saving your time and money. Get the best results on loans through multiple banks or NBFCs. We are aimed to provide easy quick loan approval. The company has garnered a great volume of acclaim due to its authentic services in giving the industry-best loan offerings.
               </Typography>
               <Button variant="contained" component={Link} href="/company" sx={{ mt: 2 }}>
                 Know More
@@ -494,7 +494,7 @@ export default function HomePage() {
             What Our Customers Say
           </Typography>
           <Typography variant="subtitle1" textAlign="center" color="text.secondary" paragraph sx={{ mb: { xs: 3, md: 5 }, maxWidth: '700px', mx: 'auto' }}>
-            We're dedicated to helping you in getting loans through membership cards, with an emphasis on saving your time and money. Get the best results on loans through multiple banks or NBFCs. We are aimed to provide easy quick loan approval.
+            We&apos;re dedicated to helping you in getting loans through membership cards, with an emphasis on saving your time and money. Get the best results on loans through multiple banks or NBFCs. We are aimed to provide easy quick loan approval.
           </Typography>
           <Grid container spacing={4} justifyContent="center">
             {[1, 2, 3].map((item) => ( // Creating 3 placeholder testimonials
@@ -505,7 +505,7 @@ export default function HomePage() {
                       <PersonIcon />
                     </Avatar>
                     <Typography variant="body1" fontStyle="italic" paragraph>
-                      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas."
+                      &quot;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.&quot;
                     </Typography>
                     <Typography variant="subtitle2" component="p" sx={{ fontWeight: 'bold' }}>
                       - Customer Name {item}

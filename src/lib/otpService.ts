@@ -76,15 +76,15 @@ export const sendOtp = async (
     });
     console.log(`OTP SMS sent successfully to ${phoneNumber}. Message SID: ${message.sid}`);
     return { success: true, messageId: message.sid };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(`Failed to send OTP SMS to ${phoneNumber}:`, error);
     // Log more specific error details if available
     let errorMessage = 'Failed to send OTP.';
-    if (error.message) {
+    if (error instanceof Error && error.message) {
         errorMessage += ` Details: ${error.message}`;
     }
-    if (error.code) { // Twilio error codes can be helpful
-        errorMessage += ` (Code: ${error.code})`;
+    if (error && typeof error === 'object' && 'code' in error) { // Twilio error codes can be helpful
+        errorMessage += ` (Code: ${(error as { code: string }).code})`;
     }
     return { success: false, error: errorMessage };
   }

@@ -1,6 +1,6 @@
 'use client';
 
-import { Container, Typography, Box, Grid, Paper, List, ListItem, ListItemIcon, ListItemText, Button, Link as MuiLink } from '@mui/material';
+import { Container, Typography, Box, Grid, Paper, ListItem, ListItemIcon, ListItemText, Button, Link as MuiLink } from '@mui/material';
 import CheckCircleOutline from '@mui/icons-material/CheckCircleOutline'; // Or other relevant icons
 
 export default function CareerPage() {

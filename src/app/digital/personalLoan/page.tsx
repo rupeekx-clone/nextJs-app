@@ -1,13 +1,11 @@
 'use client'; // For form interactions
 
 import { useState, useEffect } from 'react'; // Added useEffect
-import { Container, Typography, Box, TextField, Button, Grid, Paper, FormControl, InputLabel, Select, MenuItem, Alert, Stepper, Step, StepLabel, Slider, ToggleButtonGroup, ToggleButton, IconButton, SelectChangeEvent } from '@mui/material'; // Added SelectChangeEvent
-import { Checkbox, FormControlLabel, Card, CardContent, CardMedia, Stack } from '@mui/material';
-import CheckCircleOutline from '@mui/icons-material/CheckCircleOutline';
+import { Container, Typography, Box, TextField, Button, Grid, Paper, FormControl, InputLabel, Select, MenuItem, Alert, Stepper, Step, StepLabel, Slider, IconButton, SelectChangeEvent } from '@mui/material'; // Added SelectChangeEvent
+import { Checkbox, FormControlLabel, Card, CardContent, CardMedia } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import UploadFileIcon from '@mui/icons-material/UploadFile'; // Added UploadFileIcon
-import Label from '@mui/icons-material/Label';
 
 
 // Define Steps
@@ -17,7 +15,7 @@ const steps = ['Loan Explorer', 'Quick Identity Check', 'Smart Employment Profil
 type LoanExplorerFormData = typeof initialFormData & { customInterestRate: string };
 interface LoanExplorerStepProps {
   formData: LoanExplorerFormData;
-  handleGenericChange: (field: keyof LoanExplorerFormData, value: any) => void;
+  handleGenericChange: (field: keyof LoanExplorerFormData, value: unknown) => void;
   loanPurposes: string[];
 }
 
@@ -28,14 +26,6 @@ const LoanExplorerStep = ({ formData, handleGenericChange, loanPurposes }: LoanE
     handleGenericChange('loanAmount', newValue as number);
   };
 
-  const handleTenureToggleChange = (_event: React.MouseEvent<HTMLElement>, newTenure: string | null) => {
-    if (newTenure !== null) {
-      handleGenericChange('tenure', newTenure);
-      if (newTenure !== 'custom') {
-        handleGenericChange('customTenure', ''); // Clear custom tenure
-      }
-    }
-  };
 
   const handleCustomTenureFieldChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
@@ -234,7 +224,7 @@ const IdentityCheckStep = ({ formData, handleFileMetaChange }: IdentityCheckStep
   return (
     <Box sx={{ py: 3, px: 1 }}> {/* Consistent padding */}
       <Typography variant="h4" component="h2" textAlign="center" gutterBottom sx={{ mb: 4, fontWeight: 'bold', color: 'primary.main' }}> {/* Enhanced Title */}
-        Let's Verify Your Identity
+        Let&apos;s Verify Your Identity
       </Typography>
 
       <Typography variant="h6" gutterBottom sx={{ mt: 2, mb: 2.5, borderBottom: 1, borderColor: 'divider', pb: 1, fontWeight: 'medium' }}>
@@ -331,7 +321,7 @@ const IdentityCheckStep = ({ formData, handleFileMetaChange }: IdentityCheckStep
 // Employment Profiler Step Component
 interface EmploymentProfilerStepProps {
   formData: typeof initialFormData;
-  handleGenericChange: (field: keyof typeof initialFormData, value: any) => void;
+  handleGenericChange: (field: keyof typeof initialFormData, value: unknown) => void;
   handleFileMetaChange: (field: keyof typeof initialFormData, file: File | null) => void;
   employmentTypes: string[];
 }
@@ -511,7 +501,7 @@ const EmploymentProfilerStep = ({ formData, handleGenericChange, handleFileMetaC
 // Location & Contact Step Component
 interface LocationContactStepProps {
   formData: typeof initialFormData;
-  handleGenericChange: (field: keyof typeof initialFormData, value: any) => void;
+  handleGenericChange: (field: keyof typeof initialFormData, value: unknown) => void;
 }
 
 const LocationContactStep = ({ formData, handleGenericChange }: LocationContactStepProps) => {
@@ -668,7 +658,7 @@ const LocationContactStep = ({ formData, handleGenericChange }: LocationContactS
 // Final Review Step Component
 interface FinalReviewStepProps { // Ensure this interface is correctly defined or use inline props
   formData: typeof initialFormData;
-  handleGenericChange: (field: keyof typeof initialFormData, value: any) => void;
+  handleGenericChange: (field: keyof typeof initialFormData, value: unknown) => void;
 }
 
 const FinalReviewStep = ({ formData, handleGenericChange }: FinalReviewStepProps) => {
@@ -749,7 +739,7 @@ const FinalReviewStep = ({ formData, handleGenericChange }: FinalReviewStepProps
         />
       </Box>
       <Typography variant="caption" display="block" sx={{ mt: 2, textAlign: 'center', color: 'text.secondary' }}>
-        By clicking "Pay ₹499 & See All Offers", you agree to our Terms & Conditions.
+        By clicking &quot;Pay ₹499 &amp; See All Offers&quot;, you agree to our Terms &amp; Conditions.
       </Typography>
     </Box>
   );
@@ -826,7 +816,7 @@ export default function PersonalLoanPage() {
   }, []);
   // --- End cross-fade logic ---
 
-  const handleGenericChange = (field: keyof typeof initialFormData, fieldValue: any) => {
+  const handleGenericChange = (field: keyof typeof initialFormData, fieldValue: unknown) => {
     setFormData(prev => ({ ...prev, [field]: fieldValue }));
   };
 
@@ -1097,7 +1087,7 @@ export default function PersonalLoanPage() {
                   type="submit"
                   sx={{ px: 3, py: 1 }}
                 >
-                  {isLoading ? 'Submitting...' : 'Pay ₹499 & See All Offers'}
+                  {isLoading ? 'Submitting...' : 'Pay ₹499 &amp; See All Offers'}
                 </Button>
               ) : (
                 <Button

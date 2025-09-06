@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
     }
 
     // 3. Construct MongoDB query object
-    const query: any = { user_id: new ObjectId(userId) }; // Filter by authenticated user
+    const query: Record<string, unknown> = { user_id: new ObjectId(userId) }; // Filter by authenticated user
     if (status) {
       query.status = status;
     }
@@ -92,7 +92,7 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     console.error('Error fetching loan applications:', error);
     // Check if the error is a known type, e.g., from MongoDB driver or JWT verification
-    if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
+    if (error instanceof Error && (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError')) {
         // This case should ideally be caught by the specific try-catch around verifyToken
         return NextResponse.json({ message: 'Unauthorized: Invalid token' }, { status: 401 });
     }

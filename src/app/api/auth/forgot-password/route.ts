@@ -28,7 +28,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, message: 'Failed to send OTP. Please try again.' }, { status: 500 });
     }
     return NextResponse.json({ success: true, message: 'OTP sent to your mobile number.', phone_number: user.phone_number }, { status: 200 });
-  } catch (error: any) {
-    return NextResponse.json({ success: false, message: 'An error occurred.', details: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    return NextResponse.json({ success: false, message: 'An error occurred.', details: error instanceof Error ? error.message : 'Unknown error' }, { status: 500 });
   }
 } 

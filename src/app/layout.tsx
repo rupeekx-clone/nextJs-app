@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google"; // Assuming you still want to use Geist fonts
 import ThemeRegistry from "@/components/ThemeRegistry/ThemeRegistry";
 import Navbar from '@/components/Header/Navbar'; // Import the Navbar
-import { AppBar, Toolbar, Typography, Container, Box, Button } from '@mui/material';
+import { Typography, Container, Box, Button } from '@mui/material';
 import Link from 'next/link';
 import "./globals.css";
 

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { verifyToken } from '@/lib/jwt'; // Assuming verifyToken is the correct function
-import LoanApplication from '@/models/LoanApplication'; // Assuming LoanApplication model is default export
 import { ObjectId } from 'mongodb';
 
 export async function POST(req: NextRequest) {
@@ -15,11 +14,11 @@ export async function POST(req: NextRequest) {
 
     let decodedToken;
     try {
-      decodedToken = verifyToken(token); // This should throw an error if invalid
+      decodedToken = verifyToken(token, process.env.ACCESS_TOKEN_SECRET || 'default-access-secret-key-for-dev-must-be-32-chars'); // This should throw an error if invalid
       if (!decodedToken || !decodedToken.userId) {
         return NextResponse.json({ message: 'Invalid token' }, { status: 401 });
       }
-    } catch (error) {
+    } catch (error: unknown) {
       return NextResponse.json({ message: 'Invalid token' }, { status: 401 });
     }
 
@@ -50,7 +49,7 @@ export async function POST(req: NextRequest) {
     }
 
 
-    const { db } = await connectToDatabase();
+    const db = await connectToDatabase();
 
     // 3. Create new loan application object
     const newLoanApplicationData = {
@@ -99,7 +98,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('Error applying for loan:', error);
     // Check if the error is a known type, e.g., from MongoDB driver or JWT verification
-    if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
+    if (error instanceof Error && (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError')) {
         return NextResponse.json({ message: 'Invalid token' }, { status: 401 });
     }
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 });
