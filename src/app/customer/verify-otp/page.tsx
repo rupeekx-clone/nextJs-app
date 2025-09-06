@@ -1,11 +1,11 @@
 "use client";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Container, Typography, Box, TextField, Button, Paper } from "@mui/material";
 import { useAxios } from "@/lib/useAxios";
 import AuthBackgroundRotator from "@/components/AuthBackgroundRotator";
 
-export default function VerifyOtpPage() {
+function VerifyOtpForm() {
   const searchParams = useSearchParams();
   const mobile = searchParams.get("mobile") || "";
   const isReset = searchParams.get("reset") === "1";
@@ -102,5 +102,13 @@ export default function VerifyOtpPage() {
       </Paper>
     </Container>
     </>
+  );
+}
+
+export default function VerifyOtpPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <VerifyOtpForm />
+    </Suspense>
   );
 } 

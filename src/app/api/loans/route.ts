@@ -66,14 +66,14 @@ export async function GET(req: NextRequest) {
     const total_pages = Math.ceil(total_entries / limit);
 
     // 6. Format the retrieved applications
-    const formattedApplications = applications.map((app: any) => ({
-      application_id: app._id.toString(),
-      user_id: app.user_id.toString(), // Ensure user_id is also stringified
+    const formattedApplications = applications.map((app: Record<string, unknown>) => ({
+      application_id: (app._id as { toString(): string }).toString(),
+      user_id: (app.user_id as { toString(): string }).toString(), // Ensure user_id is also stringified
       loan_type: app.loan_type,
       amount_requested: app.amount_requested,
       tenure_months_requested: app.tenure_months_requested,
       status: app.status,
-      application_date: app.application_date.toISOString(), // Format date to ISO string
+      application_date: (app.application_date as Date).toISOString(), // Format date to ISO string
       documents_submitted: app.documents_submitted, // Include if needed, or select specific fields
       // Add other fields as per api_endpoints.md if necessary
       // e.g., approved_amount, interest_rate, emi_amount if they should be part of the list view
