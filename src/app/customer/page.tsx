@@ -114,7 +114,7 @@ export default function CustomerLoginPage() {
                 </MuiLink>
               </Grid>
               <Grid size={{ xs: 12 }}>
-                <MuiLink component={NextLink} href="#" variant="body2"> {/* Link to a future signup page */}
+                <MuiLink component={NextLink} href="/customer/signup" variant="body2">
                   {"Don't have an account? Sign Up"}
                 </MuiLink>
               </Grid>
