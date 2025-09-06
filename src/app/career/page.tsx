@@ -1,6 +1,6 @@
 'use client';
 
-import { Container, Typography, Box, Grid, Paper, ListItem, ListItemIcon, ListItemText, Button, Link as MuiLink } from '@mui/material';
+import { Container, Typography, Box, Grid, Paper, ListItemIcon, ListItemText, Button, Link as MuiLink } from '@mui/material';
 import CheckCircleOutline from '@mui/icons-material/CheckCircleOutline'; // Or other relevant icons
 
 export default function CareerPage() {
@@ -80,7 +80,7 @@ export default function CareerPage() {
               We are constantly growing!
             </Typography>
             <Typography variant="body1" color="text.secondary" paragraph>
-              While we don't have specific openings listed right now, we are always interested in hearing from passionate and talented individuals.
+              While we don&apos;t have specific openings listed right now, we are always interested in hearing from passionate and talented individuals.
             </Typography>
             <Typography variant="body1" color="text.secondary">
               Feel free to send your resume and a cover letter to{' '}

@@ -22,10 +22,10 @@ const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET || 'default-access-s
  *                  It will receive a NextRequestWithUser object.
  * @returns A new handler function that includes authentication and authorization logic.
  */
-type AppRouterApiHandler = (req: NextRequestWithUser, params?: { params: Record<string, unknown> }) => Promise<NextResponse>;
+type AppRouterApiHandler = (req: NextRequestWithUser, context?: { params: Record<string, unknown> }) => Promise<NextResponse>;
 
-export const withAuth = (handler: AppRouterApiHandler): AppRouterApiHandler => {
-  return async (req: NextRequestWithUser, params?: { params: Record<string, unknown> }): Promise<NextResponse> => {
+export const withAuth = (handler: AppRouterApiHandler) => {
+  return async (req: NextRequestWithUser, context?: { params: Record<string, unknown> }): Promise<NextResponse> => {
     try {
       const authHeader = req.headers.get('Authorization');
 
@@ -53,7 +53,7 @@ export const withAuth = (handler: AppRouterApiHandler): AppRouterApiHandler => {
 
 
       // Call the original handler with the modified request
-      return handler(req, params);
+      return handler(req, context);
 
     } catch (error: unknown) {
       console.error('Auth error:', error instanceof Error ? error.message : 'Unknown error');

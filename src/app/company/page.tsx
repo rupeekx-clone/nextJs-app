@@ -27,7 +27,7 @@ export default function CompanyPage() {
       <Grid container spacing={5} justifyContent="center">
         <Grid size={{ xs: 12, md: 8 }}> {/* Main text column */}
           <Typography variant="body1" paragraph sx={{ lineHeight: 1.8, fontSize: '1.1rem', textAlign: 'justify' }}>
-            Welcome to Rupeekx.com, we are the number one loan provider consult. We're dedicated to helping you in getting loans through membership cards, with an emphasis on saving your time and money. Get the best results on loans through multiple banks or NBFCs. We are aimed to provide easy quick loan approval. The company has garnered a great volume of acclaim due to its authentic services in giving the industry-best loan offerings.
+            Welcome to Rupeekx.com, we are the number one loan provider consult. We&apos;re dedicated to helping you in getting loans through membership cards, with an emphasis on saving your time and money. Get the best results on loans through multiple banks or NBFCs. We are aimed to provide easy quick loan approval. The company has garnered a great volume of acclaim due to its authentic services in giving the industry-best loan offerings.
           </Typography>
         </Grid>
         <Grid size={{ xs: 12, md: 10 }}> {/* Centered list below the main text */}

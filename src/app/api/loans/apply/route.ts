@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
       if (!decodedToken || !decodedToken.userId) {
         return NextResponse.json({ message: 'Invalid token' }, { status: 401 });
       }
-    } catch (error: unknown) {
+    } catch {
       return NextResponse.json({ message: 'Invalid token' }, { status: 401 });
     }
 

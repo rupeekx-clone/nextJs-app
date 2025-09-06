@@ -1,6 +1,6 @@
 'use client'; // For form interactions
 
-import { useState, useEffect } from 'react'; // Added useEffect
+import { useState, useEffect, useMemo } from 'react'; // Added useEffect
 import { Container, Typography, Box, TextField, Button, Grid, Paper, FormControl, InputLabel, Select, MenuItem, Alert, Stepper, Step, StepLabel, Slider, IconButton, SelectChangeEvent } from '@mui/material'; // Added SelectChangeEvent
 import { Checkbox, FormControlLabel, Card, CardContent, CardMedia } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
@@ -786,11 +786,11 @@ export default function PersonalLoanPage() {
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
   // --- Cross-fade background logic ---
-  const bgImages = [
+  const bgImages = useMemo(() => [
     '/personal-loan-bg-1.jpg',
     '/personal-loan-bg-2.jpg',
     '/personal-loan-bg-3.jpg',
-  ];
+  ], []);
   const [currentBg, setCurrentBg] = useState(0);
   const [nextBg, setNextBg] = useState(1);
   const [fade, setFade] = useState(false);
@@ -799,8 +799,8 @@ export default function PersonalLoanPage() {
     const interval = setInterval(() => {
       setFade(true); // Start fade
       setTimeout(() => {
-        setCurrentBg((prev) => nextBg);
-        setNextBg((prev) => (nextBg + 1) % bgImages.length);
+        setCurrentBg(nextBg);
+        setNextBg((nextBg + 1) % bgImages.length);
         setFade(false); // Reset fade
       }, 1000); // Fade duration (ms)
     }, 6000); // Change every 6 seconds
@@ -813,7 +813,7 @@ export default function PersonalLoanPage() {
       const img = new window.Image();
       img.src = src;
     });
-  }, []);
+  }, [bgImages]);
   // --- End cross-fade logic ---
 
   const handleGenericChange = (field: keyof typeof initialFormData, fieldValue: unknown) => {

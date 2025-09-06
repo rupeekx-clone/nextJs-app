@@ -20,7 +20,7 @@ export default function CustomerSignupPage() {
     agreeTerms: false
   });
   const [success, setSuccess] = useState<string | null>(null);
-  const { loading, error, data, sendRequest } = useAxios();
+  const { loading, error, sendRequest } = useAxios();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -45,7 +45,7 @@ export default function CustomerSignupPage() {
     }
 
     try {
-      const { confirmPassword, agreeTerms, ...registrationData } = formData;
+      const { ...registrationData } = formData;
       const result = await sendRequest({
         method: 'POST',
         url: '/auth/register',
@@ -59,7 +59,7 @@ export default function CustomerSignupPage() {
           window.location.href = '/customer';
         }, 2000);
       }
-    } catch (err) {
+    } catch {
       setSuccess(null);
       // Error is handled by the hook
     }

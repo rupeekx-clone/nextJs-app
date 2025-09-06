@@ -102,7 +102,7 @@ export async function POST(request: Request) {
     console.error('Verify OTP error:', error);
     // Check for Mongoose validation error (though less likely here unless save fails)
     if (error instanceof Error && error.name === 'ValidationError') {
-      const errors = Object.values((error as any).errors).map((err: any) => err.message);
+      const errors = Object.values((error as unknown as { errors: Record<string, { message: string }> }).errors).map((err: { message: string }) => err.message);
       return NextResponse.json(
         { success: false, message: 'Validation error during update.', details: errors },
         { status: 400 }
