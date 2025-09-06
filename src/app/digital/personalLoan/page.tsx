@@ -7,6 +7,7 @@ import CheckCircleOutline from '@mui/icons-material/CheckCircleOutline';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import UploadFileIcon from '@mui/icons-material/UploadFile'; // Added UploadFileIcon
+import Label from '@mui/icons-material/Label';
 
 
 // Define Steps
@@ -89,14 +90,25 @@ const LoanExplorerStep = ({ formData, handleGenericChange, loanPurposes }: LoanE
   }, [formData.loanAmount, formData.tenure, formData.customTenure, formData.interestRate, formData.customInterestRate]);
 
   return (
-    <Box sx={{ py: 3, px:1 }}> {/* Added more padding to step content box */}
+    <Box sx={{ py: 3, px: 1 }}> {/* Added more padding to step content box */}
       <Typography variant="h4" component="h2" textAlign="center" gutterBottom sx={{ mb: 4, fontWeight: 'bold', color: 'primary.main' }}> {/* Enhanced Title */}
         Discover Your Perfect Loan Match
       </Typography>
-      <Grid container spacing={3.5}> {/* Increased spacing */}
-        {/* Loan Amount */}
-        <Grid sx={{xs:12}}>
-          <Typography gutterBottom sx={{ fontWeight: 'medium', fontSize: '1.1rem' }}>Loan Amount: <Typography component="span" sx={{fontWeight:'bold', color:'secondary.main'}}>₹{formData.loanAmount.toLocaleString()}</Typography></Typography> {/* Enhanced Label */}
+      <Grid container spacing={3.5} direction="column" alignItems="flex-start">
+      <Grid container spacing={3.5} direction="column" alignItems="center"> {/* Changed to "center" */}
+          <Grid sx={{ xs:12, textAlign: 'center', my: 2.5 }}>
+            <Paper elevation={2} sx={{ p: 2.5, borderRadius: '8px', background: 'linear-gradient(to right, #e3f2fd, #f3e5f5)', width: '100%', maxWidth: 400, mx: 'auto' }}>
+              <Typography variant="h5" component="p" sx={{ fontWeight: 'bold', color: 'primary.dark' }}>
+                Your Estimated EMI: ₹{calculatedEMI}/month
+              </Typography>
+              <Typography variant="caption" display="block" sx={{ mt: 0.5, color: 'text.secondary' }}>
+                (Calculated at {formData.interestRate === 'custom' ? formData.customInterestRate || '0' : formData.interestRate}% annual interest rate)
+              </Typography>
+            </Paper>
+          </Grid>
+        </Grid>
+        <Grid sx={{ xs: 12 }} size={10} alignItems='center'>
+          <Typography gutterBottom sx={{ fontWeight: 'medium', fontSize: '1.1rem' }}>Loan Amount: <Typography component="span" sx={{ fontWeight: 'bold', color: 'secondary.main' }}>₹{formData.loanAmount.toLocaleString()}</Typography></Typography> {/* Enhanced Label */}
           <Slider
             value={formData.loanAmount}
             onChange={handleSliderChange}
@@ -105,110 +117,99 @@ const LoanExplorerStep = ({ formData, handleGenericChange, loanPurposes }: LoanE
             step={1000}
             min={10000}
             max={500000}
-            sx={{mt: 1, color: 'secondary.main'}}
+            sx={{ mt: 1, color: 'secondary.main' }}
           />
         </Grid>
+        <Grid container spacing={2} alignItems="flex-start">
+          {/* Tenure */}
+          <Grid sx={{ xs: 12, md: 4 }}>
+            <Typography gutterBottom sx={{ fontWeight: 'medium', fontSize: '1.1rem' }}>Tenure</Typography>
+            <FormControl fullWidth variant="outlined" sx={{ mb: 1.5 }}>
+              <InputLabel id="tenure-label">Select Tenure</InputLabel>
+              <Select
+                labelId="tenure-label"
+                id="tenure-select"
+                value={formData.tenure}
+                label="Select Tenure"
+                onChange={(e) => {
+                  handleGenericChange('tenure', e.target.value);
+                  if (e.target.value !== 'custom') handleGenericChange('customTenure', '');
+                }}
+              >
+                {[12, 24, 36, 48, 60].map((t) => (
+                  <MenuItem key={t} value={t.toString()}>{t} months</MenuItem>
+                ))}
+                <MenuItem value="custom">Custom</MenuItem>
+              </Select>
+            </FormControl>
+            {formData.tenure === 'custom' && (
+              <TextField
+                fullWidth
+                label="Custom Tenure (months)"
+                value={formData.customTenure}
+                onChange={handleCustomTenureFieldChange}
+                type="tel"
+                variant="outlined"
+                size="small"
+                inputProps={{ maxLength: 3 }}
+                sx={{ mt: 1 }}
+              />
+            )}
+          </Grid>
 
-        {/* Tenure Selector (Refactored to Select) */}
-        <Grid sx={{xs:12}}>
-          <Typography gutterBottom sx={{ fontWeight: 'medium', fontSize: '1.1rem' }}>Tenure</Typography>
-          <FormControl fullWidth variant="outlined" sx={{ mb: 1.5 }}>
-            <InputLabel id="tenure-label">Select Tenure</InputLabel>
-            <Select
-              labelId="tenure-label"
-              id="tenure-select"
-              value={formData.tenure}
-              label="Select Tenure"
-              onChange={(e) => {
-                handleGenericChange('tenure', e.target.value);
-                if (e.target.value !== 'custom') handleGenericChange('customTenure', '');
-              }}
-            >
-              {[12, 24, 36, 48, 60].map((t) => (
-                <MenuItem key={t} value={t.toString()}>{t} months</MenuItem>
-              ))}
-              <MenuItem value="custom">Custom</MenuItem>
-            </Select>
-          </FormControl>
-          {formData.tenure === 'custom' && (
-            <TextField
-              fullWidth
-              label="Custom Tenure (months)"
-              value={formData.customTenure}
-              onChange={handleCustomTenureFieldChange}
-              type="tel"
-              variant="outlined"
-              size="small"
-              inputProps={{ maxLength: 3 }}
-              sx={{ mt: 1 }}
-            />
-          )}
-        </Grid>
+          {/* Interest Rate */}
+          <Grid sx={{ xs: 12, md: 4 }}>
+            <Typography gutterBottom sx={{ fontWeight: 'medium', fontSize: '1.1rem' }}>Interest Rate</Typography>
+            <FormControl fullWidth variant="outlined" sx={{ mb: 1.5 }}>
+              <InputLabel id="interest-rate-label">Select Rate</InputLabel>
+              <Select
+                labelId="interest-rate-label"
+                id="interest-rate-select"
+                value={formData.interestRate}
+                label="Select Rate"
+                onChange={handleInterestRateChange}
+              >
+                {[10, 12, 14, 16, 18].map((rate) => (
+                  <MenuItem key={rate} value={rate.toString()}>{rate}%</MenuItem>
+                ))}
+                <MenuItem value="custom">Custom</MenuItem>
+              </Select>
+            </FormControl>
+            {formData.interestRate === 'custom' && (
+              <TextField
+                fullWidth
+                label="Custom Interest Rate (%)"
+                value={formData.customInterestRate}
+                onChange={handleCustomInterestRateFieldChange}
+                type="tel"
+                variant="outlined"
+                size="small"
+                inputProps={{ maxLength: 5 }}
+                sx={{ mt: 1 }}
+              />
+            )}
+          </Grid>
 
-        {/* Interest Rate Selector */}
-        <Grid sx={{xs:12}}>
-          <Typography gutterBottom sx={{ fontWeight: 'medium', fontSize: '1.1rem' }}>Interest Rate</Typography>
-          <FormControl fullWidth variant="outlined" sx={{ mb: 1.5 }}>
-            <InputLabel id="interest-rate-label">Select Rate</InputLabel>
-            <Select
-              labelId="interest-rate-label"
-              id="interest-rate-select"
-              value={formData.interestRate}
-              label="Select Rate"
-              onChange={handleInterestRateChange}
-            >
-              {[10, 12, 14, 16, 18].map((rate) => (
-                <MenuItem key={rate} value={rate.toString()}>{rate}%</MenuItem>
-              ))}
-              <MenuItem value="custom">Custom</MenuItem>
-            </Select>
-          </FormControl>
-          {formData.interestRate === 'custom' && (
-            <TextField
-              fullWidth
-              label="Custom Interest Rate (%)"
-              value={formData.customInterestRate}
-              onChange={handleCustomInterestRateFieldChange}
-              type="tel"
-              variant="outlined"
-              size="small"
-              inputProps={{ maxLength: 5 }}
-              sx={{ mt: 1 }}
-            />
-          )}
-        </Grid>
-
-        {/* EMI Display */}
-        <Grid sx={{xs:12, textAlign:'center', my:2.5}}>
-          <Paper elevation={2} sx={{p:2.5, borderRadius: '8px', background: 'linear-gradient(to right, #e3f2fd, #f3e5f5)'}}> 
-            <Typography variant="h5" component="p" sx={{ fontWeight: 'bold', color: 'primary.dark' }}>
-              Your Estimated EMI: ₹{calculatedEMI}/month
-            </Typography>
-            <Typography variant="caption" display="block" sx={{mt: 0.5, color: 'text.secondary'}}>
-              (Calculated at {formData.interestRate === 'custom' ? formData.customInterestRate || '0' : formData.interestRate}% annual interest rate)
-            </Typography>
-          </Paper>
-        </Grid>
-
-        {/* Loan Purpose */}
-        <Grid sx={{xs:12}}>
-         <Typography gutterBottom sx={{ fontWeight: 'medium', fontSize: '1.1rem', mb:1 }}>Loan Purpose</Typography>
-          <FormControl fullWidth variant="outlined"> {/* Ensured variant for consistency */}
-            <InputLabel id="loan-purpose-label">Select Purpose</InputLabel>
-            <Select
-              labelId="loan-purpose-label"
-              id="loan-purpose-select"
-              value={formData.loanPurpose}
-              label="Select Purpose"
-              onChange={(e) => handleGenericChange('loanPurpose', e.target.value)}
-            >
-              {loanPurposes.map((purpose) => (
-                <MenuItem key={purpose} value={purpose}>
-                  {purpose}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          {/* Loan Purpose */}
+          <Grid sx={{ xs: 12, md: 4 }}>
+            <Typography gutterBottom sx={{ fontWeight: 'medium', fontSize: '1.1rem' }}>Loan Purpose</Typography>
+            <FormControl fullWidth variant="outlined">
+              <InputLabel id="loan-purpose-label">Select Purpose</InputLabel>
+              <Select
+                labelId="loan-purpose-label"
+                id="loan-purpose-select"
+                value={formData.loanPurpose}
+                label="Select Purpose"
+                onChange={(e) => handleGenericChange('loanPurpose', e.target.value)}
+              >
+                {loanPurposes.map((purpose) => (
+                  <MenuItem key={purpose} value={purpose}>
+                    {purpose}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
         </Grid>
       </Grid>
     </Box>
@@ -231,56 +232,56 @@ const IdentityCheckStep = ({ formData, handleFileMetaChange }: IdentityCheckStep
   };
 
   return (
-    <Box sx={{ py: 3, px:1 }}> {/* Consistent padding */}
-      <Typography variant="h5" component="h2" textAlign="center" gutterBottom sx={{ mb: 4, fontWeight: 'bold' }}> {/* Enhanced Title */}
+    <Box sx={{ py: 3, px: 1 }}> {/* Consistent padding */}
+      <Typography variant="h4" component="h2" textAlign="center" gutterBottom sx={{ mb: 4, fontWeight: 'bold', color: 'primary.main' }}> {/* Enhanced Title */}
         Let's Verify Your Identity
       </Typography>
-                
-      <Typography variant="h6" gutterBottom sx={{ mt: 2, mb: 2.5, borderBottom: 1, borderColor: 'divider', pb:1, fontWeight:'medium' }}>
-            Personal Details
-          </Typography>
-          <Grid container spacing={2.5}>
-            <Grid sx={{xs:12, sm:6}}><TextField fullWidth label="Full Name" name="fullName" required autoComplete="name" /></Grid>
-            <Grid sx={{xs:12, sm:6}}><TextField fullWidth label="Date of Birth" name="dob" type="date" InputLabelProps={{ shrink: true }} required /></Grid>
-            <Grid sx={{xs:12, sm:6}}><TextField fullWidth label="PAN Card Number" name="pan" required /></Grid>
-            <Grid sx={{xs:12, sm:6}}><TextField fullWidth label="Aadhaar Number" name="aadhaar" required /></Grid>
-            <Grid sx={{xs:12}}><TextField fullWidth label="Current Address" name="address" multiline rows={3} required autoComplete="street-address" /></Grid>
-            <Grid sx={{xs:12, sm:6}}><TextField fullWidth label="Mobile Number" name="mobile" type="tel" required autoComplete="tel" /></Grid>
-            <Grid sx={{xs:12, sm:6}}><TextField fullWidth label="Email Address" name="email" type="email" required autoComplete="email" /></Grid>
-          </Grid>
+
+      <Typography variant="h6" gutterBottom sx={{ mt: 2, mb: 2.5, borderBottom: 1, borderColor: 'divider', pb: 1, fontWeight: 'medium' }}>
+        Personal Details
+      </Typography>
+      <Grid container spacing={2.5}>
+        <Grid sx={{ xs: 12, sm: 6 }}><TextField fullWidth label="Full Name" name="fullName" required autoComplete="name" /></Grid>
+        <Grid sx={{ xs: 12, sm: 6 }}><TextField fullWidth label="Date of Birth" name="dob" type="date" InputLabelProps={{ shrink: true }} required /></Grid>
+        <Grid sx={{ xs: 12, sm: 6 }}><TextField fullWidth label="PAN Card Number" name="pan" required /></Grid>
+        <Grid sx={{ xs: 12, sm: 6 }}><TextField fullWidth label="Aadhaar Number" name="aadhaar" required /></Grid>
+        <Grid sx={{ xs: 12 }}><TextField fullWidth label="Current Address" name="address" multiline rows={3} required autoComplete="street-address" /></Grid>
+        <Grid sx={{ xs: 12, sm: 6 }}><TextField fullWidth label="Mobile Number" name="mobile" type="tel" required autoComplete="tel" /></Grid>
+        <Grid sx={{ xs: 12, sm: 6 }}><TextField fullWidth label="Email Address" name="email" type="email" required autoComplete="email" /></Grid>
+      </Grid>
 
 
       <Grid container spacing={3}>
         {/* PAN Card Upload */}
-        <Grid sx={{xs:12}}>
-          <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'medium', mb:1 }}>PAN Card Upload</Typography>
+        <Grid sx={{ xs: 12 }}>
+          <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'medium', mb: 1 }}>PAN Card Upload</Typography>
           <Button variant="outlined" component="label" fullWidth startIcon={<UploadFileIcon />}> {/* Added Icon */}
             Upload PAN Card
             <input type="file" hidden accept="image/*,.pdf" onChange={(e) => handleFileChange(e, 'panFile')} />
           </Button>
-          {formData.panFile && <Typography variant="body2" sx={{ mt: 1, textAlign:'center', color:'success.main' }}>Selected: {formData.panFile.name}</Typography>}
+          {formData.panFile && <Typography variant="body2" sx={{ mt: 1, textAlign: 'center', color: 'success.main' }}>Selected: {formData.panFile.name}</Typography>}
           <Typography variant="caption" display="block" sx={{ mt: 0.5, textAlign: 'center', color: 'text.secondary' }}>
             Drag & drop or take photo (Max file size: 5MB. Formats: JPG, PNG, PDF)
           </Typography>
         </Grid>
 
         {/* Aadhaar Upload */}
-        <Grid sx={{xs:12}}>
-          <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'medium', mt:2, mb:1 }}>Aadhaar Upload</Typography>
+        <Grid sx={{ xs: 12 }}>
+          <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'medium', mt: 2, mb: 1 }}>Aadhaar Upload</Typography>
           <Grid container spacing={2}>
-            <Grid sx={{xs:12, sm:6}}>
+            <Grid sx={{ xs: 12, sm: 6 }}>
               <Button variant="outlined" component="label" fullWidth startIcon={<UploadFileIcon />}> {/* Added Icon */}
                 Upload Aadhaar Front
                 <input type="file" hidden accept="image/*,.pdf" onChange={(e) => handleFileChange(e, 'aadhaarFrontFile')} />
               </Button>
-              {formData.aadhaarFrontFile && <Typography variant="body2" sx={{ mt: 1, textAlign:'center', color:'success.main' }}>Selected: {formData.aadhaarFrontFile.name}</Typography>}
+              {formData.aadhaarFrontFile && <Typography variant="body2" sx={{ mt: 1, textAlign: 'center', color: 'success.main' }}>Selected: {formData.aadhaarFrontFile.name}</Typography>}
             </Grid>
-            <Grid sx={{xs:12, sm:6}}>
+            <Grid sx={{ xs: 12, sm: 6 }}>
               <Button variant="outlined" component="label" fullWidth startIcon={<UploadFileIcon />}> {/* Added Icon */}
                 Upload Aadhaar Back
                 <input type="file" hidden accept="image/*,.pdf" onChange={(e) => handleFileChange(e, 'aadhaarBackFile')} />
               </Button>
-              {formData.aadhaarBackFile && <Typography variant="body2" sx={{ mt: 1, textAlign:'center', color:'success.main' }}>Selected: {formData.aadhaarBackFile.name}</Typography>}
+              {formData.aadhaarBackFile && <Typography variant="body2" sx={{ mt: 1, textAlign: 'center', color: 'success.main' }}>Selected: {formData.aadhaarBackFile.name}</Typography>}
             </Grid>
           </Grid>
           <Typography variant="caption" display="block" sx={{ mt: 1, textAlign: 'center', color: 'text.secondary' }}>
@@ -352,38 +353,38 @@ const EmploymentProfilerStep = ({ formData, handleGenericChange, handleFileMetaC
   // Update monthlyIncomeDisplay if employmentType changes and it was showing the default
   useEffect(() => {
     if (formData.employmentType && monthlyIncomeDisplay === 'Enter details to see') {
-        setMonthlyIncomeDisplay('₹1,20,000 ✓');
+      setMonthlyIncomeDisplay('₹1,20,000 ✓');
     } else if (!formData.employmentType && monthlyIncomeDisplay !== 'Processing...') { // Avoid resetting if processing
-        // setMonthlyIncomeDisplay('Enter details to see'); // Or keep current if already processed
+      // setMonthlyIncomeDisplay('Enter details to see'); // Or keep current if already processed
     }
   }, [formData.employmentType, monthlyIncomeDisplay]);
 
 
   return (
-    <Box sx={{ py: 3, px:1 }}> {/* Consistent padding */}
-      <Typography variant="h5" component="h2" textAlign="center" gutterBottom sx={{ mb: 4, fontWeight: 'bold' }}> {/* Enhanced Title */}
+    <Box sx={{ py: 3, px: 1 }}> {/* Consistent padding */}
+      <Typography variant="h4" component="h2" textAlign="center" gutterBottom sx={{ mb: 4, fontWeight: 'bold', color: 'primary.main' }}> {/* Enhanced Title */}
         Tell Us About Your Work Life
       </Typography>
 
-      <Typography variant="h6" gutterBottom sx={{ mt: 4, mb: 2.5, borderBottom: 1, borderColor: 'divider', pb:1, fontWeight:'medium' }}>
-            Employment Information
-          </Typography>
-          <Grid container spacing={2.5}>
-            <Grid sx={{xs:12, sm:6}}>
-              <FormControl fullWidth required>
-                <InputLabel id="employment-type-label">Employment Type</InputLabel>
-                <Select labelId="employment-type-label" label="Employment Type" name="employmentType" defaultValue="">
-                 {employmentTypes.map((type) => (
-                  <MenuItem key={type} value={type}>{type}</MenuItem>
-                ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid sx={{xs:12, sm:6}}><TextField fullWidth label="Company Name (if salaried/employed)" name="companyName" /></Grid>
-            <Grid sx={{xs:12, sm:6}}><TextField fullWidth label="Designation (if salaried/employed)" name="designation" /></Grid>
-            <Grid sx={{xs:12, sm:6}}><TextField fullWidth label="Years in Current Employment/Business" name="yearsInService" type="number" required InputProps={{ inputProps: { min: 0 } }} /></Grid>
-            <Grid sx={{xs:12, sm:6}}><TextField fullWidth label="Monthly Income (INR)" name="monthlyIncome" type="number" required InputProps={{ inputProps: { min: 0 } }} /></Grid>
-          </Grid>
+      <Typography variant="h6" gutterBottom sx={{ mt: 4, mb: 2.5, borderBottom: 1, borderColor: 'divider', pb: 1, fontWeight: 'medium' }}>
+        Employment Information
+      </Typography>
+      <Grid container spacing={2.5}>
+        <Grid sx={{ xs: 12, sm: 6 }}>
+          <FormControl fullWidth required>
+            <InputLabel id="employment-type-label">Employment Type</InputLabel>
+            <Select labelId="employment-type-label" label="Employment Type" name="employmentType" defaultValue="">
+              {employmentTypes.map((type) => (
+                <MenuItem key={type} value={type}>{type}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid sx={{ xs: 12, sm: 6 }}><TextField fullWidth label="Company Name (if salaried/employed)" name="companyName" /></Grid>
+        <Grid sx={{ xs: 12, sm: 6 }}><TextField fullWidth label="Designation (if salaried/employed)" name="designation" /></Grid>
+        <Grid sx={{ xs: 12, sm: 6 }}><TextField fullWidth label="Years in Current Employment/Business" name="yearsInService" type="number" required InputProps={{ inputProps: { min: 0 } }} /></Grid>
+        <Grid sx={{ xs: 12, sm: 6 }}><TextField fullWidth label="Monthly Income (INR)" name="monthlyIncome" type="number" required InputProps={{ inputProps: { min: 0 } }} /></Grid>
+      </Grid>
 
       <Grid container spacing={3}>
         {/* Employment Type */}
@@ -406,7 +407,7 @@ const EmploymentProfilerStep = ({ formData, handleGenericChange, handleFileMetaC
         {/* Conditional Fields for Salaried */}
         {formData.employmentType === 'Salaried' && (
           <>
-            <Grid sx={{xs:12, sm:6}}>
+            <Grid sx={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
                 label="Company Name"
@@ -415,7 +416,7 @@ const EmploymentProfilerStep = ({ formData, handleGenericChange, handleFileMetaC
                 variant="outlined"
               />
             </Grid>
-            <Grid sx={{xs:12, sm:6}}>
+            <Grid sx={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
                 label="Designation"
@@ -429,7 +430,7 @@ const EmploymentProfilerStep = ({ formData, handleGenericChange, handleFileMetaC
 
         {formData.employmentType === 'Self-Employed/Business' && (
           <>
-            <Grid sx={{xs:12, sm:6}}>
+            <Grid sx={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
                 label="Business Name"
@@ -439,7 +440,7 @@ const EmploymentProfilerStep = ({ formData, handleGenericChange, handleFileMetaC
                 helperText="Your registered business name"
               />
             </Grid>
-            <Grid sx={{xs:12, sm:6}}>
+            <Grid sx={{ xs: 12, sm: 6 }}>
               <TextField
                 fullWidth
                 label="Nature of Business"
@@ -448,7 +449,7 @@ const EmploymentProfilerStep = ({ formData, handleGenericChange, handleFileMetaC
                 variant="outlined"
               />
             </Grid>
-             <Grid sx={{xs:12}}>
+            <Grid sx={{ xs: 12 }}>
               <TextField
                 fullWidth
                 label="Years in Business"
@@ -462,17 +463,17 @@ const EmploymentProfilerStep = ({ formData, handleGenericChange, handleFileMetaC
         )}
 
         {/* Income Verification */}
-        <Grid sx={{xs:12}}>
-          <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'medium', mt: 2, mb:1 }}>
+        <Grid sx={{ xs: 12 }}>
+          <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'medium', mt: 2, mb: 1 }}>
             Income Verification
           </Typography>
           <Grid container spacing={2} alignItems="center">
-            <Grid sx={{xs:12, sm:6}}>
+            <Grid sx={{ xs: 12, sm: 6 }}>
               <Button variant="outlined" component="label" fullWidth startIcon={<UploadFileIcon />}> {/* Added Icon */}
                 Upload Salary Slip
                 <input type="file" hidden accept="image/*,.pdf" onChange={handleSalarySlipUpload} />
               </Button>
-              {formData.salarySlipFile && <Typography variant="body2" sx={{ mt: 1, textAlign:'center', color:'success.main' }}>Selected: {formData.salarySlipFile.name}</Typography>}
+              {formData.salarySlipFile && <Typography variant="body2" sx={{ mt: 1, textAlign: 'center', color: 'success.main' }}>Selected: {formData.salarySlipFile.name}</Typography>}
             </Grid>
             {/* <Grid sx={{xs:12, sm:6}}>
               <Button variant="outlined" color="secondary" fullWidth> 
@@ -514,125 +515,152 @@ interface LocationContactStepProps {
 }
 
 const LocationContactStep = ({ formData, handleGenericChange }: LocationContactStepProps) => {
-  // Local state for UI interaction, not part of main formData unless explicitly needed elsewhere
   const [isEditingMobile, setIsEditingMobile] = useState<boolean>(false);
-  const [showBackupEmail, setShowBackupEmail] = useState<boolean>(false);
+  const [isEditingEmail, setIsEditingEmail] = useState<boolean>(false);
+  const [addressLine1Error, setAddressLine1Error] = useState<string>('');
 
+  const handleAddressLine1Change = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleGenericChange('addressLine1', e.target.value);
+    if (!e.target.value.trim()) {
+      setAddressLine1Error('Address Line 1 is required');
+    } else {
+      setAddressLine1Error('');
+    }
+  };
 
   return (
-    <Box sx={{ py: 3, px:1 }}> {/* Consistent padding */}
-      <Typography variant="h5" component="h2" textAlign="center" gutterBottom sx={{ mb: 4, fontWeight: 'bold' }}> {/* Enhanced Title */}
+    <Box sx={{ py: 3, px: 1 }}>
+      <Typography variant="h4" component="h2" textAlign="center" gutterBottom sx={{ mb: 4, fontWeight: 'bold', color: 'primary.main' }}>
         Where Should We Reach You?
       </Typography>
-
-      <Grid container spacing={3}>
-        {/* Address Input UI */}
-        <Grid sx={{xs:12}}>
-          <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'medium' }}>Enter Your Current Address</Typography>
-          <Typography variant="caption" display="block" color="text.secondary" sx={{ mb: 1.5 }}>
-            Alternatively, move pin to your exact location (Conceptual Map UI)
-          </Typography>
-          <TextField
-            fullWidth
-            label="Building/Apartment Name"
-            value={formData.building}
-            onChange={(e) => handleGenericChange('building', e.target.value)}
-            variant="outlined"
-            sx={{ mb: 2 }}
-          />
-          <Grid container spacing={2}>
-            <Grid sx={{xs:12, sm:6}}>
-              <TextField
-                fullWidth
-                label="City"
-                value={formData.city}
-                onChange={(e) => handleGenericChange('city', e.target.value)}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid sx={{xs:12, sm:6}}>
-              <TextField
-                fullWidth
-                label="Pincode"
-                value={formData.pincode}
-                onChange={(e) => handleGenericChange('pincode', e.target.value)}
-                variant="outlined"
-                type="tel"
-              />
-            </Grid>
-          </Grid>
-        </Grid>
-
-        {/* Auto-Filled Address Display (Conceptual) */}
-        <Grid sx={{xs:12, mt:1}}>
-          <Typography variant="caption" display="block" color="text.secondary" sx={{ fontWeight: 'medium' }}>
-            AUTOFILLED ADDRESS (CONCEPTUAL):
-          </Typography>
-          <Paper elevation={1} sx={{ display: 'flex', alignItems: 'center', mt: 0.5, p:1.5, borderRadius:1, bgcolor: 'grey.50' }}> {/* Subtle background */}
-            <Typography variant="body2" sx={{ flexGrow: 1, lineHeight:1.8 }}> {/* Improved line height */}
-              Building: Orchid Towers <CheckCircleOutline color="success" sx={{ fontSize: '1rem', verticalAlign: 'middle' }} /> <br />
-              City: Mumbai <CheckCircleOutline color="success" sx={{ fontSize: '1rem', verticalAlign: 'middle' }} /> <br />
-              Pincode: 400001 <CheckCircleOutline color="success" sx={{ fontSize: '1rem', verticalAlign: 'middle' }} />
-            </Typography>
-          </Paper>
-        </Grid>
-
-        {/* Contact Preferences UI */}
-        <Grid sx={{xs:12, mt:2}}>
-          <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'medium', mb:1.5 }}>Contact Preferences</Typography>
-          {/* Mobile Number */}
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
-            {isEditingMobile ? (
-              <TextField
-                label="Mobile Number"
-                value={formData.mobileNumber}
-                onChange={(e) => handleGenericChange('mobileNumber', e.target.value)}
-                variant="outlined"
-                size="small"
-                sx={{ flexGrow: 1 }}
-              />
-            ) : (
-              <Typography sx={{ flexGrow: 1 }}>
-                Mobile: {formData.mobileNumber} <Typography component="span" variant="caption" color="success.main">(Verified)</Typography>
-              </Typography>
-            )}
-            <IconButton onClick={() => setIsEditingMobile(!isEditingMobile)} size="small" sx={{ml:1}}>
-              {isEditingMobile ? <SaveIcon /> : <EditIcon />}
-            </IconButton>
-          </Box>
-
-          {/* Email Address */}
-          <Box sx={{ mb: 1 }}>
-            <Typography>
-              Email: {formData.email} <Typography component="span" variant="caption" color="text.secondary">(Primary)</Typography>
-            </Typography>
-          </Box>
-          {showBackupEmail && (
+      <Paper elevation={0} sx={{ p: 3, borderRadius: 2, mb: 3 }}>
+        <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'medium' }}>Enter Your Address & Contact Details</Typography>
+        <Grid container spacing={3} direction="column" alignItems="flex-start">
+          {/* Address Line 1 */}
+          <Grid size={10} sx={{ xs: 12 }}>
             <TextField
               fullWidth
-              label="Backup Email Address"
-              value={formData.backupEmail}
-              onChange={(e) => handleGenericChange('backupEmail', e.target.value)}
+              required
+              label="Address Line 1"
+              value={formData.addressLine1}
+              onChange={handleAddressLine1Change}
               variant="outlined"
-              size="small"
-              sx={{ mb: 1 }}
+              error={!!addressLine1Error}
+              rows={2}
+              multiline
             />
-          )}
-          <Button size="small" onClick={() => setShowBackupEmail(!showBackupEmail)} sx={{textTransform: 'none'}}> {/* Less shouty button */}
-            {showBackupEmail ? 'Remove Backup Email' : 'Add Backup Email'}
-          </Button>
+          </Grid>
+
+          {/* Address Line 2 */}
+          <Grid size={10} sx={{ xs: 12 }}>
+            <TextField
+              fullWidth
+              label="Address Line 2 (optional)"
+              value={formData.addressLine2}
+              onChange={(e) => handleGenericChange('addressLine2', e.target.value)}
+              variant="outlined"
+              rows={2}
+              multiline
+            />
+          </Grid>
+
+          {/* City and Pincode in Column */}
+          <Grid size={10} sx={{ xs: 12 }}>
+            <Grid container direction="row" spacing={2}>
+              <Grid>
+                <TextField
+                  fullWidth
+                  label="City"
+                  value={formData.city}
+                  onChange={(e) => handleGenericChange('city', e.target.value)}
+                  variant="outlined"
+                />
+              </Grid>
+              <Grid>
+                <TextField
+                  fullWidth
+                  label="Pincode"
+                  value={formData.pincode}
+                  onChange={(e) => handleGenericChange('pincode', e.target.value)}
+                  variant="outlined"
+                  type="tel"
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+
+          {/* Mobile Number */}
+          <Grid sx={{ xs: 3 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              {isEditingMobile ? (
+                <TextField
+                  label="Mobile Number"
+                  value={formData.mobileNumber}
+                  onChange={(e) => handleGenericChange('mobileNumber', e.target.value)}
+                  variant="outlined"
+                  size="small"
+                  sx={{ flexGrow: 1 }}
+                />
+              ) : (
+                <Typography sx={{ flexGrow: 1 }}>
+                  Mobile: {formData.mobileNumber}{' '}
+                  <Typography component="span" variant="caption" color="success.main">
+                    (Verified)
+                  </Typography>
+                </Typography>
+              )}
+              <IconButton onClick={() => setIsEditingMobile(!isEditingMobile)} size="small" sx={{ ml: 1 }}>
+                {isEditingMobile ? <SaveIcon /> : <EditIcon />}
+              </IconButton>
+            </Box>
+          </Grid>
+
+          {/* Email Address with Edit Icon */}
+          <Grid sx={{ xs: 3 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              {isEditingEmail ? (
+                <TextField
+                  label="Email Address"
+                  value={formData.email}
+                  onChange={(e) => handleGenericChange('email', e.target.value)}
+                  variant="outlined"
+                  size="small"
+                  fullWidth
+                />
+              ) : (
+                <Typography sx={{ flexGrow: 1 }}>
+                  Email: {formData.email}{' '}
+                  <Typography component="span" variant="caption" color="text.secondary">
+                    (Primary)
+                  </Typography>
+                </Typography>
+              )}
+              <IconButton onClick={() => setIsEditingEmail(!isEditingEmail)} size="small" sx={{ ml: 1 }}>
+                {isEditingEmail ? <SaveIcon /> : <EditIcon />}
+              </IconButton>
+            </Box>
+          </Grid>
+
+          {/* Backup Email */}
+          {/* <Grid sx={{ xs: 3 }}>
+            {showBackupEmail && (
+              <TextField
+                fullWidth
+                label="Backup Email Address"
+                value={formData.backupEmail}
+                onChange={(e) => handleGenericChange('backupEmail', e.target.value)}
+                variant="outlined"
+                size="small"
+                sx={{ mb: 1 }}
+              />
+            )} */}
+          {/* <Button size="small" onClick={() => setShowBackupEmail(!showBackupEmail)} sx={{ textTransform: 'none' }}>
+              {showBackupEmail ? 'Remove Backup Email' : 'Add Backup Email'}
+            </Button> */}
+          {/* </Grid> */}
         </Grid>
 
-        {/* Send OTP Button */}
-        <Grid sx={{xs:12, textAlign:'center', mt:2}}>
-          <Button variant="contained" color="primary" sx={{px:5, py:1.5, fontWeight:'medium'}}> {/* Styled Button */}
-            Send OTP & Continue
-          </Button>
-           <Typography variant="caption" display="block" sx={{ mt: 0.5, color: 'text.secondary' }}>
-                (This is a UI placeholder. Use main 'Next' button to navigate.)
-            </Typography>
-        </Grid>
-      </Grid>
+      </Paper>
     </Box>
   );
 };
@@ -653,11 +681,12 @@ const FinalReviewStep = ({ formData, handleGenericChange }: FinalReviewStepProps
   ];
 
   return (
-    <Box sx={{ py: 3, px:1 }}> {/* Consistent padding */}
-      
-      <Typography variant="h5" component="h2" textAlign="center" gutterBottom sx={{ mb: 3, fontWeight: 'bold' }}> {/* Enhanced Title */}
+    <Box sx={{ py: 3, px: 1 }}> {/* Consistent padding */}
+
+      <Typography variant="h4" component="h2" textAlign="center" gutterBottom sx={{ mb: 4, fontWeight: 'bold', color: 'primary.main' }}>
         Review & Unlock Your Offers!
       </Typography>
+
 
       {/* Personalized Loan Matches (Conceptual) */}
       <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'medium', mb: 2, color: 'text.primary' }}>
@@ -665,8 +694,8 @@ const FinalReviewStep = ({ formData, handleGenericChange }: FinalReviewStepProps
       </Typography>
       <Grid container spacing={2.5}>
         {mockOffers.map((offer, index) => (
-          <Grid sx={{xs:12, md:4}} key={index}>
-            <Card elevation={3} sx={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between', borderRadius: '12px', transition: '0.3s', '&:hover': {transform: 'translateY(-5px)', boxShadow:6} }}> {/* Added hover effect & border radius */}
+          <Grid sx={{ xs: 12, md: 4 }} key={index}>
+            <Card elevation={3} sx={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between', borderRadius: '12px', transition: '0.3s', '&:hover': { transform: 'translateY(-5px)', boxShadow: 6 } }}> {/* Added hover effect & border radius */}
               <CardMedia
                 component="img"
                 height="80" /* Increased height */
@@ -674,54 +703,54 @@ const FinalReviewStep = ({ formData, handleGenericChange }: FinalReviewStepProps
                 alt={`${offer.bankName} logo`}
                 sx={{ p: 2, objectFit: 'contain', borderBottom: '1px solid #eee' }}
               />
-              <CardContent sx={{flexGrow: 1, textAlign:'center'}}> {/* Centered content */}
-                <Typography gutterBottom variant="h6" component="div" sx={{fontSize: '1.2rem', fontWeight:'bold'}}> {/* Bolder bank name */}
+              <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}> {/* Centered content */}
+                <Typography gutterBottom variant="h6" component="div" sx={{ fontSize: '1.2rem', fontWeight: 'bold' }}> {/* Bolder bank name */}
                   {offer.bankName}
                 </Typography>
-                <Typography variant="body1" color="primary.main" sx={{fontWeight:'bold', mb:1, fontSize:'1.1rem'}}> {/* Larger offer text */}
+                <Typography variant="body1" color="primary.main" sx={{ fontWeight: 'bold', mb: 1, fontSize: '1.1rem' }}> {/* Larger offer text */}
                   {offer.offer}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Est. APR: {offer.apr}
                 </Typography>
-                 <Typography variant="body2" color="text.secondary">
-                  Processing Fee: <Typography component="span" sx={{textDecoration: offer.bankName === 'Axis Bank' ? 'line-through': 'none', fontWeight: offer.bankName === 'Axis Bank' ? 'normal' : 'bold'}}>{offer.processingFee}</Typography> {offer.bankName === 'Axis Bank' ? <Typography component="span" color="success.main" sx={{fontWeight:'bold'}}>FREE</Typography> : ''}
+                <Typography variant="body2" color="text.secondary">
+                  Processing Fee: <Typography component="span" sx={{ textDecoration: offer.bankName === 'Axis Bank' ? 'line-through' : 'none', fontWeight: offer.bankName === 'Axis Bank' ? 'normal' : 'bold' }}>{offer.processingFee}</Typography> {offer.bankName === 'Axis Bank' ? <Typography component="span" color="success.main" sx={{ fontWeight: 'bold' }}>FREE</Typography> : ''}
                 </Typography>
               </CardContent>
-               <Button size="medium" variant="contained" sx={{m:2, alignSelf:'center', fontWeight:'medium'}}>View Details & Apply</Button> {/* Styled button */}
+              <Button size="medium" variant="contained" sx={{ m: 2, alignSelf: 'center', fontWeight: 'medium' }}>View Details & Apply</Button> {/* Styled button */}
             </Card>
           </Grid>
         ))}
       </Grid>
 
       {/* Processing Fee Information */}
-      <Paper elevation={2} sx={{ textAlign: 'center', p: 2, mt: 4, mb:3, backgroundColor: 'secondary.light', color: 'secondary.contrastText', borderRadius: '8px' }}> {/* Distinct styling */}
-        <Typography variant="h6" component="p" sx={{fontWeight:'bold'}}>
+      <Paper elevation={2} sx={{ textAlign: 'center', p: 2, mt: 4, mb: 3, backgroundColor: 'secondary.light', color: 'secondary.contrastText', borderRadius: '8px' }}> {/* Distinct styling */}
+        <Typography variant="h6" component="p" sx={{ fontWeight: 'bold' }}>
           One-Time Processing Fee: ₹499
         </Typography>
         <Typography variant="body1"> {/* Slightly larger body */}
-           (Waived if loan is approved through select partners!)
+          (Waived if loan is approved through select partners!)
         </Typography>
       </Paper>
 
       {/* Secure Submission Section */}
-      <Box sx={{ mt: 3, p:2.5, border: '1px solid #ddd', borderRadius: '8px', bgcolor: 'background.paper' }}> {/* Added padding and border radius */}
-        <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'medium', mb:1.5 }}>
+      <Box sx={{ mt: 3, p: 2.5, border: '1px solid #ddd', borderRadius: '8px', bgcolor: 'background.paper' }}> {/* Added padding and border radius */}
+        <Typography variant="subtitle1" gutterBottom sx={{ fontWeight: 'medium', mb: 1.5 }}>
           SECURE SUBMISSION & CONSENTS:
         </Typography>
         <FormControlLabel
-          control={<Checkbox checked={formData.agreeToShare} onChange={(e) => handleGenericChange('agreeToShare', e.target.checked)} color="primary"/>} /* Added color */
+          control={<Checkbox checked={formData.agreeToShare} onChange={(e) => handleGenericChange('agreeToShare', e.target.checked)} color="primary" />} /* Added color */
           label="I agree to share my details with financial partners to find the best loan offers."
-          sx={{mb:1}}
+          sx={{ mb: 1 }}
         />
         <FormControlLabel
-          control={<Checkbox checked={formData.getCreditReport} onChange={(e) => handleGenericChange('getCreditReport', e.target.checked)} color="primary"/>} /* Added color */
+          control={<Checkbox checked={formData.getCreditReport} onChange={(e) => handleGenericChange('getCreditReport', e.target.checked)} color="primary" />} /* Added color */
           label="Yes, get my free credit report to pre-check eligibility (soft inquiry, won't affect score)."
         />
       </Box>
-       <Typography variant="caption" display="block" sx={{ mt: 2, textAlign: 'center', color: 'text.secondary' }}>
-          By clicking "Pay ₹499 & See All Offers", you agree to our Terms & Conditions.
-       </Typography>
+      <Typography variant="caption" display="block" sx={{ mt: 2, textAlign: 'center', color: 'text.secondary' }}>
+        By clicking "Pay ₹499 & See All Offers", you agree to our Terms & Conditions.
+      </Typography>
     </Box>
   );
 };
@@ -748,7 +777,8 @@ const initialFormData = {
   yearsInBusiness: '',
   salarySlipFile: null as FilePlaceholder | null,
   // Step 4: Location & Contact
-  building: '',
+  addressLine1: '', // required
+  addressLine2: '', // optional
   city: '',
   pincode: '',
   mobileNumber: '98******90', // Default or prefill
@@ -764,6 +794,37 @@ export default function PersonalLoanPage() {
   const [formData, setFormData] = useState(initialFormData);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+
+  // --- Cross-fade background logic ---
+  const bgImages = [
+    '/personal-loan-bg-1.jpg',
+    '/personal-loan-bg-2.jpg',
+    '/personal-loan-bg-3.jpg',
+  ];
+  const [currentBg, setCurrentBg] = useState(0);
+  const [nextBg, setNextBg] = useState(1);
+  const [fade, setFade] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFade(true); // Start fade
+      setTimeout(() => {
+        setCurrentBg((prev) => nextBg);
+        setNextBg((prev) => (nextBg + 1) % bgImages.length);
+        setFade(false); // Reset fade
+      }, 1000); // Fade duration (ms)
+    }, 6000); // Change every 6 seconds
+    return () => clearInterval(interval);
+  }, [nextBg, bgImages.length]);
+
+  // Preload images for smooth transition
+  useEffect(() => {
+    bgImages.forEach((src) => {
+      const img = new window.Image();
+      img.src = src;
+    });
+  }, []);
+  // --- End cross-fade logic ---
 
   const handleGenericChange = (field: keyof typeof initialFormData, fieldValue: any) => {
     setFormData(prev => ({ ...prev, [field]: fieldValue }));
@@ -808,32 +869,32 @@ export default function PersonalLoanPage() {
     switch (step) {
       case 0:
         return <LoanExplorerStep
-                  formData={formData}
-                  handleGenericChange={handleGenericChange}
-                  loanPurposes={loanPurposesList}
-                />;
+          formData={formData}
+          handleGenericChange={handleGenericChange}
+          loanPurposes={loanPurposesList}
+        />;
       case 1:
         return <IdentityCheckStep
-                  formData={formData}
-                  handleFileMetaChange={handleFileMetaChange}
-                />;
+          formData={formData}
+          handleFileMetaChange={handleFileMetaChange}
+        />;
       case 2:
         return <EmploymentProfilerStep
-                  formData={formData}
-                  handleGenericChange={handleGenericChange}
-                  handleFileMetaChange={handleFileMetaChange}
-                  employmentTypes={employmentTypesList}
-                />;
+          formData={formData}
+          handleGenericChange={handleGenericChange}
+          handleFileMetaChange={handleFileMetaChange}
+          employmentTypes={employmentTypesList}
+        />;
       case 3:
         return <LocationContactStep
-                  formData={formData}
-                  handleGenericChange={handleGenericChange}
-                />;
+          formData={formData}
+          handleGenericChange={handleGenericChange}
+        />;
       case 4:
         return <FinalReviewStep
-                  formData={formData}
-                  handleGenericChange={handleGenericChange}
-                />;
+          formData={formData}
+          handleGenericChange={handleGenericChange}
+        />;
       default:
         return <Typography>Unknown Step</Typography>;
     }
@@ -851,7 +912,7 @@ export default function PersonalLoanPage() {
       setIsLoading(false);
       return;
     }
-    
+
     const { panFile, aadhaarFrontFile, aadhaarBackFile, salarySlipFile, ...otherFormData } = formData;
 
     const submissionData = {
@@ -866,38 +927,39 @@ export default function PersonalLoanPage() {
         salary_slip: salarySlipFile ? salarySlipFile.name : "NOT_UPLOADED",
       },
       contact_details: {
-           mobile: formData.mobileNumber,
-           email: formData.email,
-           backup_email: formData.backupEmail,
+        mobile: formData.mobileNumber,
+        email: formData.email,
+        backup_email: formData.backupEmail,
       },
       address_details: {
-           building: formData.building,
-           city: formData.city,
-           pincode: formData.pincode,
+        address_line_1: formData.addressLine1,
+        address_line_2: formData.addressLine2,
+        city: formData.city,
+        pincode: formData.pincode,
       },
       employment_details: {
-           type: formData.employmentType,
-           company_name: formData.companyName,
-           designation: formData.designation,
-           business_name: formData.businessName,
-           nature_of_business: formData.natureOfBusiness,
-           years_in_business: formData.yearsInBusiness,
+        type: formData.employmentType,
+        company_name: formData.companyName,
+        designation: formData.designation,
+        business_name: formData.businessName,
+        nature_of_business: formData.natureOfBusiness,
+        years_in_business: formData.yearsInBusiness,
       },
       consents: {
-           agree_to_share: formData.agreeToShare,
-           get_credit_report: formData.getCreditReport,
+        agree_to_share: formData.agreeToShare,
+        get_credit_report: formData.getCreditReport,
       }
     };
 
     if (isNaN(submissionData.amount_requested) || submissionData.amount_requested <= 0) {
-        setMessage({ type: 'error', text: 'Invalid loan amount. Please review Step 1.' });
-        setIsLoading(false);
-        return;
+      setMessage({ type: 'error', text: 'Invalid loan amount. Please review Step 1.' });
+      setIsLoading(false);
+      return;
     }
     if (isNaN(submissionData.tenure_months_requested) || submissionData.tenure_months_requested <= 0) {
-        setMessage({ type: 'error', text: 'Invalid loan tenure. Please review Step 1.' });
-        setIsLoading(false);
-        return;
+      setMessage({ type: 'error', text: 'Invalid loan tenure. Please review Step 1.' });
+      setIsLoading(false);
+      return;
     }
 
     try {
@@ -931,70 +993,128 @@ export default function PersonalLoanPage() {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ py: { xs: 3, sm: 4, md: 6 } }}>
-      <Paper elevation={3} sx={{ p: { xs: 2, sm: 3, md: 4 }, borderRadius: 2, boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}>
-        <Typography variant="h4" component="h1" textAlign="center" gutterBottom sx={{ fontWeight: 'bold', mb: {xs: 3, md: 4} }}>
-          Personal Loan Application
-        </Typography>
+    <Box sx={{ position: 'relative', width: '100%', overflow: 'auto' }}>
+      {/* Cross-fade background images */}
+      <Box
+        sx={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100vh',
+          backgroundImage: `url(${bgImages[currentBg]})`,
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          opacity: fade ? 0 : 0.25,
+          zIndex: -2,
+          pointerEvents: 'none',
+          transition: 'opacity 2s ease',
+        }}
+      />
+      <Box
+        sx={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100vh',
+          backgroundImage: `url(${bgImages[nextBg]})`,
+          backgroundSize: 'cover',
+          backgroundRepeat: 'no-repeat',
+          opacity: fade ? 0.25 : 0,
+          zIndex: -1,
+          pointerEvents: 'none',
+          transition: 'opacity 5s ease',
+        }}
+      />
+      {/* Foreground content */}
+      <Container maxWidth="lg" sx={{ py: { xs: 3, sm: 4, md: 6 }, position: 'relative', zIndex: 1 }}>
+        <Paper elevation={3} sx={{ p: { xs: 2, sm: 3, md: 4 }, borderRadius: 2, boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}>
+          <Typography variant="h4" component="h1" textAlign="center" gutterBottom sx={{ fontWeight: 'bold', mb: { xs: 3, md: 4 } }}>
+            Personal Loan Application
+          </Typography>
 
-        <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 4 }}>
-          {steps.map((label, idx) => (
-            <Step key={label}>
-              <StepLabel>
-                <Box
-                  component="span"
-                  onClick={() => setActiveStep(idx)}
-                  sx={{ cursor: 'pointer', display: 'inline-block', px: 1 }}
-                >
-                  {label}
-                </Box>
-              </StepLabel>
-            </Step>
-          ))}
-        </Stepper>
-
-        <Box component="form" onSubmit={activeStep === steps.length -1 ? handleSubmit : (e) => { e.preventDefault(); handleNext();}} noValidate>
-          {message && (
-            <Grid sx={{xs:12, mb:2}}>
-              <Alert severity={message.type} onClose={() => setMessage(null)}>{message.text}</Alert>
-            </Grid>
-          )}
-
-          {getStepContent(activeStep)}
-
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 4 }}>
-            <Button
-              disabled={activeStep === 0 || isLoading}
-              onClick={handleBack}
-              sx={{ mr: 1 }}
+          {/* Responsive Stepper Wrapper */}
+          <Box
+            sx={{
+              overflowX: { xs: 'auto', sm: 'auto', md: 'visible' },
+              whiteSpace: { xs: 'nowrap', sm: 'nowrap', md: 'normal' },
+              WebkitOverflowScrolling: 'touch',
+              msOverflowStyle: 'none', // IE/Edge
+              scrollbarWidth: 'none', // Firefox
+              '&::-webkit-scrollbar': { display: 'none' }, // Chrome/Safari
+              mb: 4,
+            }}
+          >
+            <Stepper
+              activeStep={activeStep}
+              alternativeLabel
+              sx={{
+                minWidth: { xs: '600px', sm: '700px', md: '0' },
+                mb: 0,
+                // Ensure Stepper doesn't wrap steps
+                flexWrap: { xs: 'nowrap', sm: 'nowrap', md: 'wrap' },
+              }}
             >
-              Back
-            </Button>
-            {activeStep === steps.length - 1 ? (
-              <Button
-                variant="contained"
-                color="primary"
-                disabled={isLoading || !formData.agreeToShare}
-                type="submit"
-                sx={{px: 3, py:1}}
-              >
-                {isLoading ? 'Submitting...' : 'Pay ₹499 & See All Offers'}
-              </Button>
-            ) : (
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleNext}
-                disabled={isLoading}
-                type="button"
-                sx={{px: 3, py:1}}
-              >
-                Next
-              </Button>
-            )}
+              {steps.map((label, idx) => (
+                <Step key={label}>
+                  <StepLabel>
+                    <Box
+                      component="span"
+                      onClick={() => setActiveStep(idx)}
+                      sx={{ cursor: 'pointer', display: 'inline-block', px: 1 }}
+                    >
+                      {label}
+                    </Box>
+                  </StepLabel>
+                </Step>
+              ))}
+            </Stepper>
           </Box>
-        </Box>
-      </Paper>
-    </Container>
+
+          <Box component="form" onSubmit={activeStep === steps.length - 1 ? handleSubmit : (e) => { e.preventDefault(); handleNext(); }} noValidate>
+            {message && (
+              <Grid sx={{ xs: 12, mb: 2 }}>
+                <Alert severity={message.type} onClose={() => setMessage(null)}>{message.text}</Alert>
+              </Grid>
+            )}
+
+            {getStepContent(activeStep)}
+
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 4 }}>
+              <Button
+                disabled={activeStep === 0 || isLoading}
+                onClick={handleBack}
+                sx={{ mr: 1 }}
+              >
+                Back
+              </Button>
+              {activeStep === steps.length - 1 ? (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  disabled={isLoading || !formData.agreeToShare}
+                  type="submit"
+                  sx={{ px: 3, py: 1 }}
+                >
+                  {isLoading ? 'Submitting...' : 'Pay ₹499 & See All Offers'}
+                </Button>
+              ) : (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleNext}
+                  disabled={isLoading}
+                  type="button"
+                  sx={{ px: 3, py: 1 }}
+                >
+                  Next
+                </Button>
+              )}
+            </Box>
+          </Box>
+        </Paper>
+      </Container>
+    </Box>
   );
 }

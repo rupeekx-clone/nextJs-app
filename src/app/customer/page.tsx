@@ -4,6 +4,7 @@ import { Container, Typography, Box, TextField, Button, Grid, Paper, Link as Mui
 import NextLink from 'next/link'; // For navigation links
 import { useState } from 'react';
 import { useAxios } from '@/lib/useAxios';
+import AuthBackgroundRotator from '@/components/AuthBackgroundRotator';
 
 export default function CustomerLoginPage() {
   const [mobile, setMobile] = useState('');
@@ -37,87 +38,90 @@ export default function CustomerLoginPage() {
   };
 
   return (
-    <Container 
-      maxWidth="xs" 
-      sx={{ 
-        display: 'flex', 
-        flexDirection: 'column', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        minHeight: 'calc(100vh - 120px)', // Adjust 120px based on header/footer height
-        py: 4 
-      }}
-    >
-      <Paper 
-        elevation={6} 
+    <>
+      <AuthBackgroundRotator />
+      <Container 
+        maxWidth="xs" 
         sx={{ 
-          p: {xs: 2, sm: 4}, // Responsive padding
-          width: '100%',
-          borderRadius: 2
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          minHeight: 'calc(100vh - 120px)', // Adjust 120px based on header/footer height
+          py: 4 
         }}
       >
-        <Typography variant="h4" component="h1" textAlign="center" gutterBottom sx={{ fontWeight: 'bold', mb: 3 }}>
-          Customer Login
-        </Typography>
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            id="mobile"
-            label="Mobile Number"
-            name="mobile"
-            autoComplete="tel"
-            autoFocus
-            value={mobile}
-            onChange={e => setMobile(e.target.value)}
-            inputProps={{ maxLength: 10, pattern: '[0-9]*' }}
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-          />
-          {error && (
-            <Typography color="error" sx={{ mt: 1, mb: 1 }}>
-              {error}
-            </Typography>
-          )}
-          {success && (
-            <Typography color="success.main" sx={{ mt: 1, mb: 1 }}>
-              {success}
-            </Typography>
-          )}
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2, py: 1.5 }}
-            disabled={loading}
-          >
-            {loading ? 'Signing In...' : 'Sign In'}
-          </Button>
-          <Grid container>
-            <Grid size={{ xs: 12 }}>
-              <MuiLink component={NextLink} href="/customer/forgot-password" variant="body2">
-                Forgot password?
-              </MuiLink>
+        <Paper 
+          elevation={6} 
+          sx={{ 
+            p: {xs: 2, sm: 4}, // Responsive padding
+            width: '100%',
+            borderRadius: 2
+          }}
+        >
+          <Typography variant="h4" component="h1" textAlign="center" gutterBottom sx={{ fontWeight: 'bold', mb: 3 }}>
+            Customer Login
+          </Typography>
+          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="mobile"
+              label="Mobile Number"
+              name="mobile"
+              autoComplete="tel"
+              autoFocus
+              value={mobile}
+              onChange={e => setMobile(e.target.value)}
+              inputProps={{ maxLength: 10, pattern: '[0-9]*' }}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+            />
+            {error && (
+              <Typography color="error" sx={{ mt: 1, mb: 1 }}>
+                {error}
+              </Typography>
+            )}
+            {success && (
+              <Typography color="success.main" sx={{ mt: 1, mb: 1 }}>
+                {success}
+              </Typography>
+            )}
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2, py: 1.5 }}
+              disabled={loading}
+            >
+              {loading ? 'Signing In...' : 'Sign In'}
+            </Button>
+            <Grid container>
+              <Grid size={{ xs: 12 }}>
+                <MuiLink component={NextLink} href="/customer/forgot-password" variant="body2">
+                  Forgot password?
+                </MuiLink>
+              </Grid>
+              <Grid size={{ xs: 12 }}>
+                <MuiLink component={NextLink} href="#" variant="body2"> {/* Link to a future signup page */}
+                  {"Don't have an account? Sign Up"}
+                </MuiLink>
+              </Grid>
             </Grid>
-            <Grid size={{ xs: 12 }}>
-              <MuiLink component={NextLink} href="#" variant="body2"> {/* Link to a future signup page */}
-                {"Don't have an account? Sign Up"}
-              </MuiLink>
-            </Grid>
-          </Grid>
-        </Box>
-      </Paper>
-    </Container>
+          </Box>
+        </Paper>
+      </Container>
+    </>
   );
 }

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Container, Typography, Box, TextField, Button, Paper } from "@mui/material";
 import { useAxios } from "@/lib/useAxios";
+import AuthBackgroundRotator from "@/components/AuthBackgroundRotator";
 
 export default function VerifyOtpPage() {
   const searchParams = useSearchParams();
@@ -38,6 +39,8 @@ export default function VerifyOtpPage() {
   };
 
   return (
+    <>
+    <AuthBackgroundRotator />
     <Container 
       maxWidth="xs" 
       sx={{ 
@@ -98,5 +101,6 @@ export default function VerifyOtpPage() {
         </Box>
       </Paper>
     </Container>
+    </>
   );
 } 
