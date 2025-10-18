@@ -106,7 +106,7 @@ const loanApplicationSchema: Schema<ILoanApplication> = new Schema({
 });
 
 // Indexes for performance
-loanApplicationSchema.index({ user_id: 1 });
+// user_id index is automatically created by ref field
 loanApplicationSchema.index({ status: 1 });
 loanApplicationSchema.index({ loan_type: 1 });
 loanApplicationSchema.index({ application_date: -1 });

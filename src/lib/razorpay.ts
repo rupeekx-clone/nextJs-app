@@ -1,11 +1,22 @@
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
 
-// Initialize Razorpay instance
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID!,
-  key_secret: process.env.RAZORPAY_KEY_SECRET!,
-});
+// Check if Razorpay credentials are available
+const hasRazorpayCredentials = () => {
+  return !!(process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET);
+};
+
+// Initialize Razorpay instance only if credentials are available
+let razorpay: Razorpay | null = null;
+
+if (hasRazorpayCredentials()) {
+  razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID!,
+    key_secret: process.env.RAZORPAY_KEY_SECRET!,
+  });
+} else {
+  console.warn('Razorpay credentials not found. Payment functionality will be disabled.');
+}
 
 export interface CreateOrderOptions {
   amount: number; // Amount in paise (INR)
@@ -25,6 +36,13 @@ export class RazorpayService {
    * Create a new order for payment
    */
   static async createOrder(options: CreateOrderOptions) {
+    if (!hasRazorpayCredentials() || !razorpay) {
+      return {
+        success: false,
+        error: 'Razorpay credentials not configured. Please contact support.',
+      };
+    }
+
     try {
       const order = await razorpay.orders.create({
         amount: options.amount,
@@ -55,6 +73,11 @@ export class RazorpayService {
    * Verify payment signature
    */
   static verifyPayment(options: PaymentVerificationOptions): boolean {
+    if (!hasRazorpayCredentials()) {
+      console.error('Razorpay credentials not configured for payment verification');
+      return false;
+    }
+
     try {
       const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = options;
       
@@ -75,6 +98,13 @@ export class RazorpayService {
    * Fetch payment details
    */
   static async getPaymentDetails(paymentId: string) {
+    if (!hasRazorpayCredentials() || !razorpay) {
+      return {
+        success: false,
+        error: 'Razorpay credentials not configured. Please contact support.',
+      };
+    }
+
     try {
       const payment = await razorpay.payments.fetch(paymentId);
       return {

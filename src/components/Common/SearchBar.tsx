@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { TextField, InputAdornment, IconButton, Box } from '@mui/material';
 import { Search, Clear } from '@mui/icons-material';
 
@@ -28,20 +28,17 @@ const SearchBar: React.FC<SearchBarProps> = ({
   clearable = true,
 }) => {
   const [query, setQuery] = useState(initialValue);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Debounced search function
-  const debouncedSearch = useCallback(
-    (() => {
-      let timeoutId: NodeJS.Timeout;
-      return (searchQuery: string) => {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-          onSearch(searchQuery);
-        }, debounceMs);
-      };
-    })(),
-    [onSearch, debounceMs]
-  );
+  const debouncedSearch = useCallback((searchQuery: string) => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    timeoutRef.current = setTimeout(() => {
+      onSearch(searchQuery);
+    }, debounceMs);
+  }, [onSearch, debounceMs]);
 
   // Effect to trigger search when query changes
   useEffect(() => {

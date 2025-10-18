@@ -60,7 +60,7 @@ const cashLendingSubscriptionSchema: Schema<ICashLendingSubscription> = new Sche
 });
 
 // Indexes
-cashLendingSubscriptionSchema.index({ user_id: 1 });
+// user_id index is automatically created by unique: true
 cashLendingSubscriptionSchema.index({ status: 1 });
 cashLendingSubscriptionSchema.index({ end_date: 1 });
 

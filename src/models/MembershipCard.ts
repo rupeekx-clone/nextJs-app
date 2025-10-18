@@ -65,7 +65,7 @@ const membershipCardSchema: Schema<IMembershipCard> = new Schema({
 });
 
 // Indexes
-membershipCardSchema.index({ user_id: 1 });
+// user_id index is automatically created by unique: true
 membershipCardSchema.index({ status: 1 });
 membershipCardSchema.index({ expiry_date: 1 });
 

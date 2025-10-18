@@ -67,7 +67,7 @@ const staticContentSchema: Schema<IStaticContent> = new Schema({
 });
 
 // Indexes
-staticContentSchema.index({ slug: 1 });
+// slug index is automatically created by unique: true
 staticContentSchema.index({ is_published: 1 });
 staticContentSchema.index({ last_updated_by: 1 });
 

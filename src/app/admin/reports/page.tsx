@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Container, Typography, Box, Grid, Card, CardContent, FormControl, InputLabel, Select, MenuItem, Button, Chip } from '@mui/material';
 import { DateRange, Download, TrendingUp, People, AccountBalance, Assessment, Schedule } from '@mui/icons-material';
 import StatsCard from '@/components/Admin/StatsCard';
@@ -47,7 +47,7 @@ export default function AdminReportsPage() {
     endDate: new Date(), // Today
   });
 
-  const fetchReportData = async () => {
+  const fetchReportData = useCallback(async () => {
     try {
       setLoading(true);
       
@@ -75,7 +75,7 @@ export default function AdminReportsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [dateRange]);
 
   const handleExportReport = (format: 'pdf' | 'csv') => {
     // Implement export functionality
@@ -96,7 +96,7 @@ export default function AdminReportsPage() {
 
   useEffect(() => {
     fetchReportData();
-  }, [dateRange]);
+  }, [dateRange, fetchReportData]);
 
 
   if (loading) {

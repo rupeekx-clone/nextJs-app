@@ -14,6 +14,7 @@ import {
   LinearProgress,
   Alert,
 } from '@mui/material';
+import Image from 'next/image';
 import {
   Close,
   Download,
@@ -161,11 +162,13 @@ const DocumentViewer: React.FC<DocumentViewerProps> = ({
             }}
           >
             {isImage ? (
-              <img
+              <Image
                 src={document.url}
                 alt={document.name}
                 onLoad={handleImageLoad}
                 onError={handleImageError}
+                width={800}
+                height={600}
                 style={{
                   maxWidth: '100%',
                   maxHeight: '100%',

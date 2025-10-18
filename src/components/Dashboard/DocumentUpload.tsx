@@ -37,51 +37,42 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
     setIsDragOver(false);
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(false);
-    
-    const files = Array.from(e.dataTransfer.files);
-    if (files.length > 0) {
-      handleFileUpload(files[0]);
-    }
-  }, []);
-
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      handleFileUpload(files[0]);
-    }
-  };
-
-  const handleFileUpload = async (file: File) => {
+  const handleFileUpload = useCallback(async (file: File) => {
     // Validate file type
     const allowedMimeTypes = acceptedFormats.map(format => {
       switch (format.toLowerCase()) {
-        case 'pdf': return 'application/pdf';
+        case 'pdf':
+          return 'application/pdf';
         case 'jpg':
-        case 'jpeg': return 'image/jpeg';
-        case 'png': return 'image/png';
-        default: return `application/${format}`;
+        case 'jpeg':
+          return 'image/jpeg';
+        case 'png':
+          return 'image/png';
+        case 'doc':
+          return 'application/msword';
+        case 'docx':
+          return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+        default:
+          return format;
       }
     });
-    
+
     if (!allowedMimeTypes.includes(file.type)) {
-      setError(`Please upload a ${acceptedFormats.join(', ').toUpperCase()} file`);
+      setError(`Invalid file type. Accepted formats: ${acceptedFormats.join(', ')}`);
       return;
     }
 
     // Validate file size
-    const maxSize = maxSizeMB * 1024 * 1024;
-    if (file.size > maxSize) {
-      setError(`File size must be less than ${maxSizeMB}MB`);
+    const maxSizeBytes = maxSizeMB * 1024 * 1024;
+    if (file.size > maxSizeBytes) {
+      setError(`File size exceeds ${maxSizeMB}MB limit`);
       return;
     }
 
-    setUploading(true);
     setError(null);
-    setSuccess(false);
+    setUploading(true);
     setUploadProgress(0);
+    setSuccess(false);
 
     try {
       // Simulate upload progress
@@ -93,33 +84,50 @@ const DocumentUpload: React.FC<DocumentUploadProps> = ({
           }
           return prev + 10;
         });
-      }, 200);
+      }, 100);
 
-      let result;
       if (onUpload) {
-        result = await onUpload(file);
+        const result = await onUpload(file);
+        clearInterval(progressInterval);
+        setUploadProgress(100);
+        
+        if (result.success) {
+          setSuccess(true);
+          setTimeout(() => setSuccess(false), 3000);
+        } else {
+          setError(result.error || 'Upload failed');
+        }
       } else {
-        // Default upload handling - simulate success
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        result = { success: true, url: URL.createObjectURL(file) };
-      }
-      
-      clearInterval(progressInterval);
-      setUploadProgress(100);
-
-      if (result.success) {
+        // Default upload behavior - just simulate success
+        clearInterval(progressInterval);
+        setUploadProgress(100);
         setSuccess(true);
         setTimeout(() => setSuccess(false), 3000);
-      } else {
-        setError(result.error || 'Upload failed');
       }
-    } catch (err: unknown) {
+    } catch (err) {
       setError(err instanceof Error ? (err as Error).message : 'Upload failed');
     } finally {
       setUploading(false);
-      setUploadProgress(0);
+    }
+  }, [acceptedFormats, maxSizeMB, onUpload]);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    
+    const files = Array.from(e.dataTransfer.files);
+    if (files.length > 0) {
+      handleFileUpload(files[0]);
+    }
+  }, [handleFileUpload]);
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      handleFileUpload(files[0]);
     }
   };
+
 
   const handleDelete = async () => {
     if (onDelete) {
