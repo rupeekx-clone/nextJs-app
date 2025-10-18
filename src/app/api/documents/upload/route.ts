@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withAuth, NextRequestWithUser } from '@/lib/authMiddleware';
 import { S3Service } from '@/lib/s3Upload';
-import { validateData, z } from '@/lib/validation';
+import { validateData } from '@/lib/validation';
+import { z } from 'zod';
 
 const uploadDocumentSchema = z.object({
   fileName: z.string().min(1, 'File name is required'),

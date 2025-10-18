@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withAuth, NextRequestWithUser } from '@/lib/authMiddleware';
 import { connectToDatabase } from '@/lib/mongodb';
-import { validateData, z } from '@/lib/validation';
+import { validateData } from '@/lib/validation';
+import { z } from 'zod';
 import MembershipCardType from '@/models/MembershipCardType';
 import CashLendingSubscriptionPlan from '@/models/CashLendingSubscriptionPlan';
 import { RazorpayService } from '@/lib/razorpay';
@@ -83,10 +84,10 @@ const createOrderHandler = async (req: NextRequestWithUser) => {
     }
 
     return NextResponse.json({
-      order_id: orderResult.order.id,
-      amount: orderResult.order.amount,
-      currency: orderResult.order.currency,
-      receipt: orderResult.order.receipt,
+      order_id: orderResult.order?.id,
+      amount: orderResult.order?.amount,
+      currency: orderResult.order?.currency,
+      receipt: orderResult.order?.receipt,
       item_name: itemName,
       item_type: validatedData.type,
       message: 'Payment order created successfully'
