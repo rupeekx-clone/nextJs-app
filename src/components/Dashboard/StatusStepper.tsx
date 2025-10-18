@@ -4,10 +4,7 @@ import React from 'react';
 import { Stepper, Step, StepLabel, StepContent, Typography, Box } from '@mui/material';
 import { 
   Description, 
-  Visibility, 
   CheckCircle, 
-  Cancel, 
-  AccountBalance,
   Schedule
 } from '@mui/icons-material';
 
@@ -121,7 +118,7 @@ const StatusStepper: React.FC<StatusStepperProps> = ({
       </Typography>
       
       <Stepper activeStep={displaySteps.length - 1} orientation="vertical">
-        {displaySteps.map((step, index) => (
+        {displaySteps.map((step) => (
           <Step key={step.status}>
             <StepLabel
               icon={getStepIcon(step.status, status)}

@@ -3,11 +3,11 @@
 import * as React from 'react';
 import { 
   Container, Typography, Button, Grid, Box, Card, CardContent, CardActions,
-  List, ListItem, ListItemIcon, ListItemText, Avatar
+  List, ListItem, ListItemIcon, ListItemText
 } from '@mui/material'; // Added Avatar
 import Link from 'next/link';
 import CheckCircleOutline from '@mui/icons-material/CheckCircleOutline'; // Import the icon
-import PersonIcon from '@mui/icons-material/Person'; // Import PersonIcon
+// import PersonIcon from '@mui/icons-material/Person'; // Import PersonIcon
 import MembershipCard from '@/components/Business/MembershipCard';
 import TestimonialCarousel from '@/components/Business/TestimonialCarousel';
 import BankPartners from '@/components/Business/BankPartners';

@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { withAdminAuth, NextRequestWithAdmin } from '@/lib/adminAuthMiddleware';
 import { connectToDatabase } from '@/lib/mongodb';
 import LoanApplication from '@/models/LoanApplication';
-import User from '@/models/User';
+// import User from '@/models/User';
 
 const getLoansHandler = async (req: NextRequestWithAdmin) => {
   try {
@@ -18,7 +18,7 @@ const getLoansHandler = async (req: NextRequestWithAdmin) => {
     await connectToDatabase();
 
     // Build query
-    const query: any = {};
+    const query: Record<string, unknown> = {};
     
     if (status) {
       query.status = status;
@@ -32,7 +32,7 @@ const getLoansHandler = async (req: NextRequestWithAdmin) => {
     const skip = (page - 1) * limit;
 
     // Build aggregation pipeline for search and user data
-    const pipeline: any[] = [
+    const pipeline: unknown[] = [
       { $match: query },
       {
         $lookup: {
@@ -79,14 +79,14 @@ const getLoansHandler = async (req: NextRequestWithAdmin) => {
     );
 
     // Execute aggregation
-    const applications = await LoanApplication.aggregate(pipeline);
+    const applications = await LoanApplication.aggregate(pipeline as never[]);
 
     // Get total count for pagination
     const countPipeline = [...pipeline];
     countPipeline.splice(-3); // Remove sort, skip, and limit
     countPipeline.push({ $count: 'total' });
     
-    const countResult = await LoanApplication.aggregate(countPipeline);
+    const countResult = await LoanApplication.aggregate(countPipeline as never[]);
     const totalEntries = countResult[0]?.total || 0;
     const totalPages = Math.ceil(totalEntries / limit);
 

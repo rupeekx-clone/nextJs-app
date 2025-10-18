@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, Box, Grid, Card, CardContent, Alert, Button, Chip, Divider, Paper } from '@mui/material';
-import { ArrowBack, Download, Upload, CheckCircle, Cancel, Info } from '@mui/icons-material';
+import { Container, Typography, Box, Grid, Card, CardContent, Alert, Button, Chip, Paper } from '@mui/material';
+import { ArrowBack, Download, CheckCircle, Cancel, Info } from '@mui/icons-material';
 import StatusStepper from '@/components/Dashboard/StatusStepper';
 import LoadingSpinner from '@/components/Common/LoadingSpinner';
 import { useRouter } from 'next/navigation';
@@ -47,22 +47,18 @@ interface UserProfile {
   phone_number: string;
 }
 
-export default function LoanDetailPage({ params }: { params: { id: string } }) {
+export default function LoanDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const [application, setApplication] = useState<LoanApplication | null>(null);
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  useEffect(() => {
-    fetchLoanDetails();
-  }, [params.id]);
-
-  const fetchLoanDetails = async () => {
+  const fetchLoanDetails = async (id: string) => {
     try {
       setLoading(true);
       
-      const response = await fetch(`/api/loans/${params.id}`, {
+      const response = await fetch(`/api/loans/${id}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
         },
@@ -137,6 +133,16 @@ export default function LoanDetailPage({ params }: { params: { id: string } }) {
     return Math.round(emi);
   };
 
+  
+  useEffect(() => {
+    const initializeParams = async () => {
+      const resolvedParams = await params;
+      fetchLoanDetails(resolvedParams.id);
+    };
+    
+    initializeParams();
+  }, [params]);
+
   if (loading) {
     return (
       <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -178,7 +184,7 @@ export default function LoanDetailPage({ params }: { params: { id: string } }) {
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <Chip 
                 label={application.status.replace('_', ' ').toUpperCase()} 
-                color={getStatusColor(application.status) as any}
+                color={getStatusColor(application.status) as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
                 size="medium"
               />
               <Typography variant="body2" color="text.secondary">

@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Container, Typography, Box, Grid, Card, CardContent, Button, Alert, Divider, Chip, List, ListItem, ListItemText, ListItemIcon, Tabs, Tab } from '@mui/material';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Container, Typography, Box, Grid, Card, CardContent, Button, Alert, Chip, List, ListItem, ListItemText, ListItemIcon, Tabs, Tab } from '@mui/material';
 import { ArrowBack, Person, Email, Phone, LocationOn, CalendarToday, Security, Block, CheckCircle } from '@mui/icons-material';
 import { useRouter, useParams } from 'next/navigation';
 import StatusBadge from '@/components/Admin/StatusBadge';
@@ -80,13 +80,7 @@ export default function AdminUserDetailPage() {
   const params = useParams();
   const userId = params.id as string;
 
-  useEffect(() => {
-    if (userId) {
-      fetchUserDetails();
-    }
-  }, [userId]);
-
-  const fetchUserDetails = async () => {
+  const fetchUserDetails = useCallback(async () => {
     try {
       setLoading(true);
       
@@ -110,7 +104,13 @@ export default function AdminUserDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    if (userId) {
+      fetchUserDetails();
+    }
+  }, [userId, fetchUserDetails]);
 
   const handleSuspendUser = async () => {
     if (!confirm('Are you sure you want to suspend this user?')) {
@@ -201,26 +201,26 @@ export default function AdminUserDetailPage() {
       label: 'Amount Requested',
       minWidth: 150,
       align: 'right',
-      render: (value) => formatCurrency(value),
+      render: (value) => formatCurrency(Number(value)),
     },
     {
       id: 'amount_approved',
       label: 'Amount Approved',
       minWidth: 150,
       align: 'right',
-      render: (value) => value ? formatCurrency(value) : 'Pending',
+      render: (value) => value ? formatCurrency(Number(value)) : 'Pending',
     },
     {
       id: 'status',
       label: 'Status',
       minWidth: 150,
-      render: (value) => <StatusBadge status={value} />,
+      render: (value) => <StatusBadge status={String(value)} />,
     },
     {
       id: 'application_date',
       label: 'Application Date',
       minWidth: 120,
-      render: (value) => formatDate(value),
+      render: (value) => formatDate(String(value)),
     },
   ];
 

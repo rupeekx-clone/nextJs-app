@@ -3,10 +3,10 @@
 import { Container, Typography, Box, TextField, Button, Grid, Paper, FormControl, InputLabel, Select, MenuItem, Card, CardContent, Accordion, AccordionSummary, AccordionDetails, Alert, Chip, Divider } from '@mui/material';
 import { ExpandMore, Support, CheckCircle, Info, Warning, Error } from '@mui/icons-material';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+// import { useRouter } from 'next/navigation';
 
 export default function RaiseRequestPage() {
-  const router = useRouter();
+  //  const router = useRouter();
   const [formData, setFormData] = useState({
     userType: '',
     fullName: '',
@@ -122,7 +122,7 @@ export default function RaiseRequestPage() {
           Raise a Request
         </Typography>
         <Typography variant="h6" component="p" gutterBottom sx={{ color: 'text.secondary', mb: 3 }}>
-          We're here to help! Submit your request and our support team will get back to you within 24 hours.
+          We&apos;re here to help! Submit your request and our support team will get back to you within 24 hours.
         </Typography>
       </Box>
 
@@ -136,7 +136,7 @@ export default function RaiseRequestPage() {
             
             {submitStatus === 'success' && (
               <Alert severity="success" sx={{ mb: 3 }}>
-                Your request has been submitted successfully! We'll get back to you within 24 hours.
+                Your request has been submitted successfully! We&apos;ll get back to you within 24 hours.
               </Alert>
             )}
             
@@ -251,7 +251,7 @@ export default function RaiseRequestPage() {
                         <MenuItem key={level.value} value={level.value}>
                           <Chip 
                             label={level.label} 
-                            color={level.color as any} 
+                            color={level.color as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'} 
                             size="small" 
                             sx={{ mr: 1 }}
                           />

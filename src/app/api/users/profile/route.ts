@@ -1,4 +1,4 @@
-import { NextResponse, NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 import User from '@/models/User';
 import { connectToDatabase } from '@/lib/mongodb';
 import { withAuth, NextRequestWithUser } from '@/lib/authMiddleware';
@@ -65,7 +65,7 @@ const updateProfileHandler = async (req: NextRequestWithUser) => {
     const user = await User.findByIdAndUpdate(
       userId,
       { 
-        ...(validation.data as any),
+        ...(validation.data as { full_name?: string; phone_number?: string; address_line1?: string; address_line2?: string; city?: string; pincode?: string; }),
         updated_at: new Date()
       },
       { new: true, runValidators: true }

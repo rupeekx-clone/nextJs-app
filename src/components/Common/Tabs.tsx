@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Box, Tabs as MuiTabs, Tab, Typography } from '@mui/material';
+import { Box, Tabs as MuiTabs, Tab } from '@mui/material';
 
 interface TabPanelProps {
   children?: React.ReactNode;

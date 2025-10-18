@@ -54,7 +54,7 @@ const MembershipStatus: React.FC<MembershipStatusProps> = ({ membership }) => {
         <Box sx={{ mb: 2 }}>
           <Badge 
             label={getStatusText()} 
-            color={getStatusColor() as any}
+            color={getStatusColor() as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
             variant="filled"
           />
         </Box>

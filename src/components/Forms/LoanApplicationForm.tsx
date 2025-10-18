@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Input from '../Common/Input';
 import Button from '../Common/Button';
-import { validateData, loanApplicationSchema } from '@/lib/validation';
+// import { validateData, loanApplicationSchema } from '@/lib/validation';
 
 const loanFormSchema = z.object({
   loan_type: z.enum(['personal', 'business'], {

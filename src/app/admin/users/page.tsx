@@ -1,11 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Container, Typography, Box, Grid, Card, CardContent, TextField, Button, FormControl, InputLabel, Select, MenuItem, Chip, Avatar } from '@mui/material';
 import { Search, FilterList, Download, Refresh, Person, Email, Phone } from '@mui/icons-material';
 import DataTable, { Column } from '@/components/Admin/DataTable';
 import StatusBadge from '@/components/Admin/StatusBadge';
-import LoadingSpinner from '@/components/Common/LoadingSpinner';
 import { useRouter } from 'next/navigation';
 
 interface User {
@@ -33,11 +32,7 @@ export default function AdminUsersPage() {
   const [userTypeFilter, setUserTypeFilter] = useState('');
   const router = useRouter();
 
-  useEffect(() => {
-    fetchUsers();
-  }, [page, rowsPerPage, searchTerm, statusFilter, userTypeFilter]);
-
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
       
@@ -68,7 +63,11 @@ export default function AdminUsersPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, rowsPerPage, searchTerm, statusFilter, userTypeFilter]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-IN', {
@@ -112,14 +111,14 @@ export default function AdminUsersPage() {
       render: (value, row) => (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main' }}>
-            {value.charAt(0).toUpperCase()}
+            {String(value).charAt(0).toUpperCase()}
           </Avatar>
           <Box>
             <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-              {value}
+              {String(value)}
             </Typography>
             <Typography variant="caption" color="text.secondary">
-              ID: {row._id.slice(-8)}
+              ID: {String((row as { _id: string })._id).slice(-8)}
             </Typography>
           </Box>
         </Box>
@@ -132,9 +131,9 @@ export default function AdminUsersPage() {
       render: (value, row) => (
         <Box>
           <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-            {value}
+            {String(value)}
           </Typography>
-          {row.email_verified_at && (
+          {String((row as { email_verified_at?: string }).email_verified_at) && (
             <Chip
               label="Verified"
               color="success"
@@ -152,9 +151,9 @@ export default function AdminUsersPage() {
       render: (value, row) => (
         <Box>
           <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-            {value}
+            {String(value)}
           </Typography>
-          {row.phone_verified_at && (
+          {String((row as { phone_verified_at?: string }).phone_verified_at) && (
             <Chip
               label="Verified"
               color="success"
@@ -181,7 +180,7 @@ export default function AdminUsersPage() {
       id: 'status',
       label: 'Status',
       minWidth: 150,
-      render: (value) => <StatusBadge status={value} />,
+      render: (value) => <StatusBadge status={String(value)} />,
     },
     {
       id: 'created_at',
@@ -189,7 +188,7 @@ export default function AdminUsersPage() {
       minWidth: 120,
       render: (value) => (
         <Typography variant="body2">
-          {formatDate(value)}
+          {formatDate(String(value))}
         </Typography>
       ),
     },
@@ -199,7 +198,7 @@ export default function AdminUsersPage() {
       minWidth: 120,
       render: (value) => (
         <Typography variant="body2" color="text.secondary">
-          {value ? formatDate(value) : 'Never'}
+          {value ? formatDate(String(value)) : 'Never'}
         </Typography>
       ),
     },
@@ -380,13 +379,13 @@ export default function AdminUsersPage() {
             columns={columns}
             data={users}
             loading={loading}
-            onRowClick={handleRowClick}
+            onRowClick={(row) => handleRowClick(row as User)}
             onPageChange={handlePageChange}
             totalCount={totalCount}
             page={page}
             rowsPerPage={rowsPerPage}
             selectable={true}
-            getRowId={(row) => row._id}
+            getRowId={(row) => (row as { _id: string })._id}
           />
         </CardContent>
       </Card>

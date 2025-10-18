@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Container, Typography, Box, Grid, Card, CardContent, Button, Alert, Divider, Chip, List, ListItem, ListItemText, ListItemIcon } from '@mui/material';
-import { ArrowBack, CheckCircle, Cancel, Description, Person, AccountBalance, Schedule } from '@mui/icons-material';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Container, Typography, Box, Grid, Card, CardContent, Button, Alert, Chip, List, ListItem, ListItemText, ListItemIcon } from '@mui/material';
+import { ArrowBack, CheckCircle, Cancel, Description } from '@mui/icons-material';
 import { useRouter, useParams } from 'next/navigation';
 import StatusBadge from '@/components/Admin/StatusBadge';
 import LoadingSpinner from '@/components/Common/LoadingSpinner';
@@ -86,18 +86,11 @@ export default function AdminLoanDetailPage() {
     register: registerRejection,
     handleSubmit: handleRejectionSubmit,
     formState: { errors: rejectionErrors },
-    reset: resetRejection,
   } = useForm<RejectionFormData>({
     resolver: zodResolver(rejectionSchema),
   });
 
-  useEffect(() => {
-    if (applicationId) {
-      fetchApplicationDetails();
-    }
-  }, [applicationId]);
-
-  const fetchApplicationDetails = async () => {
+  const fetchApplicationDetails = useCallback(async () => {
     try {
       setLoading(true);
       
@@ -127,7 +120,13 @@ export default function AdminLoanDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [applicationId, resetApproval]);
+
+  useEffect(() => {
+    if (applicationId) {
+      fetchApplicationDetails();
+    }
+  }, [applicationId, fetchApplicationDetails]);
 
   const handleApproval = async (data: ApprovalFormData) => {
     try {
@@ -440,7 +439,7 @@ export default function AdminLoanDetailPage() {
                 </Typography>
               ) : (
                 <List>
-                  {Object.entries(application.documents_submitted).map(([docType, docUrl], index) => (
+                  {Object.entries(application.documents_submitted).map(([docType, docUrl]) => (
                     <ListItem key={docType} sx={{ px: 0 }}>
                       <ListItemIcon>
                         <Description />
@@ -560,7 +559,6 @@ export default function AdminLoanDetailPage() {
               {...registerApproval('interest_rate', { valueAsNumber: true })}
               label="Interest Rate (%)"
               type="number"
-              step="0.1"
               fullWidth
               required
               error={!!approvalErrors.interest_rate}

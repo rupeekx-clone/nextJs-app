@@ -1,11 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Container, Typography, Box, Grid, Card, CardContent, TextField, Button, FormControl, InputLabel, Select, MenuItem, Chip } from '@mui/material';
 import { Search, FilterList, Download, Refresh } from '@mui/icons-material';
 import DataTable, { Column } from '@/components/Admin/DataTable';
 import StatusBadge from '@/components/Admin/StatusBadge';
-import LoadingSpinner from '@/components/Common/LoadingSpinner';
 import { useRouter } from 'next/navigation';
 
 interface LoanApplication {
@@ -34,11 +33,7 @@ export default function AdminLoansPage() {
   const [loanTypeFilter, setLoanTypeFilter] = useState('');
   const router = useRouter();
 
-  useEffect(() => {
-    fetchApplications();
-  }, [page, rowsPerPage, searchTerm, statusFilter, loanTypeFilter]);
-
-  const fetchApplications = async () => {
+  const fetchApplications = useCallback(async () => {
     try {
       setLoading(true);
       
@@ -69,7 +64,11 @@ export default function AdminLoansPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, rowsPerPage, searchTerm, statusFilter, loanTypeFilter]);
+
+  useEffect(() => {
+    fetchApplications();
+  }, [fetchApplications]);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -120,7 +119,7 @@ export default function AdminLoansPage() {
       minWidth: 150,
       render: (value) => (
         <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-          {value}
+          {String(value)}
         </Typography>
       ),
     },
@@ -131,10 +130,10 @@ export default function AdminLoansPage() {
       render: (value, row) => (
         <Box>
           <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-            {value || 'N/A'}
+            {String(value) || 'N/A'}
           </Typography>
           <Typography variant="caption" color="text.secondary">
-            {row.user_phone || 'N/A'}
+            {String((row as { user_phone?: string }).user_phone) || 'N/A'}
           </Typography>
         </Box>
       ),
@@ -158,7 +157,7 @@ export default function AdminLoansPage() {
       align: 'right',
       render: (value) => (
         <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-          {formatCurrency(value)}
+          {formatCurrency(Number(value))}
         </Typography>
       ),
     },
@@ -169,7 +168,7 @@ export default function AdminLoansPage() {
       align: 'right',
       render: (value) => (
         <Typography variant="body2" sx={{ fontWeight: 'medium', color: value ? 'success.main' : 'text.secondary' }}>
-          {value ? formatCurrency(value) : 'Pending'}
+          {value ? formatCurrency(Number(value)) : 'Pending'}
         </Typography>
       ),
     },
@@ -177,7 +176,7 @@ export default function AdminLoansPage() {
       id: 'status',
       label: 'Status',
       minWidth: 150,
-      render: (value) => <StatusBadge status={value} />,
+      render: (value) => <StatusBadge status={String(value)} />,
     },
     {
       id: 'application_date',
@@ -185,7 +184,7 @@ export default function AdminLoansPage() {
       minWidth: 120,
       render: (value) => (
         <Typography variant="body2">
-          {formatDate(value)}
+          {formatDate(String(value))}
         </Typography>
       ),
     },
@@ -301,13 +300,13 @@ export default function AdminLoansPage() {
             columns={columns}
             data={applications}
             loading={loading}
-            onRowClick={handleRowClick}
+            onRowClick={(row) => handleRowClick(row as LoanApplication)}
             onPageChange={handlePageChange}
             totalCount={totalCount}
             page={page}
             rowsPerPage={rowsPerPage}
             selectable={true}
-            getRowId={(row) => row._id}
+            getRowId={(row) => (row as { _id: string })._id}
           />
         </CardContent>
       </Card>

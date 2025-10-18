@@ -37,9 +37,9 @@ const Pagination: React.FC<PaginationProps> = ({
     onPageChange(page);
   };
 
-  const handleItemsPerPageChange = (event: any) => {
+  const handleItemsPerPageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     if (onItemsPerPageChange) {
-      onItemsPerPageChange(event.target.value);
+      onItemsPerPageChange(Number(event.target.value));
     }
   };
 

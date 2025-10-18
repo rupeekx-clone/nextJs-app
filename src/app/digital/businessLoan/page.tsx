@@ -1,7 +1,7 @@
 'use client';
 
 import { Container, Typography, Box, TextField, Button, Grid, Paper, FormControl, InputLabel, Select, MenuItem, Card, CardContent, List, ListItem, ListItemIcon, ListItemText, Chip } from '@mui/material';
-import { CheckCircleOutline, Business, TrendingUp, Security, Speed, Support, AccountBalance } from '@mui/icons-material';
+import { CheckCircleOutline, Business, TrendingUp, Security, AccountBalance } from '@mui/icons-material';
 import { useState, useEffect, useMemo } from 'react';
 
 export default function BusinessLoanPage() {

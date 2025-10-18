@@ -38,19 +38,19 @@ export async function POST(req: NextRequest) {
 
     // Generate tokens
     const accessToken = generateAccessToken({
-      userId: admin._id.toString(),
+      userId: (admin._id as { toString(): string }).toString(),
       email: admin.email,
       userType: admin.user_type,
     });
 
     const refreshToken = generateRefreshToken({
-      userId: admin._id.toString(),
+      userId: (admin._id as { toString(): string }).toString(),
       email: admin.email,
       userType: admin.user_type,
     });
 
     // Update last login
-    admin.last_login = new Date();
+    (admin as { last_login?: Date }).last_login = new Date();
     await admin.save();
 
     const response = NextResponse.json({

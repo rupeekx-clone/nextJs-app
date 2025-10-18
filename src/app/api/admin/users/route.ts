@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { withAdminAuth, NextRequestWithAdmin } from '@/lib/adminAuthMiddleware';
 import { connectToDatabase } from '@/lib/mongodb';
 import User from '@/models/User';
@@ -17,7 +17,7 @@ const getUsersHandler = async (req: NextRequestWithAdmin) => {
     await connectToDatabase();
 
     // Build query
-    const query: any = {};
+    const query: Record<string, unknown> = {};
     
     if (status) {
       query.status = status;
@@ -31,7 +31,7 @@ const getUsersHandler = async (req: NextRequestWithAdmin) => {
     const skip = (page - 1) * limit;
 
     // Build aggregation pipeline for search
-    const pipeline: any[] = [
+    const pipeline: unknown[] = [
       { $match: query },
     ];
 
@@ -56,14 +56,14 @@ const getUsersHandler = async (req: NextRequestWithAdmin) => {
     );
 
     // Execute aggregation
-    const users = await User.aggregate(pipeline);
+    const users = await User.aggregate(pipeline as never[]);
 
     // Get total count for pagination
     const countPipeline = [...pipeline];
     countPipeline.splice(-3); // Remove sort, skip, and limit
     countPipeline.push({ $count: 'total' });
     
-    const countResult = await User.aggregate(countPipeline);
+    const countResult = await User.aggregate(countPipeline as never[]);
     const totalEntries = countResult[0]?.total || 0;
     const totalPages = Math.ceil(totalEntries / limit);
 

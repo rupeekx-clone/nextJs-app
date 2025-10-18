@@ -1,10 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { validateData, enquirySchema } from '@/lib/validation';
 import Enquiry from '@/models/Enquiry';
 import EmailService from '@/lib/emailService';
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
     const body = await req.json();
 
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     await connectToDatabase();
 
     // Create new enquiry
-    const enquiry = new Enquiry(validation.data as any);
+    const enquiry = new Enquiry(validation.data as Record<string, unknown>);
     await enquiry.save();
 
     // Send notification email to admin (optional)

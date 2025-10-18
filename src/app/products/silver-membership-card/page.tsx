@@ -1,7 +1,7 @@
 'use client';
 
-import { Container, Typography, Box, Grid, Button, List, ListItem, ListItemIcon, ListItemText, Paper, Card, CardContent, Chip, Stepper, Step, StepLabel, Divider } from '@mui/material';
-import { CheckCircleOutline, Star, Security, Speed, Support, TrendingUp, CreditCard, AccessTime } from '@mui/icons-material';
+import { Container, Typography, Box, Grid, Button, List, ListItem, ListItemIcon, ListItemText, Paper, Card, CardContent, Stepper, Step, StepLabel } from '@mui/material';
+import { CheckCircleOutline, Star, Security, Speed, TrendingUp } from '@mui/icons-material';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -230,7 +230,7 @@ export default function SilverMembershipCardPage() {
             Upgrade your dream
           </Typography>
           <Typography variant="h6" sx={{ mb: 4, opacity: 0.9 }}>
-            Don't let financial constraints hold you back. Get your Silver Membership Card today and unlock the door to your dreams.
+            Don&apos;t let financial constraints hold you back. Get your Silver Membership Card today and unlock the door to your dreams.
           </Typography>
           <Button 
             variant="contained" 

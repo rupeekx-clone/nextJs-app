@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Box, Drawer, AppBar, Toolbar, Typography, IconButton, Avatar, Menu, MenuItem, List, ListItem, ListItemIcon, ListItemText, Divider } from '@mui/material';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Box, Drawer, AppBar, Toolbar, Typography, IconButton, Avatar, Menu, MenuItem, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Divider } from '@mui/material';
 import { 
   Menu as MenuIcon, 
   Dashboard, 
@@ -39,15 +39,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [loading, setLoading] = useState(true);
-  const [admin, setAdmin] = useState<any>(null);
+  const [admin, setAdmin] = useState<{ full_name: string; email: string; role: string } | null>(null);
   const router = useRouter();
   const pathname = usePathname();
 
-  useEffect(() => {
-    checkAdminAuth();
-  }, []);
-
-  const checkAdminAuth = async () => {
+  const checkAdminAuth = useCallback(async () => {
     try {
       const token = localStorage.getItem('adminAccessToken');
       if (!token) {
@@ -76,7 +72,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [router]);
+
+  useEffect(() => {
+    checkAdminAuth();
+  }, [checkAdminAuth]);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -114,31 +114,31 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       <Divider />
       <List>
         {menuItems.map((item) => (
-          <ListItem
-            button
-            key={item.text}
-            onClick={() => {
-              router.push(item.path);
-              setMobileOpen(false);
-            }}
-            selected={pathname === item.path}
-            sx={{
-              '&.Mui-selected': {
-                backgroundColor: 'primary.light',
-                '& .MuiListItemIcon-root': {
-                  color: 'primary.main',
+          <ListItem key={item.text} disablePadding>
+            <ListItemButton
+              onClick={() => {
+                router.push(item.path);
+                setMobileOpen(false);
+              }}
+              selected={pathname === item.path}
+              sx={{
+                '&.Mui-selected': {
+                  backgroundColor: 'primary.light',
+                  '& .MuiListItemIcon-root': {
+                    color: 'primary.main',
+                  },
+                  '& .MuiListItemText-primary': {
+                    color: 'primary.main',
+                    fontWeight: 'bold',
+                  },
                 },
-                '& .MuiListItemText-primary': {
-                  color: 'primary.main',
-                  fontWeight: 'bold',
-                },
-              },
-            }}
-          >
-            <ListItemIcon>
-              {item.icon}
-            </ListItemIcon>
-            <ListItemText primary={item.text} />
+              }}
+            >
+              <ListItemIcon>
+                {item.icon}
+              </ListItemIcon>
+              <ListItemText primary={item.text} />
+            </ListItemButton>
           </ListItem>
         ))}
       </List>

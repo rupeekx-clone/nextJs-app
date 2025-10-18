@@ -92,7 +92,7 @@ export default function DashboardPage() {
           const membershipData = await membershipResponse.json();
           setMembership(membershipData);
         }
-      } catch (err) {
+      } catch {
         // Membership not found is okay
         console.log('No active membership found');
       }
@@ -219,7 +219,7 @@ export default function DashboardPage() {
             Welcome back, {user?.full_name}!
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            Here's an overview of your account and recent activities.
+            Here&apos;s an overview of your account and recent activities.
           </Typography>
         </Box>
         <Box sx={{ display: 'flex', gap: 1 }}>
@@ -334,7 +334,7 @@ export default function DashboardPage() {
               <Card>
                 <CardContent sx={{ textAlign: 'center', py: 4 }}>
                   <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
-                    You haven't applied for any loans yet.
+                    You haven&apos;t applied for any loans yet.
                   </Typography>
                   <Typography variant="body2" color="text.secondary">
                     Start by applying for a personal or business loan to get the funds you need.
@@ -464,7 +464,7 @@ export default function DashboardPage() {
                         <Chip 
                           label={application.status.replace('_', ' ')} 
                           size="small" 
-                          color={getStatusColor(application.status) as any}
+                          color={getStatusColor(application.status) as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
                         />
                       </Box>
                       <Typography variant="caption" color="text.secondary">

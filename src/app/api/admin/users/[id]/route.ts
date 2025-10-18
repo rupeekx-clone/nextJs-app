@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { withAdminAuth, NextRequestWithAdmin } from '@/lib/adminAuthMiddleware';
 import { connectToDatabase } from '@/lib/mongodb';
 import User from '@/models/User';
@@ -33,7 +33,7 @@ const getUserHandler = async (req: NextRequestWithAdmin) => {
     // Format membership cards
     const formattedMembershipCards = membershipCards.map(card => ({
       _id: card._id,
-      card_type_name: (card.card_type_id as any)?.name || 'Unknown',
+      card_type_name: (card.card_type_id as { name: string })?.name || 'Unknown',
       purchase_date: card.purchase_date,
       expiry_date: card.expiry_date,
       status: card.status,
@@ -54,7 +54,7 @@ const getUserHandler = async (req: NextRequestWithAdmin) => {
         created_at: user.createdAt,
         email_verified_at: user.email_verified_at,
         phone_verified_at: user.phone_verified_at,
-        last_login: user.last_login,
+        last_login: (user as { last_login?: string }).last_login,
       },
       loanApplications,
       membershipCards: formattedMembershipCards,

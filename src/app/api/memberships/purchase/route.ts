@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { withAuth, NextRequestWithUser } from '@/lib/authMiddleware';
 import { validateData, membershipPurchaseSchema, paymentVerificationSchema } from '@/lib/validation';
@@ -35,7 +35,7 @@ const purchaseMembershipHandler = async (req: NextRequestWithUser) => {
       }, { status: 409 });
     }
 
-    const validatedData = validation.data as any;
+    const validatedData = validation.data as { card_type_id: string; payment_reference: string; };
     
     // Find the card type
     const cardType = await MembershipCardType.findOne({
@@ -63,7 +63,7 @@ const purchaseMembershipHandler = async (req: NextRequestWithUser) => {
       }, { status: 400 });
     }
 
-    const isPaymentValid = RazorpayService.verifyPayment(paymentVerification.data as any);
+    const isPaymentValid = RazorpayService.verifyPayment(paymentVerification.data as { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string; });
     if (!isPaymentValid) {
       return NextResponse.json({
         error: 'Invalid payment signature'

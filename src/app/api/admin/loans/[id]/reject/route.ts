@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { withAdminAuth, NextRequestWithAdmin } from '@/lib/adminAuthMiddleware';
 import { connectToDatabase } from '@/lib/mongodb';
 import { validateData, loanRejectionSchema } from '@/lib/validation';
@@ -36,7 +36,10 @@ const rejectLoanHandler = async (req: NextRequestWithAdmin) => {
       }, { status: 400 });
     }
 
-    const validatedData = validation.data as any;
+    const validatedData = validation.data as {
+      reason: string;
+      remarks?: string;
+    };
 
     // Update the application with rejection details
     application.status = 'rejected';

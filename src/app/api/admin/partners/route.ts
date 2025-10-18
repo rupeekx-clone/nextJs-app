@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { withAdminAuth, NextRequestWithAdmin } from '@/lib/adminAuthMiddleware';
 import { connectToDatabase } from '@/lib/mongodb';
 import BankPartner from '@/models/BankPartner';
@@ -14,7 +14,7 @@ const getPartnersHandler = async (req: NextRequestWithAdmin) => {
     await connectToDatabase();
 
     // Build query
-    const query: any = {};
+    const query: Record<string, unknown> = {};
     
     if (search) {
       query.$or = [
@@ -65,7 +65,7 @@ const getPartnersHandler = async (req: NextRequestWithAdmin) => {
       pagination: {
         current_page: page,
         total_pages: Math.ceil(totalEntries / limit),
-        total_entries,
+        total_entries: totalEntries,
         entries_per_page: limit,
       },
     }, { status: 200 });

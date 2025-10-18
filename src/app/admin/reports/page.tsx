@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, Box, Grid, Card, CardContent, FormControl, InputLabel, Select, MenuItem, Button, Paper, Chip } from '@mui/material';
+import { Container, Typography, Box, Grid, Card, CardContent, FormControl, InputLabel, Select, MenuItem, Button, Chip } from '@mui/material';
 import { DateRange, Download, TrendingUp, People, AccountBalance, Assessment, Schedule } from '@mui/icons-material';
 import StatsCard from '@/components/Admin/StatsCard';
 import LoadingSpinner from '@/components/Common/LoadingSpinner';
@@ -46,11 +46,6 @@ export default function AdminReportsPage() {
     startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1), // First day of current month
     endDate: new Date(), // Today
   });
-  const [reportType, setReportType] = useState('overview');
-
-  useEffect(() => {
-    fetchReportData();
-  }, [dateRange, reportType]);
 
   const fetchReportData = async () => {
     try {
@@ -59,7 +54,7 @@ export default function AdminReportsPage() {
       const params = new URLSearchParams({
         start_date: dateRange.startDate.toISOString(),
         end_date: dateRange.endDate.toISOString(),
-        report_type: reportType,
+        report_type: 'overview',
       });
 
       const response = await fetch(`/api/admin/reports/overview?${params}`, {
@@ -84,7 +79,7 @@ export default function AdminReportsPage() {
 
   const handleExportReport = (format: 'pdf' | 'csv') => {
     // Implement export functionality
-    console.log(`Exporting ${reportType} report as ${format}`);
+    console.log(`Exporting overview report as ${format}`);
   };
 
   const formatCurrency = (amount: number) => {
@@ -98,6 +93,11 @@ export default function AdminReportsPage() {
   const formatPercentage = (value: number) => {
     return `${value.toFixed(1)}%`;
   };
+
+  useEffect(() => {
+    fetchReportData();
+  }, [dateRange]);
+
 
   if (loading) {
     return (
@@ -139,9 +139,9 @@ export default function AdminReportsPage() {
                 <FormControl fullWidth>
                   <InputLabel>Report Type</InputLabel>
                   <Select
-                    value={reportType}
+                    value="overview"
                     label="Report Type"
-                    onChange={(e) => setReportType(e.target.value)}
+                    disabled
                   >
                     <MenuItem value="overview">Overview</MenuItem>
                     <MenuItem value="users">User Analytics</MenuItem>

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { withAuth, NextRequestWithUser } from '@/lib/authMiddleware';
 import { connectToDatabase } from '@/lib/mongodb';
 import { validateData } from '@/lib/validation';
@@ -28,7 +28,10 @@ const createOrderHandler = async (req: NextRequestWithUser) => {
 
     await connectToDatabase();
 
-    const validatedData = validation.data as any;
+    const validatedData = validation.data as {
+      type: 'membership_card' | 'cash_lending_subscription';
+      item_id: string;
+    };
     let amount = 0;
     let itemName = '';
 

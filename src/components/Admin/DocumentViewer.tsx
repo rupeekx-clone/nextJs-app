@@ -20,7 +20,7 @@ import {
   ZoomIn,
   ZoomOut,
   RotateRight,
-  Fullscreen,
+  // Fullscreen,
   CheckCircle,
   Cancel,
 } from '@mui/icons-material';
@@ -65,13 +65,15 @@ const DocumentViewer: React.FC<DocumentViewerProps> = ({
   };
 
   const handleDownload = () => {
-    const link = document.createElement('a');
-    link.href = document.url;
-    link.download = document.name;
-    link.target = '_blank';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const link = window.document.createElement('a');
+    if (link) {
+      link.href = document.url;
+      link.download = document.name;
+      link.target = '_blank';
+      window.document.body.appendChild(link);
+      link.click();
+      window.document.body.removeChild(link);
+    }
   };
 
   const handleVerify = (verified: boolean) => {

@@ -1,8 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { verifyToken } from '@/lib/jwt';
+import { ObjectId } from 'mongodb';
 
-export async function GET(req: NextRequest) {
+export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const token = searchParams.get('token');
@@ -27,7 +28,7 @@ export async function GET(req: NextRequest) {
 
     // Update user's email verification status
     const result = await usersCollection.updateOne(
-      { _id: decoded.userId },
+      { _id: new ObjectId(decoded.userId) },
       { 
         $set: { 
           email_verified_at: new Date(),

@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { withAuth, NextRequestWithUser } from '@/lib/authMiddleware';
+import { NextResponse } from 'next/server';
+import { withAuth } from '@/lib/authMiddleware';
 
-const logoutHandler = async (req: NextRequestWithUser) => {
+const logoutHandler = async () => {
   try {
     // In a stateless JWT system, logout is primarily handled client-side
     // by removing the token from storage. However, we can implement

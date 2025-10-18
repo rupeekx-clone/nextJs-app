@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Input from '../Common/Input';
 import Button from '../Common/Button';
-import { validateData, enquirySchema } from '@/lib/validation';
+// import { validateData, enquirySchema } from '@/lib/validation';
 
 const contactFormSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),

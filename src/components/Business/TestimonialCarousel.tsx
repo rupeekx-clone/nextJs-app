@@ -94,7 +94,7 @@ const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({
               color: 'text.secondary',
             }}
           >
-            "{currentTestimonial.text}"
+            &ldquo;{currentTestimonial.text}&rdquo;
           </Typography>
 
           {/* Customer Info */}

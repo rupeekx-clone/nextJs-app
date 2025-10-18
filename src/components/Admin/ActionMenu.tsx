@@ -2,12 +2,12 @@
 
 import React, { useState } from 'react';
 import { IconButton, Menu, MenuItem, ListItemIcon, ListItemText, Divider } from '@mui/material';
-import { MoreVert, Edit, Delete, Visibility, Block, CheckCircle, Download, Share } from '@mui/icons-material';
+import { MoreVert, Edit, Visibility, Block, CheckCircle, Download } from '@mui/icons-material';
 
 interface ActionMenuProps {
   actions: ActionItem[];
-  onActionClick: (action: string, data?: any) => void;
-  data?: any;
+  onActionClick: (action: string, data?: unknown) => void;
+  data?: unknown;
   size?: 'small' | 'medium' | 'large';
 }
 

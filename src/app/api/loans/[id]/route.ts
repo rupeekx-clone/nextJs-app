@@ -1,13 +1,14 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { withAuth, NextRequestWithUser } from '@/lib/authMiddleware';
 import { validateData, loanUpdateSchema } from '@/lib/validation';
 import LoanApplication from '@/models/LoanApplication';
 
-const getLoanHandler = async (req: NextRequestWithUser, context: { params: { id: string } }) => {
+const getLoanHandler = async (req: NextRequestWithUser, context: { params: Promise<{ id: string }> }) => {
   try {
     const userId = req.user!.userId;
-    const applicationId = context.params.id;
+    const params = await context.params;
+    const applicationId = params.id;
 
     await connectToDatabase();
 
@@ -55,10 +56,11 @@ const getLoanHandler = async (req: NextRequestWithUser, context: { params: { id:
   }
 };
 
-const updateLoanHandler = async (req: NextRequestWithUser, context: { params: { id: string } }) => {
+const updateLoanHandler = async (req: NextRequestWithUser, context: { params: Promise<{ id: string }> }) => {
   try {
     const userId = req.user!.userId;
-    const applicationId = context.params.id;
+    const params = await context.params;
+    const applicationId = params.id;
     const body = await req.json();
 
     // Validate the request body
@@ -92,7 +94,7 @@ const updateLoanHandler = async (req: NextRequestWithUser, context: { params: { 
     }
 
     // Update the application
-    Object.assign(application, validation.data as any);
+    Object.assign(application, validation.data as { amount_requested?: number; tenure_months_requested?: number; documents_submitted?: Record<string, string>; });
     application.updated_at = new Date();
     await application.save();
 

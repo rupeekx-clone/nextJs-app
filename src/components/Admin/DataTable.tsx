@@ -11,14 +11,13 @@ import {
   Paper,
   TablePagination,
   TableSortLabel,
-  Box,
   Typography,
   IconButton,
   Menu,
   MenuItem,
   Checkbox,
 } from '@mui/material';
-import { MoreVert, FilterList } from '@mui/icons-material';
+import { MoreVert } from '@mui/icons-material';
 
 export interface Column {
   id: string;
@@ -26,14 +25,14 @@ export interface Column {
   minWidth?: number;
   align?: 'right' | 'left' | 'center';
   sortable?: boolean;
-  render?: (value: any, row: any) => React.ReactNode;
+  render?: (value: unknown, row: unknown) => React.ReactNode;
 }
 
 interface DataTableProps {
   columns: Column[];
-  data: any[];
+  data: unknown[];
   loading?: boolean;
-  onRowClick?: (row: any) => void;
+  onRowClick?: (row: unknown) => void;
   onSort?: (column: string, direction: 'asc' | 'desc') => void;
   onPageChange?: (page: number, rowsPerPage: number) => void;
   totalCount?: number;
@@ -42,7 +41,7 @@ interface DataTableProps {
   selectable?: boolean;
   selectedRows?: string[];
   onSelectionChange?: (selectedIds: string[]) => void;
-  getRowId?: (row: any) => string;
+  getRowId?: (row: unknown) => string;
 }
 
 const DataTable: React.FC<DataTableProps> = ({
@@ -58,12 +57,12 @@ const DataTable: React.FC<DataTableProps> = ({
   selectable = false,
   selectedRows = [],
   onSelectionChange,
-  getRowId = (row) => row.id || row._id,
+  getRowId = (row) => (row as { id?: string; _id?: string }).id || (row as { id?: string; _id?: string })._id,
 }) => {
   const [sortColumn, setSortColumn] = useState<string>('');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+  const [, setSelectedRowId] = useState<string | null>(null);
 
   const handleSort = (columnId: string) => {
     const isAsc = sortColumn === columnId && sortDirection === 'asc';
@@ -94,7 +93,7 @@ const DataTable: React.FC<DataTableProps> = ({
     onSelectionChange?.(newSelection);
   };
 
-  const handleRowClick = (row: any) => {
+  const handleRowClick = (row: unknown) => {
     if (onRowClick) {
       onRowClick(row);
     }
@@ -191,7 +190,7 @@ const DataTable: React.FC<DataTableProps> = ({
                     )}
                     {columns.map((column) => (
                       <TableCell key={column.id} align={column.align}>
-                        {column.render ? column.render(row[column.id], row) : row[column.id]}
+                        {column.render ? column.render((row as Record<string, unknown>)[column.id], row) : String((row as Record<string, unknown>)[column.id] || '')}
                       </TableCell>
                     ))}
                     <TableCell align="right">

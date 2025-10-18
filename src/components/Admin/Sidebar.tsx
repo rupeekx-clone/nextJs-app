@@ -10,7 +10,6 @@ import {
   Assessment, 
   Settings, 
   Logout,
-  Menu as MenuIcon,
   Close as CloseIcon
 } from '@mui/icons-material';
 import { useRouter, usePathname } from 'next/navigation';

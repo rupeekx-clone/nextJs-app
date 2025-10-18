@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { withAdminAuth, NextRequestWithAdmin } from '@/lib/adminAuthMiddleware';
 import { connectToDatabase } from '@/lib/mongodb';
 import BankPartner from '@/models/BankPartner';
@@ -45,7 +45,7 @@ const getPartnerHandler = async (req: NextRequestWithAdmin) => {
     const formattedApplications = loanApplications.map(app => ({
       _id: app._id,
       application_id: app.application_id,
-      user_name: app.user_id?.full_name || 'N/A',
+      user_name: (app.user_id as { full_name?: string })?.full_name || 'N/A',
       loan_type: app.loan_type,
       amount_requested: app.amount_requested,
       amount_approved: app.amount_approved,

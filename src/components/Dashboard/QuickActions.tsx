@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Card, CardContent, Typography, Box, Button, Grid } from '@mui/material';
+import { Card, CardContent, Typography, Button, Grid } from '@mui/material';
 import { 
   Add, 
   Upload, 

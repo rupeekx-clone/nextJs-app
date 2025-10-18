@@ -7,10 +7,7 @@ import {
   Description, 
   CardMembership, 
   TrendingUp, 
-  AccessTime, 
-  CheckCircle, 
-  Warning,
-  Error
+  AccessTime
 } from '@mui/icons-material';
 import StatsCard from '@/components/Admin/StatsCard';
 import LoadingSpinner from '@/components/Common/LoadingSpinner';
@@ -260,7 +257,7 @@ export default function AdminDashboard() {
               </Typography>
               
               <List>
-                {stats.recentActivities.map((activity, index) => (
+                {stats.recentActivities.map((activity) => (
                   <ListItem key={activity.id} sx={{ px: 0 }}>
                     <ListItemIcon>
                       {getActivityIcon(activity.type)}
@@ -271,7 +268,7 @@ export default function AdminDashboard() {
                     />
                     <Chip
                       label={activity.status}
-                      color={getActivityColor(activity.status) as any}
+                      color={getActivityColor(activity.status) as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
                       size="small"
                     />
                   </ListItem>

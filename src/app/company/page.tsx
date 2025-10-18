@@ -1,7 +1,7 @@
 'use client';
 
 import { Container, Typography, Box, List, ListItem, ListItemIcon, ListItemText, Grid, Card, CardContent, Button, Paper, Stepper, Step, StepLabel, Chip } from '@mui/material';
-import { CheckCircleOutline, Visibility, Flag, Star, Timeline, Description, AccountBalance, TrendingUp, Security, Speed, Support, Verified } from '@mui/icons-material';
+import { CheckCircleOutline, Visibility, Flag, Star, Timeline, Description, AccountBalance, Verified } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 
 export default function CompanyPage() {

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { withAuth, NextRequestWithUser } from '@/lib/authMiddleware';
 import MembershipCard from '@/models/MembershipCard';
@@ -21,7 +21,7 @@ const getMyMembershipHandler = async (req: NextRequestWithUser) => {
       }, { status: 404 });
     }
 
-    const cardType = membershipCard.card_type_id as any;
+    const cardType = membershipCard.card_type_id as { name: string; benefits_description: string; };
     const membershipData = membershipCard.toJSON();
 
     return NextResponse.json({

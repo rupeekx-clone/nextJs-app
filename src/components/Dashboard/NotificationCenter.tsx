@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { 
   Card, 
   CardContent, 
@@ -23,8 +23,7 @@ import {
   Warning, 
   Error, 
   MarkEmailRead,
-  Delete,
-  MoreVert
+  Delete
 } from '@mui/icons-material';
 
 interface Notification {
@@ -52,7 +51,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
   onDelete,
   onClearAll,
 }) => {
-  const [expandedNotification, setExpandedNotification] = useState<string | null>(null);
+  // const [expandedNotification, setExpandedNotification] = useState<string | null>(null);
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
@@ -156,7 +155,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
               No notifications yet
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              You'll see important updates here
+              You&apos;ll see important updates here
             </Typography>
           </Box>
         ) : (
@@ -194,7 +193,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({
                         <Chip
                           label={notification.type}
                           size="small"
-                          color={getNotificationColor(notification.type) as any}
+                          color={getNotificationColor(notification.type) as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
                           variant="outlined"
                         />
                         {!notification.read && (

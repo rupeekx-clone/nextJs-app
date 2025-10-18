@@ -1,10 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import StaticContent from '@/models/StaticContent';
 
-export async function GET(req: NextRequest, context: { params: { slug: string } }) {
+export async function GET(req: Request, context: { params: Promise<{ slug: string }> }) {
   try {
-    const slug = context.params.slug;
+    const params = await context.params;
+    const slug = params.slug;
 
     if (!slug) {
       return NextResponse.json({

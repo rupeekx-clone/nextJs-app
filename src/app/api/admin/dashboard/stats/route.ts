@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { withAdminAuth, NextRequestWithAdmin } from '@/lib/adminAuthMiddleware';
+import { NextResponse } from 'next/server';
+import { withAdminAuth } from '@/lib/adminAuthMiddleware';
 import { connectToDatabase } from '@/lib/mongodb';
 import User from '@/models/User';
 import LoanApplication from '@/models/LoanApplication';
 import MembershipCard from '@/models/MembershipCard';
 
-const getDashboardStatsHandler = async (req: NextRequestWithAdmin) => {
+const getDashboardStatsHandler = async () => {
   try {
     await connectToDatabase();
 

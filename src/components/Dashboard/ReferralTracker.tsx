@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Card, CardContent, Typography, Box, Button, Chip, LinearProgress, List, ListItem, ListItemText, ListItemIcon } from '@mui/material';
-import { Share, People, TrendingUp, AccountBalance, CheckCircle } from '@mui/icons-material';
+import { Share, People, TrendingUp, CheckCircle } from '@mui/icons-material';
 
 interface ReferralData {
   totalReferrals: number;

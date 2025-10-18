@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs'; // Corrected import
 import { generateAccessToken, generateRefreshToken } from '@/lib/jwt'; // Assuming these are the correct function names
 import { connectToDatabase } from '@/lib/mongodb';
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
     const body = await req.json();
 
@@ -76,7 +76,7 @@ export async function POST(req: NextRequest) {
 
     // Generate tokens
     const access_token = generateAccessToken({ userId: createdUser._id.toString(), email: createdUser.email, userType: createdUser.user_type });
-    const refresh_token = generateRefreshToken({ userId: createdUser._id.toString(), userType: createdUser.user_type });
+    const refresh_token = generateRefreshToken({ userId: createdUser._id.toString(), email: createdUser.email, userType: createdUser.user_type });
 
     return NextResponse.json({
       message: 'User registered successfully',

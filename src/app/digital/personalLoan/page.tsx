@@ -1319,7 +1319,7 @@ export default function PersonalLoanPage() {
             <Typography variant="body1" paragraph sx={{ fontSize: '1.1rem', lineHeight: 1.8 }}>
               A personal loan is an unsecured loan that you can use for any personal purpose such as debt consolidation, 
               home renovation, medical emergencies, travel, wedding expenses, or any other financial need. Unlike home 
-              loans or car loans, personal loans don't require any collateral or security.
+              loans or car loans, personal loans don&apos;t require any collateral or security.
             </Typography>
             
             <Grid container spacing={3} sx={{ mt: 3 }}>

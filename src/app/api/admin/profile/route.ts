@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { withAdminAuth, NextRequestWithAdmin } from '@/lib/adminAuthMiddleware';
 import { connectToDatabase } from '@/lib/mongodb';
 import User from '@/models/User';
@@ -23,7 +23,7 @@ const getAdminProfileHandler = async (req: NextRequestWithAdmin) => {
       user_type: adminProfile.user_type,
       status: adminProfile.status,
       created_at: adminProfile.createdAt,
-      last_login: adminProfile.last_login,
+      last_login: (adminProfile as { last_login?: string }).last_login,
     }, { status: 200 });
 
   } catch (error: unknown) {

@@ -1,7 +1,7 @@
 'use client';
 
-import { Container, Typography, Box, Grid, Button, List, ListItem, ListItemIcon, ListItemText, Paper, Card, CardContent, Chip, Stepper, Step, StepLabel, Divider } from '@mui/material';
-import { CheckCircleOutline, Star, Security, Speed, Support, TrendingUp, Business, AccessTime, AccountBalance } from '@mui/icons-material';
+import { Container, Typography, Box, Grid, Button, List, ListItem, ListItemIcon, ListItemText, Paper, Card, CardContent, Stepper, Step, StepLabel } from '@mui/material';
+import { CheckCircleOutline, Star, Security, Speed, TrendingUp, Business } from '@mui/icons-material';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -260,7 +260,7 @@ export default function GoldMembershipCardPage() {
             Scale your business
           </Typography>
           <Typography variant="h6" sx={{ mb: 4, opacity: 0.9 }}>
-            Don't let funding constraints limit your business growth. Get your Gold Membership Card today and unlock the capital you need to scale your business.
+            Don&apos;t let funding constraints limit your business growth. Get your Gold Membership Card today and unlock the capital you need to scale your business.
           </Typography>
           <Button 
             variant="contained" 

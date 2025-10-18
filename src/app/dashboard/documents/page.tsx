@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, Box, Grid, Card, CardContent, Alert, Button, Chip, Paper, LinearProgress, Divider } from '@mui/material';
+import { Container, Typography, Box, Grid, Card, CardContent, Button, Chip, Paper, LinearProgress, Divider } from '@mui/material';
 import { ArrowBack, CloudUpload, Download, Delete, CheckCircle, Error, Info } from '@mui/icons-material';
 import DocumentUpload from '@/components/Dashboard/DocumentUpload';
 import LoadingSpinner from '@/components/Common/LoadingSpinner';
@@ -31,14 +31,9 @@ export default function DocumentsPage() {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [documentTypes, setDocumentTypes] = useState<DocumentType[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
+  // const [error, setError] = useState<string | null>(null);
+  // const [uploading, setUploading] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    fetchDocuments();
-    fetchDocumentTypes();
-  }, []);
 
   const fetchDocuments = async () => {
     try {
@@ -137,9 +132,9 @@ export default function DocumentsPage() {
     router.push('/dashboard');
   };
 
-  const handleUploadSuccess = (documentType: string, document: any) => {
-    setDocuments(prev => [...prev, document]);
-  };
+  // const handleUploadSuccess = (documentType: string, document: any) => {
+  //   setDocuments(prev => [...prev, document]);
+  // };
 
   const handleDeleteDocument = async (documentId: string) => {
     try {
@@ -196,6 +191,13 @@ export default function DocumentsPage() {
     );
     return Math.round((uploadedRequired.length / requiredTypes.length) * 100);
   };
+
+  
+  useEffect(() => {
+    fetchDocuments();
+    fetchDocumentTypes();
+  }, []);
+
 
   if (loading) {
     return (
@@ -304,7 +306,7 @@ export default function DocumentsPage() {
                             <Chip 
                               label={uploadedDoc.status} 
                               size="small" 
-                              color={getDocumentStatusColor(uploadedDoc.status) as any}
+                              color={getDocumentStatusColor(uploadedDoc.status) as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
                               sx={{ ml: 1 }}
                             />
                           </Box>
@@ -381,7 +383,7 @@ export default function DocumentsPage() {
                         <Chip 
                           label={document.status} 
                           size="small" 
-                          color={getDocumentStatusColor(document.status) as any}
+                          color={getDocumentStatusColor(document.status) as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
                         />
                       </Box>
                       

@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Box, TextField, Typography, Button, Popover, Paper } from '@mui/material';
-import { DateRange, CalendarToday } from '@mui/icons-material';
+import { Box, TextField, Typography, Button, Popover } from '@mui/material';
+import { CalendarToday } from '@mui/icons-material';
 
 interface DateRangePickerProps {
   startDate: Date | null;
@@ -26,12 +26,12 @@ const DateRangePicker: React.FC<DateRangePickerProps> = ({
   startDate,
   endDate,
   onDateChange,
-  label = 'Date Range',
+  // label = 'Date Range',
   placeholder = 'Select date range',
   disabled = false,
   fullWidth = true,
   size = 'medium',
-  variant = 'outlined',
+  // variant = 'outlined',
   presets = [],
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);

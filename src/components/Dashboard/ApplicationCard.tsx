@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Card, CardContent, Typography, Box, Chip } from '@mui/material';
+import { Card, CardContent, Typography, Box } from '@mui/material';
 import { AccessTime, AccountBalance, TrendingUp } from '@mui/icons-material';
 import Badge from '../Common/Badge';
 
@@ -76,7 +76,7 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application, onClick 
           </Box>
           <Badge 
             label={application.status.replace('_', ' ').toUpperCase()} 
-            color={getStatusColor(application.status) as any}
+            color={getStatusColor(application.status) as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
           />
         </Box>
 

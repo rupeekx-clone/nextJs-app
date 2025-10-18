@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { withAuth, NextRequestWithUser } from '@/lib/authMiddleware';
 import { validateQueryParams, loanQuerySchema } from '@/lib/validation';
@@ -21,8 +21,8 @@ const getLoansHandler = async (req: NextRequestWithUser) => {
     await connectToDatabase();
 
     // Build query
-    const validatedData = validation.data as any;
-    const query: any = { user_id: userId };
+    const validatedData = validation.data as { page: number; limit: number; status?: string; loan_type?: string; };
+    const query: Record<string, unknown> = { user_id: userId };
     if (validatedData.status) {
       query.status = validatedData.status;
     }

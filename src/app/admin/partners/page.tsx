@@ -1,11 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Container, Typography, Box, Grid, Card, CardContent, TextField, Button, FormControl, InputLabel, Select, MenuItem, Chip, Avatar, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
-import { Search, FilterList, Add, Edit, Visibility, AccountBalance, TrendingUp, Schedule } from '@mui/icons-material';
+import { Search, FilterList, Add, AccountBalance, TrendingUp, Schedule } from '@mui/icons-material';
 import DataTable, { Column } from '@/components/Admin/DataTable';
 import StatusBadge from '@/components/Admin/StatusBadge';
-import LoadingSpinner from '@/components/Common/LoadingSpinner';
 import { useRouter } from 'next/navigation';
 
 interface BankPartner {
@@ -42,11 +41,7 @@ export default function AdminPartnersPage() {
   const [addPartnerModalOpen, setAddPartnerModalOpen] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    fetchPartners();
-  }, [page, rowsPerPage, searchTerm, statusFilter]);
-
-  const fetchPartners = async () => {
+  const fetchPartners = useCallback(async () => {
     try {
       setLoading(true);
       
@@ -76,7 +71,11 @@ export default function AdminPartnersPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, rowsPerPage, searchTerm, statusFilter]);
+
+  useEffect(() => {
+    fetchPartners();
+  }, [fetchPartners]);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -126,17 +125,17 @@ export default function AdminPartnersPage() {
       render: (value, row) => (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Avatar 
-            src={row.logo_url} 
+            src={(row as BankPartner).logo_url} 
             sx={{ width: 40, height: 40, bgcolor: 'primary.main' }}
           >
-            {value.charAt(0).toUpperCase()}
+            {String(value).charAt(0).toUpperCase()}
           </Avatar>
           <Box>
             <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-              {value}
+              {String(value)}
             </Typography>
             <Typography variant="caption" color="text.secondary">
-              {row.contact_person}
+              {(row as BankPartner).contact_person}
             </Typography>
           </Box>
         </Box>
@@ -148,7 +147,7 @@ export default function AdminPartnersPage() {
       minWidth: 150,
       render: (value) => (
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-          {value.map((type: string, index: number) => (
+          {Array.isArray(value) && (value as string[]).map((type: string, index: number) => (
             <Chip
               key={index}
               label={type === 'personal' ? 'Personal' : 'Business'}
@@ -166,7 +165,7 @@ export default function AdminPartnersPage() {
       align: 'right',
       render: (value) => (
         <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-          {formatCurrency(value)}
+          {formatCurrency(Number(value))}
         </Typography>
       ),
     },
@@ -176,7 +175,7 @@ export default function AdminPartnersPage() {
       minWidth: 120,
       render: (value, row) => (
         <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-          {value}% - {row.max_interest_rate}%
+          {String(value)}% - {(row as BankPartner).max_interest_rate}%
         </Typography>
       ),
     },
@@ -188,7 +187,7 @@ export default function AdminPartnersPage() {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
           <Schedule sx={{ fontSize: 16, color: 'text.secondary' }} />
           <Typography variant="body2">
-            {value} days
+            {String(value)} days
           </Typography>
         </Box>
       ),
@@ -197,22 +196,25 @@ export default function AdminPartnersPage() {
       id: 'performance_metrics',
       label: 'Performance',
       minWidth: 120,
-      render: (value) => (
-        <Box>
-          <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-            {value?.approval_rate || 0}% approval
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            {value?.total_applications || 0} applications
-          </Typography>
-        </Box>
-      ),
+      render: (value) => {
+        const metrics = value as BankPartner['performance_metrics'];
+        return (
+          <Box>
+            <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+              {String(metrics?.approval_rate || 0)}% approval
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              {String(metrics?.total_applications || 0)} applications
+            </Typography>
+          </Box>
+        );
+      },
     },
     {
       id: 'status',
       label: 'Status',
       minWidth: 100,
-      render: (value) => <StatusBadge status={value} />,
+      render: (value) => <StatusBadge status={String(value)} />,
     },
     {
       id: 'created_at',
@@ -220,7 +222,7 @@ export default function AdminPartnersPage() {
       minWidth: 100,
       render: (value) => (
         <Typography variant="body2">
-          {formatDate(value)}
+          {formatDate(String(value))}
         </Typography>
       ),
     },
@@ -377,13 +379,13 @@ export default function AdminPartnersPage() {
             columns={columns}
             data={partners}
             loading={loading}
-            onRowClick={handleRowClick}
+            onRowClick={(row) => handleRowClick(row as BankPartner)}
             onPageChange={handlePageChange}
             totalCount={totalCount}
             page={page}
             rowsPerPage={rowsPerPage}
             selectable={true}
-            getRowId={(row) => row._id}
+            getRowId={(row) => (row as { _id: string })._id}
           />
         </CardContent>
       </Card>

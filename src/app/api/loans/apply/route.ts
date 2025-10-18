@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import { withAuth, NextRequestWithUser } from '@/lib/authMiddleware';
 import { validateData, loanApplicationSchema } from '@/lib/validation';
@@ -35,8 +35,8 @@ const applyLoanHandler = async (req: NextRequestWithUser) => {
     }
 
     // Check if membership card supports this loan type
-    const cardType = membershipCard.card_type_id as any;
-    const validatedData = validation.data as any;
+    const cardType = membershipCard.card_type_id as { isForPersonalLoans(): boolean; isForBusinessLoans(): boolean; };
+    const validatedData = validation.data as { loan_type: string; amount_requested: number; tenure_months_requested: number; documents_submitted?: Record<string, string>; };
     
     if (validatedData.loan_type === 'personal' && !cardType.isForPersonalLoans()) {
       return NextResponse.json({

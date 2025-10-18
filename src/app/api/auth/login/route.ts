@@ -45,7 +45,8 @@ export async function POST(request: Request) {
     if (user.status === 'active' && user.is_phone_verified === true) {
       // User is fully active and verified
       const tokenPayload: AuthPayload = {
-        userId: (user._id as string),
+        userId: (user._id as { toString(): string }).toString(),
+        email: user.email || '',
         userType: user.user_type,
       };
       const accessToken = generateAccessToken(tokenPayload);

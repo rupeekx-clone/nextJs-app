@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { withAdminAuth, NextRequestWithAdmin } from '@/lib/adminAuthMiddleware';
 import { connectToDatabase } from '@/lib/mongodb';
 import User from '@/models/User';
@@ -11,7 +11,7 @@ const getOverviewReportHandler = async (req: NextRequestWithAdmin) => {
     const url = new URL(req.url);
     const startDate = new Date(url.searchParams.get('start_date') || new Date().toISOString());
     const endDate = new Date(url.searchParams.get('end_date') || new Date().toISOString());
-    const reportType = url.searchParams.get('report_type') || 'overview';
+    // const reportType = url.searchParams.get('report_type') || 'overview';
 
     await connectToDatabase();
 

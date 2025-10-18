@@ -414,6 +414,382 @@ import { StatsCard, DataTable, StatusBadge } from '@/components/Admin';
 - [ ] Monitor user feedback
 - [ ] Check security logs
 
+## TypeScript & ESLint Rules
+
+### TypeScript Best Practices
+
+#### 1. Avoid `any` Types
+**❌ Bad:**
+```typescript
+const data: any = response.data;
+const user = (row as any).user_id;
+```
+
+**✅ Good:**
+```typescript
+const data: { id: string; name: string } = response.data;
+const user = (row as { user_id: string }).user_id;
+```
+
+#### 2. Proper Type Assertions
+**❌ Bad:**
+```typescript
+color={getStatusColor(status) as any}
+```
+
+**✅ Good:**
+```typescript
+color={getStatusColor(status) as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
+```
+
+#### 3. API Route Function Signatures
+**❌ Bad:**
+```typescript
+export async function POST(req: NextRequest) {
+```
+
+**✅ Good:**
+```typescript
+export async function POST(req: Request) {
+// or for no parameters:
+export async function GET() {
+```
+
+#### 4. Mongoose Model Property Access
+**❌ Bad:**
+```typescript
+user.last_login = new Date();
+admin._id.toString()
+```
+
+**✅ Good:**
+```typescript
+(user as { last_login?: Date }).last_login = new Date();
+(admin._id as { toString(): string }).toString()
+```
+
+#### 5. Validation Data Types
+**❌ Bad:**
+```typescript
+const validatedData = validation.data as any;
+```
+
+**✅ Good:**
+```typescript
+const validatedData = validation.data as { 
+  approved_amount: number; 
+  interest_rate: number; 
+  tenure_months: number; 
+  processing_fee: number; 
+  remarks?: string; 
+};
+```
+
+### React Hooks Rules
+
+#### 1. useEffect Dependencies
+**❌ Bad:**
+```typescript
+useEffect(() => {
+  fetchData();
+}, []);
+```
+
+**✅ Good:**
+```typescript
+const fetchData = useCallback(async () => {
+  // fetch logic
+}, [dependency1, dependency2]);
+
+useEffect(() => {
+  fetchData();
+}, [fetchData]);
+```
+
+#### 2. Unused Variables
+**❌ Bad:**
+```typescript
+const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+// selectedRowId never used
+```
+
+**✅ Good:**
+```typescript
+const [, setSelectedRowId] = useState<string | null>(null);
+// or remove entirely if not needed
+```
+
+#### 3. Unused Parameters
+**❌ Bad:**
+```typescript
+const handleClick = (event: React.MouseEvent) => {
+  // event not used
+};
+```
+
+**✅ Good:**
+```typescript
+const handleClick = (_event: React.MouseEvent) => {
+  // or remove parameter if not needed
+};
+```
+
+### Material-UI Component Rules
+
+#### 1. ListItem Usage
+**❌ Bad:**
+```typescript
+<ListItem button onClick={handleClick}>
+```
+
+**✅ Good:**
+```typescript
+<ListItem disablePadding>
+  <ListItemButton onClick={handleClick}>
+    <ListItemIcon>{icon}</ListItemIcon>
+    <ListItemText primary={text} />
+  </ListItemButton>
+</ListItem>
+```
+
+#### 2. Chip Color Props
+**❌ Bad:**
+```typescript
+<Chip color={getColor() as any} />
+```
+
+**✅ Good:**
+```typescript
+<Chip color={getColor() as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'} />
+```
+
+### Import Management Rules
+
+#### 1. Remove Unused Imports
+**❌ Bad:**
+```typescript
+import { 
+  CheckCircle, 
+  Warning, 
+  Error, 
+  Schedule,
+  TrendingUp 
+} from '@mui/icons-material';
+// Only CheckCircle is used
+```
+
+**✅ Good:**
+```typescript
+import { CheckCircle } from '@mui/icons-material';
+```
+
+#### 2. NextRequest vs Request
+**❌ Bad:**
+```typescript
+import { NextRequest, NextResponse } from 'next/server';
+export async function GET(req: NextRequest) {
+```
+
+**✅ Good:**
+```typescript
+import { NextResponse } from 'next/server';
+export async function GET(req: Request) {
+// or
+export async function GET() {
+```
+
+### String Escaping Rules
+
+#### 1. Unescaped Entities
+**❌ Bad:**
+```typescript
+<Typography>Don't let funding constraints limit your business growth.</Typography>
+<Typography>"This is a quote"</Typography>
+```
+
+**✅ Good:**
+```typescript
+<Typography>Don&apos;t let funding constraints limit your business growth.</Typography>
+<Typography>&ldquo;This is a quote&rdquo;</Typography>
+```
+
+### Database Model Rules
+
+#### 1. Schema Types
+**❌ Bad:**
+```typescript
+benefits_availed?: Record<string, any>;
+features?: Record<string, any>;
+```
+
+**✅ Good:**
+```typescript
+benefits_availed?: Record<string, unknown>;
+features?: Record<string, unknown>;
+```
+
+#### 2. Unused Parameters in Methods
+**❌ Bad:**
+```typescript
+canApplyForLoan = function(loanType: 'personal' | 'business'): boolean {
+  // loanType not used
+}
+```
+
+**✅ Good:**
+```typescript
+canApplyForLoan = function(_loanType: 'personal' | 'business'): boolean {
+  // or remove parameter if not needed
+}
+```
+
+### Event Handler Types
+
+#### 1. Form Events
+**❌ Bad:**
+```typescript
+const handleChange = (event: any) => {
+  setValue(event.target.value);
+};
+```
+
+**✅ Good:**
+```typescript
+const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  setValue(event.target.value);
+};
+
+const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  setValue(event.target.value);
+};
+```
+
+### Data Table Patterns
+
+#### 1. Row ID Extraction
+**❌ Bad:**
+```typescript
+getRowId={(row) => (row as any)._id}
+```
+
+**✅ Good:**
+```typescript
+getRowId={(row) => (row as { _id: string })._id}
+```
+
+#### 2. Column Rendering
+**❌ Bad:**
+```typescript
+render: (value, row) => (
+  <Box>
+    {String((row as any).user_phone) || 'N/A'}
+  </Box>
+)
+```
+
+**✅ Good:**
+```typescript
+render: (value, row) => (
+  <Box>
+    {String((row as { user_phone?: string }).user_phone) || 'N/A'}
+  </Box>
+)
+```
+
+### API Response Patterns
+
+#### 1. Aggregation Pipelines
+**❌ Bad:**
+```typescript
+const pipeline: any[] = [...];
+await Model.aggregate(pipeline);
+```
+
+**✅ Good:**
+```typescript
+const pipeline: unknown[] = [...];
+await Model.aggregate(pipeline as never[]);
+```
+
+#### 2. Query Objects
+**❌ Bad:**
+```typescript
+const query: any = {};
+```
+
+**✅ Good:**
+```typescript
+const query: Record<string, unknown> = {};
+```
+
+### Error Handling Patterns
+
+#### 1. Try-Catch Blocks
+**❌ Bad:**
+```typescript
+} catch (err) {
+  console.error('Error:', err);
+}
+```
+
+**✅ Good:**
+```typescript
+} catch (err) {
+  console.error('Error:', err instanceof Error ? err.message : 'Unknown error');
+}
+```
+
+### Common Fixes Applied
+
+#### 1. Admin Pages
+- Removed unused Material-UI icon imports
+- Fixed `any` types in status color functions
+- Added `useCallback` for fetch functions
+- Fixed `ListItem` to `ListItemButton` usage
+
+#### 2. API Routes
+- Removed unused `NextRequest` imports
+- Updated function signatures to use `Request` or no parameters
+- Fixed validation data type assertions
+- Corrected Mongoose property access with type assertions
+
+#### 3. Components
+- Removed unused imports across all component files
+- Fixed `any` types in event handlers and props
+- Escaped unescaped entities in JSX
+- Added proper type assertions for Material-UI props
+
+#### 4. Models
+- Replaced `any` types with `unknown` in schema definitions
+- Fixed unused parameters in instance methods
+- Added proper type assertions for Mongoose document properties
+
+### Build Verification Rules
+
+#### Always run `npm run build` after making changes to verify:
+- No TypeScript errors
+- No ESLint errors (warnings are acceptable)
+- Successful compilation
+
+#### Notes:
+- Warnings are acceptable and don't block builds
+- Some Next.js internal type issues may appear but don't affect functionality
+- Focus on fixing errors, not warnings, unless specifically requested
+- Use type assertions sparingly and with specific types when possible
+- Prefer `unknown` over `any` when the exact type is not known
+
+### Quick Reference
+
+| Issue | Fix |
+|-------|-----|
+| `any` type | Replace with specific type or `unknown` |
+| Unused import | Remove from import statement |
+| Unused variable | Prefix with `_` or remove |
+| Missing useEffect deps | Wrap function in `useCallback` |
+| Unescaped entity | Use `&apos;`, `&ldquo;`, `&rdquo;` |
+| NextRequest unused | Remove import, use `Request` or no params |
+| Mongoose property access | Use type assertion: `(doc as { prop: Type }).prop` |
+
 ## Support and Maintenance
 
 ### Regular Tasks

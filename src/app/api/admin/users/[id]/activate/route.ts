@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { withAdminAuth, NextRequestWithAdmin } from '@/lib/adminAuthMiddleware';
 import { connectToDatabase } from '@/lib/mongodb';
 import User from '@/models/User';
@@ -24,7 +24,7 @@ const activateUserHandler = async (req: NextRequestWithAdmin) => {
 
     // Activate the user
     user.status = 'active';
-    user.updated_at = new Date();
+    user.updatedAt = new Date();
     await user.save();
 
     return NextResponse.json({

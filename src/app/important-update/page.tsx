@@ -1,7 +1,7 @@
 'use client';
 
-import { Container, Typography, Box, Paper, Divider, Card, CardContent, Chip, Grid, Alert, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
-import { Announcement, Schedule, Info, Warning, CheckCircle, Phone, Email, AccessTime } from '@mui/icons-material';
+import { Container, Typography, Box, Divider, Card, CardContent, Chip, Grid, Alert, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import { Announcement, Info, Warning, CheckCircle, Phone, Email, AccessTime } from '@mui/icons-material';
 import { useState, useEffect } from 'react';
 
 export default function ImportantUpdatePage() {
@@ -148,7 +148,7 @@ export default function ImportantUpdatePage() {
                       </Box>
                       <Chip 
                         label={update.priority.toUpperCase()} 
-                        color={getPriorityColor(update.priority) as any}
+                        color={getPriorityColor(update.priority) as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
                         size="small"
                       />
                     </Box>

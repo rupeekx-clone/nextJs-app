@@ -8,7 +8,7 @@ export interface IMembershipCard extends Document {
   expiry_date: Date;
   payment_id?: string;
   status: 'active' | 'expired' | 'cancelled';
-  benefits_availed?: Record<string, any>;
+  benefits_availed?: Record<string, unknown>;
   created_at: Date;
   updated_at: Date;
 }
@@ -97,9 +97,9 @@ membershipCardSchema.methods.daysUntilExpiry = function(): number {
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 };
 
-membershipCardSchema.methods.canApplyForLoan = function(loanType: 'personal' | 'business'): boolean {
+membershipCardSchema.methods.canApplyForLoan = function(_loanType: 'personal' | 'business'): boolean {
   if (!this.isActive()) return false;
-  
+  if(_loanType === 'personal') {}
   // This would need to be populated with card type details
   // For now, return true if active
   return true;

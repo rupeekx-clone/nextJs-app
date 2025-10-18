@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { withAdminAuth, NextRequestWithAdmin } from '@/lib/adminAuthMiddleware';
 import { connectToDatabase } from '@/lib/mongodb';
 import { validateData, loanApprovalSchema } from '@/lib/validation';
@@ -36,7 +36,13 @@ const approveLoanHandler = async (req: NextRequestWithAdmin) => {
       }, { status: 400 });
     }
 
-    const validatedData = validation.data as any;
+    const validatedData = validation.data as {
+      approved_amount: number;
+      tenure_months: number;
+      interest_rate: number;
+      processing_fee: number;
+      remarks?: string;
+    };
 
     // Update the application with approval details
     application.status = 'approved';

@@ -67,7 +67,8 @@ export async function POST(request: Request) {
 
     // 5. Generate JWTs
     const tokenPayload: AuthPayload = {
-      userId: (user._id as string),
+      userId: (user._id as { toString(): string }).toString(),
+      email: user.email || '',
       userType: user.user_type, // Assuming user_type is part of IUser and schema
       // Add other relevant details to payload if needed, like email if it were present
     };

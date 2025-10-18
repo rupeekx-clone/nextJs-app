@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { withAuth, NextRequestWithUser } from '@/lib/authMiddleware';
 import { S3Service } from '@/lib/s3Upload';
 import { validateData } from '@/lib/validation';
@@ -25,7 +25,12 @@ const uploadDocumentHandler = async (req: NextRequestWithUser) => {
       }, { status: 400 });
     }
 
-    const validatedData = validation.data as any;
+    const validatedData = validation.data as {
+      fileName: string;
+      fileSize: number;
+      contentType: string;
+      documentType: 'address_proof' | 'identity_proof' | 'income_proof' | 'bank_statement' | 'other';
+    };
 
     // Validate file type
     if (!S3Service.isValidDocumentType(validatedData.fileName)) {

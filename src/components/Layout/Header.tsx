@@ -19,9 +19,6 @@ import {
   Divider,
   Avatar,
   Badge,
-  TextField,
-  InputAdornment,
-  Chip,
   useMediaQuery,
   useTheme,
   alpha,
@@ -29,9 +26,7 @@ import {
 import {
   Menu as MenuIcon,
   Close as CloseIcon,
-  Search,
   Notifications,
-  AccountCircle,
   ExpandMore,
   ExpandLess,
   Login,
@@ -41,7 +36,7 @@ import {
   Email,
 } from '@mui/icons-material';
 import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 interface NavItem {
   label: string;
@@ -89,7 +84,7 @@ const Header: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerOpenMenus, setDrawerOpenMenus] = useState<{ [key: string]: boolean }>({});
   const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  // const [searchQuery, setSearchQuery] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState('');
@@ -97,7 +92,7 @@ const Header: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
   const router = useRouter();
-  const pathname = usePathname();
+  // const pathname = usePathname();
 
   // Check if user is logged in
   useEffect(() => {
