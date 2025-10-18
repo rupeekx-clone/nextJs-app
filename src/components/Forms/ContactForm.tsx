@@ -162,7 +162,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
             <a href="/privacy-policy" target="_blank" rel="noopener noreferrer">
               Privacy Policy
             </a>{' '}
-            of Rupeekx.com
+            of Blumiq.com
           </Typography>
         </Box>
 

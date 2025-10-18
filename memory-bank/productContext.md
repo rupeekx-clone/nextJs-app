@@ -19,7 +19,7 @@
 
 ## Solution Overview
 
-RupeekX Clone addresses these pain points by creating a unified platform that:
+Blumiq addresses these pain points by creating a unified platform that:
 
 - **Centralizes Applications**: Single application form for multiple bank partners
 - **Accelerates Processing**: Membership-based faster approval (30 min personal, 48 hr business)

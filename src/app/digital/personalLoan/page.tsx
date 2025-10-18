@@ -1251,12 +1251,12 @@ export default function PersonalLoanPage() {
             </Card>
           </Grid>
 
-          {/* Why RupeekX */}
+          {/* Why Blumiq */}
           <Grid size={{ xs: 12, md: 6 }}>
             <Card sx={{ height: '100%' }}>
               <CardContent>
                 <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3 }}>
-                  Why RupeekX?
+                  Why Blumiq?
                 </Typography>
                 <List>
                   <ListItem>
@@ -1398,7 +1398,7 @@ export default function PersonalLoanPage() {
                   Email Address
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  info@rupeekx.com
+                  info@Blumiq.com
                 </Typography>
               </Grid>
             </Grid>

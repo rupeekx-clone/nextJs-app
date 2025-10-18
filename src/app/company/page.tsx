@@ -97,7 +97,7 @@ export default function CompanyPage() {
           ONE OF THE FASTEST GROWING COMPANY IN INDIA
         </Typography>
         <Typography variant="body1" paragraph sx={{ lineHeight: 1.8, fontSize: '1.1rem', textAlign: 'justify', maxWidth: 800, mx: 'auto' }}>
-          Welcome to Rupeekx.com, we are the number one loan provider consult. We&apos;re dedicated to helping you in getting loans through membership cards, with an emphasis on saving your time and money. Get the best results on loans through multiple banks or NBFCs. We are aimed to provide easy quick loan approval. The company has garnered a great volume of acclaim due to its authentic services in giving the industry-best loan offerings.
+          Welcome to Blumiq.com, we are the number one loan provider consult. We&apos;re dedicated to helping you in getting loans through membership cards, with an emphasis on saving your time and money. Get the best results on loans through multiple banks or NBFCs. We are aimed to provide easy quick loan approval. The company has garnered a great volume of acclaim due to its authentic services in giving the industry-best loan offerings.
         </Typography>
         <Typography variant="body1" paragraph sx={{ lineHeight: 1.8, fontSize: '1.1rem', textAlign: 'justify', maxWidth: 800, mx: 'auto' }}>
           With over 10,000+ satisfied clients and growing, we have established ourselves as a trusted partner in the financial services industry. Our commitment to excellence and customer satisfaction has made us one of the fastest-growing companies in India.

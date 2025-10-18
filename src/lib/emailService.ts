@@ -68,13 +68,13 @@ export class EmailService {
       <html>
         <head>
           <meta charset="utf-8">
-          <title>Verify Your Email - RupeekX</title>
+          <title>Verify Your Email - Blumiq</title>
         </head>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
           <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-            <h2 style="color: #1976d2;">Welcome to RupeekX!</h2>
+            <h2 style="color: #1976d2;">Welcome to Blumiq!</h2>
             <p>Hi ${options.name},</p>
-            <p>Thank you for registering with RupeekX. Please verify your email address to complete your registration.</p>
+            <p>Thank you for registering with Blumiq. Please verify your email address to complete your registration.</p>
             <div style="text-align: center; margin: 30px 0;">
               <a href="${verificationUrl}" 
                  style="background-color: #1976d2; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">
@@ -86,7 +86,7 @@ export class EmailService {
             <p>This link will expire in 24 hours.</p>
             <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
             <p style="font-size: 12px; color: #666;">
-              If you didn't create an account with RupeekX, please ignore this email.
+              If you didn't create an account with Blumiq, please ignore this email.
             </p>
           </div>
         </body>
@@ -94,22 +94,22 @@ export class EmailService {
     `;
 
     const text = `
-      Welcome to RupeekX!
+      Welcome to Blumiq!
       
       Hi ${options.name},
       
-      Thank you for registering with RupeekX. Please verify your email address to complete your registration.
+      Thank you for registering with Blumiq. Please verify your email address to complete your registration.
       
       Click this link to verify: ${verificationUrl}
       
       This link will expire in 24 hours.
       
-      If you didn't create an account with RupeekX, please ignore this email.
+      If you didn't create an account with Blumiq, please ignore this email.
     `;
 
     return this.sendEmail({
       to: options.to,
-      subject: 'Verify Your Email - RupeekX',
+      subject: 'Verify Your Email - Blumiq',
       html,
       text,
     });
@@ -126,13 +126,13 @@ export class EmailService {
       <html>
         <head>
           <meta charset="utf-8">
-          <title>Reset Your Password - RupeekX</title>
+          <title>Reset Your Password - Blumiq</title>
         </head>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
           <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
             <h2 style="color: #1976d2;">Password Reset Request</h2>
             <p>Hi ${options.name},</p>
-            <p>We received a request to reset your password for your RupeekX account.</p>
+            <p>We received a request to reset your password for your Blumiq account.</p>
             <div style="text-align: center; margin: 30px 0;">
               <a href="${resetUrl}" 
                  style="background-color: #1976d2; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">
@@ -157,7 +157,7 @@ export class EmailService {
       
       Hi ${options.name},
       
-      We received a request to reset your password for your RupeekX account.
+      We received a request to reset your password for your Blumiq account.
       
       Click this link to reset your password: ${resetUrl}
       
@@ -170,7 +170,7 @@ export class EmailService {
 
     return this.sendEmail({
       to: options.to,
-      subject: 'Reset Your Password - RupeekX',
+      subject: 'Reset Your Password - Blumiq',
       html,
       text,
     });
@@ -191,7 +191,7 @@ export class EmailService {
       <html>
         <head>
           <meta charset="utf-8">
-          <title>Loan Application Submitted - RupeekX</title>
+          <title>Loan Application Submitted - Blumiq</title>
         </head>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
           <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -217,7 +217,7 @@ export class EmailService {
 
     return this.sendEmail({
       to,
-      subject: 'Loan Application Submitted - RupeekX',
+      subject: 'Loan Application Submitted - Blumiq',
       html,
     });
   }
@@ -236,11 +236,11 @@ export class EmailService {
       <html>
         <head>
           <meta charset="utf-8">
-          <title>Membership Card Activated - RupeekX</title>
+          <title>Membership Card Activated - Blumiq</title>
         </head>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
           <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-            <h2 style="color: #1976d2;">Welcome to RupeekX Membership!</h2>
+            <h2 style="color: #1976d2;">Welcome to Blumiq Membership!</h2>
             <p>Hi ${name},</p>
             <p>Congratulations! Your ${cardType} membership card has been activated successfully.</p>
             <div style="background-color: #f5f5f5; padding: 20px; border-radius: 5px; margin: 20px 0;">
@@ -249,7 +249,7 @@ export class EmailService {
               <p><strong>Status:</strong> Active</p>
             </div>
             <p>You can now enjoy all the benefits of your membership, including faster loan processing and exclusive offers.</p>
-            <p>Thank you for choosing RupeekX!</p>
+            <p>Thank you for choosing Blumiq!</p>
             <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
             <p style="font-size: 12px; color: #666;">
               If you have any questions about your membership, please contact our support team.
@@ -261,7 +261,7 @@ export class EmailService {
 
     return this.sendEmail({
       to,
-      subject: 'Membership Card Activated - RupeekX',
+      subject: 'Membership Card Activated - Blumiq',
       html,
     });
   }
@@ -282,7 +282,7 @@ export class EmailService {
       <html>
         <head>
           <meta charset="utf-8">
-          <title>Loan Application Approved - RupeekX</title>
+          <title>Loan Application Approved - Blumiq</title>
         </head>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
           <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -315,7 +315,7 @@ export class EmailService {
 
     return this.sendEmail({
       to,
-      subject: 'Loan Application Approved - RupeekX',
+      subject: 'Loan Application Approved - Blumiq',
       html,
     });
   }
@@ -335,7 +335,7 @@ export class EmailService {
       <html>
         <head>
           <meta charset="utf-8">
-          <title>Loan Application Update - RupeekX</title>
+          <title>Loan Application Update - Blumiq</title>
         </head>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
           <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -354,7 +354,7 @@ export class EmailService {
               <li>Contact our support team for guidance</li>
               <li>Consider our other loan products</li>
             </ul>
-            <p>We appreciate your interest in RupeekX and look forward to serving you in the future.</p>
+            <p>We appreciate your interest in Blumiq and look forward to serving you in the future.</p>
             <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
             <p style="font-size: 12px; color: #666;">
               If you have any questions, please contact our support team.
@@ -366,7 +366,7 @@ export class EmailService {
 
     return this.sendEmail({
       to,
-      subject: 'Loan Application Update - RupeekX',
+      subject: 'Loan Application Update - Blumiq',
       html,
     });
   }

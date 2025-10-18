@@ -6,7 +6,7 @@ export default function RefundPolicyPage() {
   const sections = [
     { 
       title: "1. Overview", 
-      content: "At RupeekX, we strive to provide excellent service and customer satisfaction. This Refund Policy outlines the circumstances under which refunds may be provided for our services. Please read this policy carefully before making any purchases or payments on our platform." 
+      content: "At Blumiq, we strive to provide excellent service and customer satisfaction. This Refund Policy outlines the circumstances under which refunds may be provided for our services. Please read this policy carefully before making any purchases or payments on our platform." 
     },
     { 
       title: "2. Refund Eligibility Conditions", 
@@ -34,11 +34,11 @@ export default function RefundPolicyPage() {
     },
     { 
       title: "8. Dispute Resolution", 
-      content: "If you disagree with a refund decision, you may:\n\n• Request a review by our senior management team\n• Provide additional documentation to support your case\n• Escalate the matter through our customer support channels\n• Contact us at legal@rupeekx.com for legal disputes\n\nWe are committed to resolving all disputes fairly and transparently." 
+      content: "If you disagree with a refund decision, you may:\n\n• Request a review by our senior management team\n• Provide additional documentation to support your case\n• Escalate the matter through our customer support channels\n• Contact us at legal@Blumiq.com for legal disputes\n\nWe are committed to resolving all disputes fairly and transparently." 
     },
     { 
       title: "9. Contact Information for Refunds", 
-      content: "For refund-related inquiries, please contact us:\n\n• Email: refunds@rupeekx.com\n• Phone: +91-70263-73808 (Mon-Fri, 9 AM - 6 PM)\n• Support Ticket: Submit through our 'Raise a Request' page\n• Address: 44, 3rd Floor, Vijayraj Society, Near Akshar Family Wear, Singanpore Causeway Road, Katargam, Surat, Gujarat, India - 395004\n\nPlease include your transaction details and reason for refund in your communication." 
+      content: "For refund-related inquiries, please contact us:\n\n• Email: refunds@Blumiq.com\n• Phone: +91-70263-73808 (Mon-Fri, 9 AM - 6 PM)\n• Support Ticket: Submit through our 'Raise a Request' page\n• Address: 44, 3rd Floor, Vijayraj Society, Near Akshar Family Wear, Singanpore Causeway Road, Katargam, Surat, Gujarat, India - 395004\n\nPlease include your transaction details and reason for refund in your communication." 
     },
     { 
       title: "10. Changes to Refund Policy", 
@@ -59,7 +59,7 @@ export default function RefundPolicyPage() {
 
         <Alert severity="info" sx={{ mb: 4 }}>
           <Typography variant="body2">
-            <strong>Important:</strong> This refund policy applies to all services provided by RupeekX. Please read carefully before making any payments.
+            <strong>Important:</strong> This refund policy applies to all services provided by Blumiq. Please read carefully before making any payments.
           </Typography>
         </Alert>
 

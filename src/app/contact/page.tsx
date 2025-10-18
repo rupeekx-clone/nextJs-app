@@ -43,7 +43,7 @@ export default function ContactPage() {
                   Email
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  info@rupeekx.com
+                  info@Blumiq.com
                 </Typography>
               </Box>
             </CardContent>

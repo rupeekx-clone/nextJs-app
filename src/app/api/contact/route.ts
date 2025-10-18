@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
     // Send notification email to admin (optional)
     try {
       await EmailService.sendEmail({
-        to: process.env.ADMIN_EMAIL || 'admin@rupeekx.com',
+        to: process.env.ADMIN_EMAIL || 'admin@Blumiq.com',
         subject: `New Contact Enquiry from ${validation.data.name}`,
         html: `
           <h3>New Contact Enquiry</h3>

@@ -6,11 +6,11 @@ export default function DisclaimerPage() {
   const sections = [
     { 
       title: "1. General Information Disclaimer", 
-      content: "The information contained on this website (RupeekX) is for general information purposes only. While we endeavor to keep the information up to date and correct, we make no representations or warranties of any kind, express or implied, about the completeness, accuracy, reliability, suitability, or availability with respect to the website or the information, products, services, or related graphics contained on the website for any purpose. Any reliance you place on such information is therefore strictly at your own risk." 
+      content: "The information contained on this website (Blumiq) is for general information purposes only. While we endeavor to keep the information up to date and correct, we make no representations or warranties of any kind, express or implied, about the completeness, accuracy, reliability, suitability, or availability with respect to the website or the information, products, services, or related graphics contained on the website for any purpose. Any reliance you place on such information is therefore strictly at your own risk." 
     },
     { 
       title: "2. Loan Facilitation Disclaimer", 
-      content: "RupeekX is a loan facilitation platform and does not directly provide loans. We act as an intermediary between borrowers and lending institutions. Important disclaimers include:\n\n• We do not guarantee loan approval or specific loan terms\n• Interest rates, processing fees, and loan terms are determined by our lending partners\n• Loan approval is subject to the lending partner's credit assessment criteria\n• We are not responsible for lending partner decisions or policies\n• Processing times may vary based on lending partner requirements\n• We facilitate the application process but do not control the final loan terms" 
+      content: "Blumiq is a loan facilitation platform and does not directly provide loans. We act as an intermediary between borrowers and lending institutions. Important disclaimers include:\n\n• We do not guarantee loan approval or specific loan terms\n• Interest rates, processing fees, and loan terms are determined by our lending partners\n• Loan approval is subject to the lending partner's credit assessment criteria\n• We are not responsible for lending partner decisions or policies\n• Processing times may vary based on lending partner requirements\n• We facilitate the application process but do not control the final loan terms" 
     },
     { 
       title: "3. Financial Advice Disclaimer", 
@@ -38,7 +38,7 @@ export default function DisclaimerPage() {
     },
     { 
       title: "9. Limitation of Liability", 
-      content: "To the maximum extent permitted by law, RupeekX shall not be liable for:\n\n• Any direct, indirect, incidental, or consequential damages\n• Loss of profits, data, or business opportunities\n• Damages arising from loan rejection or delays\n• Third-party actions or decisions\n• System failures or technical issues\n• Force majeure events\n\nOur total liability shall not exceed the fees paid for our services in the preceding 12 months." 
+      content: "To the maximum extent permitted by law, Blumiq shall not be liable for:\n\n• Any direct, indirect, incidental, or consequential damages\n• Loss of profits, data, or business opportunities\n• Damages arising from loan rejection or delays\n• Third-party actions or decisions\n• System failures or technical issues\n• Force majeure events\n\nOur total liability shall not exceed the fees paid for our services in the preceding 12 months." 
     },
     { 
       title: "10. Changes to This Disclaimer", 
@@ -46,7 +46,7 @@ export default function DisclaimerPage() {
     },
     { 
       title: "11. Contact Information", 
-      content: "If you have any questions about this disclaimer or need clarification on any points, please contact us:\n\n• Email: legal@rupeekx.com\n• Phone: +91-70263-73808\n• Address: 44, 3rd Floor, Vijayraj Society, Near Akshar Family Wear, Singanpore Causeway Road, Katargam, Surat, Gujarat, India - 395004\n\nWe will respond to your inquiries within 3 business days." 
+      content: "If you have any questions about this disclaimer or need clarification on any points, please contact us:\n\n• Email: legal@blumiq.com\n• Phone: +91-70263-73808\n• Address: 44, 3rd Floor, Vijayraj Society, Near Akshar Family Wear, Singanpore Causeway Road, Katargam, Surat, Gujarat, India - 395004\n\nWe will respond to your inquiries within 3 business days." 
     }
   ];
 
@@ -63,7 +63,7 @@ export default function DisclaimerPage() {
 
         <Alert severity="warning" sx={{ mb: 4 }}>
           <Typography variant="body2">
-            <strong>Important:</strong> Please read this disclaimer carefully. By using RupeekX services, you acknowledge that you have read, understood, and agree to be bound by this disclaimer.
+            <strong>Important:</strong> Please read this disclaimer carefully. By using Blumiq services, you acknowledge that you have read, understood, and agree to be bound by this disclaimer.
           </Typography>
         </Alert>
 
@@ -93,7 +93,7 @@ export default function DisclaimerPage() {
           <List dense>
             <ListItem>
               <ListItemText 
-                primary="RupeekX is a loan facilitation platform, not a direct lender"
+                primary="Blumiq is a loan facilitation platform, not a direct lender"
                 primaryTypographyProps={{ variant: 'body2' }}
               />
             </ListItem>

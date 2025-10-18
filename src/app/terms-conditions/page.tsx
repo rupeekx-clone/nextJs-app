@@ -6,11 +6,11 @@ export default function TermsConditionsPage() {
   const sections = [
     { 
       title: "1. Acceptance of Terms", 
-      content: "By accessing and using RupeekX's website and services, you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service. These terms apply to all visitors, users, and others who access or use the service." 
+      content: "By accessing and using Blumiq's website and services, you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this service. These terms apply to all visitors, users, and others who access or use the service." 
     },
     { 
       title: "2. Description of Service", 
-      content: "RupeekX is a financial technology platform that connects borrowers with lending partners. We provide:\n\n• Personal loan application and processing services\n• Business loan application and processing services\n• Membership card services for enhanced loan benefits\n• Document verification and processing assistance\n• Credit assessment and loan matching services\n\nWe act as an intermediary between borrowers and lending institutions, facilitating the loan application process but not providing loans directly." 
+      content: "Blumiq is a financial technology platform that connects borrowers with lending partners. We provide:\n\n• Personal loan application and processing services\n• Business loan application and processing services\n• Membership card services for enhanced loan benefits\n• Document verification and processing assistance\n• Credit assessment and loan matching services\n\nWe act as an intermediary between borrowers and lending institutions, facilitating the loan application process but not providing loans directly." 
     },
     { 
       title: "3. Eligibility and User Accounts", 
@@ -18,7 +18,7 @@ export default function TermsConditionsPage() {
     },
     { 
       title: "4. Loan Application Process", 
-      content: "When applying for loans through our platform:\n\n• You must provide accurate and complete information\n• We will share your information with our lending partners\n• Loan approval is subject to partner bank/NBFC criteria\n• We do not guarantee loan approval or specific terms\n• Interest rates and terms are determined by the lending partner\n• Processing fees may apply as disclosed during application\n\nYou understand that RupeekX facilitates the process but does not provide loans directly." 
+      content: "When applying for loans through our platform:\n\n• You must provide accurate and complete information\n• We will share your information with our lending partners\n• Loan approval is subject to partner bank/NBFC criteria\n• We do not guarantee loan approval or specific terms\n• Interest rates and terms are determined by the lending partner\n• Processing fees may apply as disclosed during application\n\nYou understand that Blumiq facilitates the process but does not provide loans directly." 
     },
     { 
       title: "5. Membership Card Services", 
@@ -42,7 +42,7 @@ export default function TermsConditionsPage() {
     },
     { 
       title: "10. Intellectual Property Rights", 
-      content: "All content, trademarks, logos, and intellectual property on our platform are owned by RupeekX or our licensors. You may not:\n\n• Copy, modify, or distribute our content without permission\n• Use our trademarks or logos without authorization\n• Create derivative works based on our platform\n• Remove or alter copyright notices\n\nYou retain ownership of the information you provide, but grant us license to use it for service provision." 
+      content: "All content, trademarks, logos, and intellectual property on our platform are owned by Blumiq or our licensors. You may not:\n\n• Copy, modify, or distribute our content without permission\n• Use our trademarks or logos without authorization\n• Create derivative works based on our platform\n• Remove or alter copyright notices\n\nYou retain ownership of the information you provide, but grant us license to use it for service provision." 
     },
     { 
       title: "11. Disclaimers and Limitations", 
@@ -50,11 +50,11 @@ export default function TermsConditionsPage() {
     },
     { 
       title: "12. Limitation of Liability", 
-      content: "To the maximum extent permitted by law, RupeekX shall not be liable for:\n\n• Indirect, incidental, or consequential damages\n• Loss of profits, data, or business opportunities\n• Damages exceeding the fees paid for our services\n• Actions or decisions of lending partners\n• Third-party content or services\n• System downtime or technical issues\n\nOur total liability shall not exceed the amount you paid for our services in the 12 months preceding the claim." 
+      content: "To the maximum extent permitted by law, Blumiq shall not be liable for:\n\n• Indirect, incidental, or consequential damages\n• Loss of profits, data, or business opportunities\n• Damages exceeding the fees paid for our services\n• Actions or decisions of lending partners\n• Third-party content or services\n• System downtime or technical issues\n\nOur total liability shall not exceed the amount you paid for our services in the 12 months preceding the claim." 
     },
     { 
       title: "13. Indemnification", 
-      content: "You agree to indemnify and hold harmless RupeekX, its officers, directors, employees, and agents from any claims, damages, or expenses arising from:\n\n• Your use of our services\n• Violation of these terms and conditions\n• Violation of any third-party rights\n• Your provision of false or misleading information\n• Your failure to comply with applicable laws" 
+      content: "You agree to indemnify and hold harmless Blumiq, its officers, directors, employees, and agents from any claims, damages, or expenses arising from:\n\n• Your use of our services\n• Violation of these terms and conditions\n• Violation of any third-party rights\n• Your provision of false or misleading information\n• Your failure to comply with applicable laws" 
     },
     { 
       title: "14. Termination", 
@@ -74,7 +74,7 @@ export default function TermsConditionsPage() {
     },
     { 
       title: "18. Entire Agreement", 
-      content: "These terms, together with our Privacy Policy and other referenced policies, constitute the entire agreement between you and RupeekX regarding the use of our services. They supersede all prior agreements and understandings." 
+      content: "These terms, together with our Privacy Policy and other referenced policies, constitute the entire agreement between you and Blumiq regarding the use of our services. They supersede all prior agreements and understandings." 
     },
     { 
       title: "19. Changes to Terms", 
@@ -82,7 +82,7 @@ export default function TermsConditionsPage() {
     },
     { 
       title: "20. Contact Information", 
-      content: "For questions about these Terms & Conditions, contact us:\n\n• Email: legal@rupeekx.com\n• Phone: +91-70263-73808\n• Address: 44, 3rd Floor, Vijayraj Society, Near Akshar Family Wear, Singanpore Causeway Road, Katargam, Surat, Gujarat, India - 395004\n\nWe will respond to your inquiries within 5 business days." 
+      content: "For questions about these Terms & Conditions, contact us:\n\n• Email: legal@blumiq.com\n• Phone: +91-70263-73808\n• Address: 44, 3rd Floor, Vijayraj Society, Near Akshar Family Wear, Singanpore Causeway Road, Katargam, Surat, Gujarat, India - 395004\n\nWe will respond to your inquiries within 5 business days." 
     }
   ];
 
@@ -99,7 +99,7 @@ export default function TermsConditionsPage() {
 
         <Alert severity="info" sx={{ mb: 4 }}>
           <Typography variant="body2">
-            <strong>Important:</strong> Please read these terms carefully before using our services. By using RupeekX, you agree to be bound by these terms and conditions.
+            <strong>Important:</strong> Please read these terms carefully before using our services. By using Blumiq, you agree to be bound by these terms and conditions.
           </Typography>
         </Alert>
 
@@ -129,7 +129,7 @@ export default function TermsConditionsPage() {
           <List dense>
             <ListItem>
               <ListItemText 
-                primary="RupeekX is a loan facilitation platform, not a direct lender"
+                primary="Blumiq is a loan facilitation platform, not a direct lender"
                 primaryTypographyProps={{ variant: 'body2' }}
               />
             </ListItem>

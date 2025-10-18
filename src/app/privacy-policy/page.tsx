@@ -6,7 +6,7 @@ export default function PrivacyPolicyPage() {
   const sections = [
     { 
       title: "1. Introduction", 
-      content: "RupeekX ('we', 'our', or 'us') is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our services. Please read this privacy policy carefully. If you do not agree with the terms of this privacy policy, please do not access the site." 
+      content: "Blumiq ('we', 'our', or 'us') is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our services. Please read this privacy policy carefully. If you do not agree with the terms of this privacy policy, please do not access the site." 
     },
     { 
       title: "2. Information We Collect", 
@@ -54,7 +54,7 @@ export default function PrivacyPolicyPage() {
     },
     { 
       title: "13. Contact Us", 
-      content: "If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact us:\n\n• Email: privacy@rupeekx.com\n• Phone: +91-70263-73808\n• Address: 44, 3rd Floor, Vijayraj Society, Near Akshar Family Wear, Singanpore Causeway Road, Katargam, Surat, Gujarat, India - 395004\n\nWe will respond to your inquiries within 30 days of receipt." 
+      content: "If you have any questions, concerns, or requests regarding this Privacy Policy or our data practices, please contact us:\n\n• Email: privacy@Blumiq.com\n• Phone: +91-70263-73808\n• Address: 44, 3rd Floor, Vijayraj Society, Near Akshar Family Wear, Singanpore Causeway Road, Katargam, Surat, Gujarat, India - 395004\n\nWe will respond to your inquiries within 30 days of receipt." 
     }
   ];
 

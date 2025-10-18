@@ -130,9 +130,9 @@ const Navbar: React.FC = () => {
   return (
     <AppBar position="static" color="default" elevation={1}>
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        {/* Left: Rupeex clone icon or text */}
+        {/* Left: Blumiq icon or text */}
         <Typography variant="h6" component={Link} href="/" sx={{ textDecoration: 'none', color: 'inherit', fontWeight: 'bold' }}>
-          Rupeex
+          Blumiq
         </Typography>
         {/* Desktop Nav */}
         {!isMobile && (

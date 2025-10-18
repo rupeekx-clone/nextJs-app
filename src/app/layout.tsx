@@ -1,10 +1,10 @@
 import * as React from 'react';
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google"; // Assuming you still want to use Geist fonts
+import { Geist, Geist_Mono } from "next/font/google";
 import ThemeRegistry from "@/components/ThemeRegistry/ThemeRegistry";
-import Navbar from '@/components/Header/Navbar'; // Import the Navbar
-import { Typography, Container, Box, Button } from '@mui/material';
-import Link from 'next/link';
+import Header from '@/components/Layout/Header';
+import Footer from '@/components/Layout/Footer';
+import { Box } from '@mui/material';
 import "./globals.css";
 
 const geistSans = Geist({
@@ -20,8 +20,20 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Rupeekx Clone", // Updated title
-  description: "A clone of the Rupeekx website built with Next.js and Material-UI.", // Updated description
+  title: "Blumiq", // Updated title
+  description: "A comprehensive digital platform for facilitating personal and business loan applications through multiple bank partnerships.", // Updated description
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon.ico', sizes: 'any' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+  },
+  manifest: '/site.webmanifest',
 };
 
 export default function RootLayout({
@@ -34,35 +46,11 @@ export default function RootLayout({
       <body>
         <ThemeRegistry>
           <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-            <Navbar />
-            <Container component="main" sx={{ flexGrow: 1, mt: 3, mb: 3 }}> {/* Added some margin top and bottom */}
+            <Header />
+            <Box component="main" sx={{ flexGrow: 1 }}>
               {children}
-            </Container>
-            <Box
-              component="footer"
-              sx={{
-                py: 3,
-                px: 2,
-                mt: 'auto', // Pushes footer to the bottom
-                backgroundColor: '#f5f5f5', // Static color to avoid function in Server Component
-                textAlign: 'center',
-              }}
-            >
-              <Container maxWidth="lg">
-                <Typography variant="body2" color="text.secondary">
-                  {'© '}
-                  {new Date().getFullYear()}{' '}
-                  Rupeekx Clone. All rights reserved. | 
-                  <Link href="/privacy-policy">
-                    <Button sx={{ color: 'text.secondary', ml: 0.5, textTransform: 'none'}}>Privacy Policy</Button>
-                  </Link>
-                   | 
-                  <Link href="/terms-conditions">
-                    <Button sx={{ color: 'text.secondary', ml: 0.5, textTransform: 'none'}}>Terms & Conditions</Button>
-                  </Link>
-                </Typography>
-              </Container>
             </Box>
+            <Footer />
           </Box>
         </ThemeRegistry>
       </body>

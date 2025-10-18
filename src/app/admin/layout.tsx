@@ -99,9 +99,17 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const drawer = (
     <Box>
       <Toolbar>
-        <Typography variant="h6" noWrap component="div" sx={{ fontWeight: 'bold' }}>
-          RupeekX Admin
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Box 
+            component="img"
+            src="/logo.svg"
+            alt="Blumiq"
+            sx={{ height: 28, width: 'auto' }}
+          />
+          <Typography variant="h6" noWrap component="div" sx={{ fontWeight: 'bold' }}>
+            Admin
+          </Typography>
+        </Box>
       </Toolbar>
       <Divider />
       <List>

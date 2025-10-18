@@ -338,7 +338,7 @@ export default function RaiseRequestPage() {
                 <strong>Phone:</strong> +91-70263-73808
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                <strong>Email:</strong> info@rupeekx.com
+                <strong>Email:</strong> info@Blumiq.com
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                 <strong>Hours:</strong> Mon-Fri 9AM-6PM

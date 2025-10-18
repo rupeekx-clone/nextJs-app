@@ -554,7 +554,7 @@ export default function BusinessLoanPage() {
                 Email Address
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                info@rupeekx.com
+                info@Blumiq.com
               </Typography>
             </Grid>
           </Grid>

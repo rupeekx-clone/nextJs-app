@@ -66,7 +66,7 @@ export const sendOtp = async (
   }
 
 
-  const messageBody = `Your OTP for RupeekX Clone is: ${otp}`;
+  const messageBody = `Your OTP for Blumiq is: ${otp}`;
 
   try {
     const message = await twilioClient.messages.create({

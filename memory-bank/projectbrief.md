@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-**Project Name:** RupeekX Clone  
+**Project Name:** Blumiq  
 **Type:** Loan Application Platform  
 **Purpose:** A comprehensive digital platform for facilitating personal and business loan applications through multiple bank partnerships
 

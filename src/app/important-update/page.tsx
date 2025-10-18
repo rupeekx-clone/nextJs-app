@@ -96,7 +96,7 @@ export default function ImportantUpdatePage() {
           Important Updates & Notices
         </Typography>
         <Typography variant="h6" component="p" gutterBottom sx={{ color: 'text.secondary', mb: 3 }}>
-          Stay informed about the latest updates, service changes, and important announcements from RupeekX.
+          Stay informed about the latest updates, service changes, and important announcements from Blumiq.
         </Typography>
         <Alert severity="info" sx={{ maxWidth: 600, mx: 'auto' }}>
           <Typography variant="body2">
@@ -241,7 +241,7 @@ export default function ImportantUpdatePage() {
                   </ListItemIcon>
                   <ListItemText 
                     primary="Email Support"
-                    secondary="info@rupeekx.com"
+                    secondary="info@Blumiq.com"
                     primaryTypographyProps={{ variant: 'body2', fontWeight: 'medium' }}
                     secondaryTypographyProps={{ variant: 'body2', color: 'text.secondary' }}
                   />

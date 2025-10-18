@@ -22,7 +22,7 @@ export default function CareerPage() {
   return (
     <Container maxWidth="lg" sx={{ py: { xs: 4, md: 8 } }}>
       <Typography variant="h3" component="h1" textAlign="center" gutterBottom sx={{ fontWeight: 'bold', mb: {xs:3, sm:4, md:5} }}>
-        Careers at Rupeekx Clone
+        Careers at Blumiq
       </Typography>
       
       <Paper elevation={0} sx={{ p: {xs: 2, sm: 3, md:4}, backgroundColor: 'alternate.main', borderRadius: 2, mb: {xs:4, sm:5, md:6} }}>
@@ -30,7 +30,7 @@ export default function CareerPage() {
           Join Our Mission
         </Typography>
         <Typography variant="body1" paragraph sx={{ lineHeight: 1.75, fontSize: '1.1rem' }}>
-          At Rupeekx Clone, we are dedicated to simplifying access to financial services through innovative technology and customer-centric solutions. We are passionate about building a platform that empowers individuals and businesses. If you are driven, talented, and eager to make an impact, we invite you to explore a career with us.
+          At Blumiq, we are dedicated to simplifying access to financial services through innovative technology and customer-centric solutions. We are passionate about building a platform that empowers individuals and businesses. If you are driven, talented, and eager to make an impact, we invite you to explore a career with us.
         </Typography>
       </Paper>
 

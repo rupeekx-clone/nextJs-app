@@ -150,10 +150,10 @@ export default function HomePage() {
                 About us
               </Typography>
               <Typography variant="h6" component="p" color="text.secondary" gutterBottom sx={{ fontStyle: 'italic' }}>
-                When it comes to lightning fast loan services – nothing beats Rupeekx!
+                When it comes to lightning fast loan services – nothing beats Blumiq!
               </Typography>
               <Typography variant="body1" paragraph>
-                Welcome to Rupeekx.com, we are the number one loan provider consult. We&apos;re dedicated to helping you in getting loans through membership cards, with an emphasis on saving your time and money. Get the best results on loans through multiple banks or NBFCs. We are aimed to provide easy quick loan approval. The company has garnered a great volume of acclaim due to its authentic services in giving the industry-best loan offerings.
+                Welcome to Blumiq.com, we are the number one loan provider consult. We&apos;re dedicated to helping you in getting loans through membership cards, with an emphasis on saving your time and money. Get the best results on loans through multiple banks or NBFCs. We are aimed to provide easy quick loan approval. The company has garnered a great volume of acclaim due to its authentic services in giving the industry-best loan offerings.
               </Typography>
               <Button variant="contained" component={Link} href="/company" sx={{ mt: 2 }}>
                 Know More
@@ -192,7 +192,7 @@ export default function HomePage() {
             Our Innovative Loan-Oriented Products
           </Typography>
           <Typography variant="subtitle1" textAlign="center" color="text.secondary" paragraph sx={{ mb: { xs: 3, md: 5 } }}>
-            With a Rupeekx Membership Card, you get more effective benefits that prove to be a great addition to the perk of availing the instant pre-approved loan offers from multiple banks.
+            With a Blumiq Membership Card, you get more effective benefits that prove to be a great addition to the perk of availing the instant pre-approved loan offers from multiple banks.
           </Typography>
           <Grid container spacing={4} justifyContent="center">
             {/* Silver Membership Card */}
@@ -244,7 +244,7 @@ export default function HomePage() {
       <Box sx={{ py: { xs: 4, md: 8 }, backgroundColor: 'background.default' }}>
         <Container maxWidth="lg">
           <Typography variant="h4" component="h2" textAlign="center" gutterBottom sx={{ fontWeight: 'bold', mb: { xs: 3, md: 5 } }}>
-            Why Choose Rupeekx
+            Why Choose Blumiq
           </Typography>
           <Typography variant="subtitle1" textAlign="center" color="text.secondary" paragraph sx={{ mb: { xs: 3, md: 5 }, maxWidth: '700px', mx: 'auto' }}>
             Join thousands of satisfied customers who have transformed their financial future with our services.
@@ -448,7 +448,7 @@ export default function HomePage() {
                 name: 'Rajesh Kumar',
                 location: 'Mumbai, Maharashtra',
                 rating: 5,
-                text: 'RupeekX made my loan application process so smooth and hassle-free. I got my personal loan approved within 30 minutes as promised. Highly recommended!'
+                text: 'Blumiq made my loan application process so smooth and hassle-free. I got my personal loan approved within 30 minutes as promised. Highly recommended!'
               },
               {
                 id: '2',
@@ -462,14 +462,14 @@ export default function HomePage() {
                 name: 'Amit Patel',
                 location: 'Ahmedabad, Gujarat',
                 rating: 5,
-                text: 'Excellent service! I needed a business loan urgently, and RupeekX delivered exactly what they promised. The documentation process was completely paperless.'
+                text: 'Excellent service! I needed a business loan urgently, and Blumiq delivered exactly what they promised. The documentation process was completely paperless.'
               },
               {
                 id: '4',
                 name: 'Sunita Reddy',
                 location: 'Bangalore, Karnataka',
                 rating: 5,
-                text: 'I was skeptical at first, but RupeekX exceeded my expectations. The customer support team was always available to help, and the loan was disbursed quickly.'
+                text: 'I was skeptical at first, but Blumiq exceeded my expectations. The customer support team was always available to help, and the loan was disbursed quickly.'
               },
               {
                 id: '5',
@@ -483,7 +483,7 @@ export default function HomePage() {
                 name: 'Meera Joshi',
                 location: 'Chennai, Tamil Nadu',
                 rating: 5,
-                text: 'RupeekX helped me consolidate my existing loans at a much better interest rate. The entire process was transparent and efficient.'
+                text: 'Blumiq helped me consolidate my existing loans at a much better interest rate. The entire process was transparent and efficient.'
               }
             ]}
           />

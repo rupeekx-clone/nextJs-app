@@ -5,15 +5,15 @@ import { red } from '@mui/material/colors';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#ef7f1a',
-      light: '#ff9b47',
-      dark: '#b95e12',
+      main: '#208DDC',      // Blue from logo
+      light: '#52A8E8',     // Lighter blue shade
+      dark: '#1A6FB0',      // Darker blue shade
       contrastText: '#fff',
     },
     secondary: {
-      main: '#19857b',
-      light: '#4caf94',
-      dark: '#005f56',
+      main: '#20DCD5',      // Cyan from logo
+      light: '#52E8E1',     // Lighter cyan shade
+      dark: '#1AB0A9',      // Darker cyan shade
       contrastText: '#fff',
     },
     error: {
@@ -24,14 +24,14 @@ const theme = createTheme({
     },
     // Custom palette extension for ternary color
     ternary: {
-      main: '#ff9800',
-      light: '#ffc947',
-      dark: '#c66900',
+      main: '#208DDC',      // Match primary blue
+      light: '#52A8E8',
+      dark: '#1A6FB0',
       contrastText: '#fff',
     },
     // Custom palette extension for alternate color
     alternate: {
-      main: '#f7f9fc', // light neutral background
+      main: '#f7f9fc',      // light neutral background (unchanged)
       light: '#ffffff',
       dark: '#e3e6eb',
       contrastText: '#171717',

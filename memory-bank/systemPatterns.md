@@ -384,7 +384,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 export default function HomePage() {
   return (
     <Container>
-      <Typography variant="h3">Welcome to RupeekX</Typography>
+      <Typography variant="h3">Welcome to Blumiq</Typography>
       <Button component={Link} href="/digital/personalLoan">
         Apply for Personal Loan
       </Button>
@@ -800,7 +800,7 @@ export class EmailService {
       <html>
         <head>
           <meta charset="utf-8">
-          <title>Loan Application Approved - RupeekX</title>
+          <title>Loan Application Approved - Blumiq</title>
         </head>
         <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
           <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -829,7 +829,7 @@ export class EmailService {
 
     return this.sendEmail({
       to,
-      subject: 'Loan Application Approved - RupeekX',
+      subject: 'Loan Application Approved - Blumiq',
       html
     });
   }
@@ -1067,4 +1067,236 @@ export async function middleware(req: NextRequest) {
   
   return response;
 }
+```
+
+## UI/UX Component Patterns
+
+### Material-UI Grid v7 API Pattern
+```typescript
+// ✅ Correct Grid v7 API usage (MUI v7+)
+<Grid container spacing={4}>
+  <Grid size={{ xs: 12, md: 6 }}>
+    {/* Content */}
+  </Grid>
+  <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+    {/* Content */}
+  </Grid>
+</Grid>
+
+// ❌ Avoid deprecated Grid v1 API
+<Grid container spacing={4}>
+  <Grid item xs={12} md={6}>
+    {/* Content */}
+  </Grid>
+</Grid>
+
+// Migration Pattern:
+// 1. Remove 'item' prop completely
+// 2. Move all breakpoint props (xs, sm, md, lg, xl) into 'size' object
+// 3. Keep 'container' prop unchanged for grid containers
+```
+
+### Professional Navigation Pattern
+```typescript
+// Header component with responsive navigation
+const Header: React.FC = () => {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const [notifications, setNotifications] = useState([]);
+  
+  return (
+    <AppBar position="sticky" sx={{ backdropFilter: 'blur(10px)' }}>
+      <Toolbar>
+        {/* Logo and brand */}
+        <Box sx={{ display: 'flex', alignItems: 'center', flexGrow: 1 }}>
+          <img src="/logo.svg" alt="Logo" style={{ height: 36 }} />
+          <Typography variant="h6" sx={{ ml: 1, fontWeight: 'bold' }}>
+            Brand Name
+          </Typography>
+        </Box>
+        
+        {/* Desktop navigation */}
+        <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2 }}>
+          {navigationItems.map((item) => (
+            <Button key={item.label} color="inherit">
+              {item.label}
+            </Button>
+          ))}
+        </Box>
+        
+        {/* User profile dropdown */}
+        {user ? (
+          <UserProfileDropdown user={user} notifications={notifications} />
+        ) : (
+          <AuthButtons />
+        )}
+        
+        {/* Mobile menu button */}
+        <IconButton
+          sx={{ display: { md: 'none' } }}
+          onClick={() => setMobileOpen(true)}
+        >
+          <MenuIcon />
+        </IconButton>
+      </Toolbar>
+    </AppBar>
+  );
+};
+```
+
+### Professional Footer Pattern
+```typescript
+// Footer component with multi-column layout
+const Footer: React.FC = () => {
+  const [email, setEmail] = useState('');
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email.trim()) {
+      // Handle newsletter subscription
+      setIsSubscribed(true);
+      setEmail('');
+    }
+  };
+  
+  return (
+    <Box component="footer" sx={{ backgroundColor: 'grey.900', color: 'white' }}>
+      <Container maxWidth="lg" sx={{ py: 6 }}>
+        <Grid container spacing={4}>
+          {/* Company Info */}
+          <Grid size={{ xs: 12, md: 4 }}>
+            <Box sx={{ mb: 3 }}>
+              <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
+                Company Name
+              </Typography>
+              <Typography variant="body2" sx={{ mb: 3, lineHeight: 1.6 }}>
+                Company description and value proposition.
+              </Typography>
+              
+              {/* Trust Badges */}
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                {trustBadges.map((badge) => (
+                  <Chip
+                    key={badge.label}
+                    icon={badge.icon}
+                    label={badge.label}
+                    size="small"
+                    sx={{ backgroundColor: 'grey.800', color: 'white' }}
+                  />
+                ))}
+              </Box>
+            </Box>
+          </Grid>
+          
+          {/* Footer Links */}
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Grid container spacing={3}>
+              {footerSections.map((section) => (
+                <Grid key={section.title} size={{ xs: 6, sm: 4 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
+                    {section.title}
+                  </Typography>
+                  <List dense>
+                    {section.links.map((link) => (
+                      <ListItem key={link.label} sx={{ px: 0 }}>
+                        <Link href={link.href} sx={{ color: 'grey.300', textDecoration: 'none' }}>
+                          {link.label}
+                        </Link>
+                      </ListItem>
+                    ))}
+                  </List>
+                </Grid>
+              ))}
+            </Grid>
+          </Grid>
+          
+          {/* Newsletter Subscription */}
+          <Grid size={{ xs: 12, md: 2 }}>
+            <Paper sx={{ p: 3, backgroundColor: 'grey.800' }}>
+              <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
+                Newsletter
+              </Typography>
+              <Box component="form" onSubmit={handleSubscribe}>
+                <TextField
+                  fullWidth
+                  size="small"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  type="email"
+                  required
+                />
+                <Button type="submit" variant="contained" fullWidth sx={{ mt: 2 }}>
+                  Subscribe
+                </Button>
+              </Box>
+            </Paper>
+          </Grid>
+        </Grid>
+      </Container>
+    </Box>
+  );
+};
+```
+
+### Responsive Design Pattern
+```typescript
+// Responsive breakpoint usage
+const ResponsiveComponent: React.FC = () => {
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: { xs: 'column', md: 'row' },
+        gap: { xs: 2, md: 4 },
+        p: { xs: 2, sm: 3, md: 4 },
+        textAlign: { xs: 'center', md: 'left' }
+      }}
+    >
+      <Typography
+        variant="h4"
+        sx={{
+          fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' },
+          fontWeight: 'bold'
+        }}
+      >
+        Responsive Title
+      </Typography>
+    </Box>
+  );
+};
+```
+
+### State Management Pattern
+```typescript
+// Local state management with React hooks
+const ComponentWithState: React.FC = () => {
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
+  
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await fetch('/api/data');
+      const result = await response.json();
+      setData(result);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  useEffect(() => {
+    fetchData();
+  }, []);
+  
+  if (loading) return <LoadingSpinner />;
+  if (error) return <Alert severity="error">{error}</Alert>;
+  
+  return <div>{/* Render data */}</div>;
+};
 ```

@@ -1,6 +1,6 @@
 import { MongoClient, Db } from 'mongodb';
 
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/rupeekx_clone_db";
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/blumiq_db";
 let cachedDb: Db | null = null;
 
 export async function connectToDatabase(): Promise<Db> {
@@ -15,7 +15,7 @@ export async function connectToDatabase(): Promise<Db> {
   try {
     await client.connect();
     // If the database name is part of the MONGODB_URI, client.db() will use it.
-    // Otherwise, you can pass the database name directly, e.g., client.db("rupeekx_clone_db")
+    // Otherwise, you can pass the database name directly, e.g., client.db("blumiq_db")
     const dbName = MONGODB_URI.split('/').pop()?.split('?')[0]; // Basic parsing to get DB name from URI
     const db = client.db(dbName); 
     console.log(`Successfully connected to MongoDB database: ${db.databaseName}.`);

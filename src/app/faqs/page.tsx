@@ -33,7 +33,7 @@ export default function FaqsPage() {
     {
       id: '5',
       question: "Which bank has the lowest interest rate for personal loan?",
-      answer: "Interest rates vary based on your profile and creditworthiness. With RupeekX, we help you get the best rates from multiple banks. Rates typically start from 10.25% per annum.",
+      answer: "Interest rates vary based on your profile and creditworthiness. With Blumiq, we help you get the best rates from multiple banks. Rates typically start from 10.25% per annum.",
       category: "Personal Loan"
     },
     {
@@ -45,7 +45,7 @@ export default function FaqsPage() {
     {
       id: '7',
       question: "How to apply for a personal loan?",
-      answer: "Apply online through RupeekX: 1) Fill the application form, 2) Upload required documents, 3) Get instant approval, 4) Sign the loan agreement, 5) Receive funds in your account.",
+      answer: "Apply online through Blumiq: 1) Fill the application form, 2) Upload required documents, 3) Get instant approval, 4) Sign the loan agreement, 5) Receive funds in your account.",
       category: "Personal Loan"
     },
     {
@@ -63,7 +63,7 @@ export default function FaqsPage() {
     {
       id: '10',
       question: "How long will it take for my Personal loan to be processed?",
-      answer: "With RupeekX, personal loans can be approved and disbursed within 30 minutes to 24 hours, provided all documentation is complete and eligibility criteria are met.",
+      answer: "With Blumiq, personal loans can be approved and disbursed within 30 minutes to 24 hours, provided all documentation is complete and eligibility criteria are met.",
       category: "Personal Loan"
     },
     {
@@ -101,7 +101,7 @@ export default function FaqsPage() {
     {
       id: '16',
       question: "Which bank has the lowest interest rate for business loans?",
-      answer: "Interest rates vary based on business profile, creditworthiness, and loan amount. With RupeekX, we help you get the best rates from multiple lenders. Rates typically start from 11.5% per annum.",
+      answer: "Interest rates vary based on business profile, creditworthiness, and loan amount. With Blumiq, we help you get the best rates from multiple lenders. Rates typically start from 11.5% per annum.",
       category: "Business Loan"
     },
     {
@@ -113,7 +113,7 @@ export default function FaqsPage() {
     {
       id: '18',
       question: "How to Apply for a business loan?",
-      answer: "Apply through RupeekX: 1) Fill business loan application, 2) Submit business documents, 3) Get pre-approval, 4) Complete verification, 5) Sign agreement and receive funds.",
+      answer: "Apply through Blumiq: 1) Fill business loan application, 2) Submit business documents, 3) Get pre-approval, 4) Complete verification, 5) Sign agreement and receive funds.",
       category: "Business Loan"
     },
     {
@@ -131,7 +131,7 @@ export default function FaqsPage() {
     {
       id: '21',
       question: "How long will it take for my business loan to be processed?",
-      answer: "With RupeekX, business loans can be approved and disbursed within 48 hours to 7 business days, depending on loan amount and documentation completeness.",
+      answer: "With Blumiq, business loans can be approved and disbursed within 48 hours to 7 business days, depending on loan amount and documentation completeness.",
       category: "Business Loan"
     },
     {
@@ -150,8 +150,8 @@ export default function FaqsPage() {
     // Membership Card FAQs
     {
       id: '24',
-      question: "What is Rupeekx membership card?",
-      answer: "RupeekX membership cards (Silver and Gold) provide exclusive access to pre-approved loan offers from multiple banks and NBFCs, faster processing, better interest rates, and dedicated customer support.",
+      question: "What is Blumiq membership card?",
+      answer: "Blumiq membership cards (Silver and Gold) provide exclusive access to pre-approved loan offers from multiple banks and NBFCs, faster processing, better interest rates, and dedicated customer support.",
       category: "Membership Card"
     },
     {

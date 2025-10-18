@@ -1,7 +1,7 @@
-# Cursor Rules for RupeekX Clone Project
+# Cursor Rules for Blumiq Project
 
 ## Project Overview
-This is a Next.js loan application platform (RupeekX clone) with complete authentication, OTP verification, admin dashboard, payment processing, document management, and multi-bank loan processing capabilities.
+This is a Next.js loan application platform (Blumiq) with complete authentication, OTP verification, admin dashboard, payment processing, document management, and multi-bank loan processing capabilities.
 
 ## Critical Implementation Patterns
 
