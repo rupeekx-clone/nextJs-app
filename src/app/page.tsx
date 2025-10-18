@@ -8,6 +8,9 @@ import {
 import Link from 'next/link';
 import CheckCircleOutline from '@mui/icons-material/CheckCircleOutline'; // Import the icon
 import PersonIcon from '@mui/icons-material/Person'; // Import PersonIcon
+import MembershipCard from '@/components/Business/MembershipCard';
+import TestimonialCarousel from '@/components/Business/TestimonialCarousel';
+import BankPartners from '@/components/Business/BankPartners';
 
 export default function HomePage() {
   return (
@@ -193,40 +196,45 @@ export default function HomePage() {
           </Typography>
           <Grid container spacing={4} justifyContent="center">
             {/* Silver Membership Card */}
-            <Grid size={{ xs: 12, md: 6 }}> {/* Full width on extra small, auto on small and up */}
-              <Card sx={{ display: 'flex', flexDirection: 'column', height: '100%', boxShadow: 3 }}>
-                <CardContent sx={{ flexGrow: 1 }}>
-                  <Typography variant="h6" component="h3" gutterBottom sx={{ fontWeight: 'medium' }}>
-                    Silver Membership Card
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Get Personal Loan of up to ₹15 Lacs in just 30 minutes
-                  </Typography>
-                </CardContent>
-                <CardActions sx={{ justifyContent: 'center', p: 2 }}> {/* Centered button */}
-                  <Button variant="contained" component={Link} href="/products/silver-membership-card">
-                    Get Now
-                  </Button>
-                </CardActions>
-              </Card>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <MembershipCard
+                type="silver"
+                name="Silver Membership Card"
+                originalPrice={2999}
+                discountedPrice={677}
+                validity="4 years"
+                benefits={[
+                  "Get Personal Loan up to ₹15 Lakhs",
+                  "4 Years Free Consultancy",
+                  "Refer & Earn up to 30%",
+                  "100% Paperless Process",
+                  "Instant Disbursal"
+                ]}
+                loanAmount="Up to ₹15 Lakhs"
+                processingTime="Within 30 Minutes"
+                onPurchase={() => window.location.href = '/products/silver-membership-card'}
+              />
             </Grid>
             {/* Gold Membership Card */}
-            <Grid size={{ xs: 12, md: 6 }}> {/* Full width on extra small, auto on small and up */}
-              <Card sx={{ display: 'flex', flexDirection: 'column', height: '100%', boxShadow: 3 }}>
-                <CardContent sx={{ flexGrow: 1 }}>
-                  <Typography variant="h6" component="h3" gutterBottom sx={{ fontWeight: 'medium' }}>
-                    Gold Membership Card
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Get Business Loan of up to ₹1 Crore in just 48 hours
-                  </Typography>
-                </CardContent>
-                <CardActions sx={{ justifyContent: 'center', p: 2 }}> {/* Centered button */}
-                  <Button variant="contained" component={Link} href="/products/gold-membership-card">
-                    Get Now
-                  </Button>
-                </CardActions>
-              </Card>
+            <Grid size={{ xs: 12, md: 6 }}>
+              <MembershipCard
+                type="gold"
+                name="Gold Membership Card"
+                originalPrice={1599}
+                discountedPrice={399}
+                validity="4 years"
+                benefits={[
+                  "Get Business Loan up to ₹1 Crore",
+                  "4 Years Free Consultancy",
+                  "Refer & Earn up to 30%",
+                  "100% Paperless Process",
+                  "Instant Disbursal"
+                ]}
+                loanAmount="Up to ₹1 Crore"
+                processingTime="Within 48 Hours"
+                onPurchase={() => window.location.href = '/products/gold-membership-card'}
+                isPopular={true}
+              />
             </Grid>
           </Grid>
         </Container>
@@ -410,84 +418,21 @@ export default function HomePage() {
         </Container>
       </Box>
 
-      {/* New Section: "Our Bank & NBFC Partners" - Infinite Carousel */}
-      <Box sx={{ py: { xs: 4, md: 8 }, backgroundColor: 'background.default' }}>
-        <Container maxWidth="lg">
-          <Typography variant="h4" component="h2" textAlign="center" gutterBottom sx={{ fontWeight: 'bold', mb: {xs: 3, md: 5} }}>
-            Our Bank & NBFC Partners
-          </Typography>
-          {/* Carousel Container */}
-          <Box
-            sx={{
-              overflow: 'hidden',
-              width: '100%',
-              position: 'relative',
-              py: 2,
-            }}
-          >
-            {/* Carousel Track */}
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: { xs: 4, sm: 6, md: 8 },
-                animation: 'scrollLeft 30s linear infinite',
-                // Duplicate the list for seamless looping
-                '@keyframes scrollLeft': {
-                  '0%': { transform: 'translateX(0)' },
-                  '100%': { transform: 'translateX(-50%)' },
-                },
-                width: 'max-content',
-              }}
-            >
-              {/* Partner Logos - Duplicated for infinite effect */}
-              {[
-                { src: '/axis-bank-seeklogo.png', alt: 'Axis Bank' },
-                { src: '/hdfc-bank-seeklogo.png', alt: 'HDFC Bank' },
-                { src: '/icici-bank-seeklogo.png', alt: 'ICICI Bank' },
-                { src: '/idfc-first-bank-seeklogo.png', alt: 'IDFC First Bank' },
-                { src: '/indian-bank-1907-seeklogo.png', alt: 'Indian Bank' },
-                { src: '/kotak-mahindra-bank-seeklogo.png', alt: 'Kotak Mahindra Bank' },
-                { src: '/sbi-state-bank-of-india-seeklogo.png', alt: 'SBI' },
-                { src: '/yes-bank-seeklogo.png', alt: 'Yes Bank' },
-                // Add more as needed
-              ].concat([
-                { src: '/axis-bank-seeklogo.png', alt: 'Axis Bank' },
-                { src: '/hdfc-bank-seeklogo.png', alt: 'HDFC Bank' },
-                { src: '/icici-bank-seeklogo.png', alt: 'ICICI Bank' },
-                { src: '/idfc-first-bank-seeklogo.png', alt: 'IDFC First Bank' },
-                { src: '/indian-bank-1907-seeklogo.png', alt: 'Indian Bank' },
-                { src: '/kotak-mahindra-bank-seeklogo.png', alt: 'Kotak Mahindra Bank' },
-                { src: '/sbi-state-bank-of-india-seeklogo.png', alt: 'SBI' },
-                { src: '/yes-bank-seeklogo.png', alt: 'Yes Bank' },
-              ]) // duplicate for seamless loop
-                .map((partner, idx) => (
-                  <Box key={idx} sx={{ minWidth: { xs: 100, sm: 120, md: 140 }, mx: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <Box
-                      component="img"
-                      src={partner.src}
-                      alt={partner.alt}
-                      sx={{
-                        height: { xs: 40, sm: 50, md: 60 },
-                        width: 'auto',
-                        objectFit: 'contain',
-                        mb: 1,
-                        filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.08))',
-                        background: '#fff',
-                        borderRadius: 2,
-                        p: 1,
-                        boxShadow: 1,
-                      }}
-                    />
-                    <Typography variant="caption" sx={{ textAlign: 'center', color: 'text.secondary' }}>{partner.alt}</Typography>
-                  </Box>
-                ))}
-            </Box>
-          </Box>
-        </Container>
-      </Box>
+      {/* Bank Partners Section */}
+      <BankPartners
+        partners={[
+          { id: '1', name: 'SBI' },
+          { id: '2', name: 'HDFC' },
+          { id: '3', name: 'ICICI' },
+          { id: '4', name: 'Axis' },
+          { id: '5', name: 'Kotak' },
+          { id: '6', name: 'Yes Bank' },
+          { id: '7', name: 'IDFC First' },
+          { id: '8', name: 'Indian Bank' },
+        ]}
+      />
 
-      {/* New Section: "What Our Customers Say" */}
+      {/* Testimonials Section */}
       <Box sx={{ py: { xs: 4, md: 8 }, backgroundColor: 'alternate.main' }}>
         <Container maxWidth="lg">
           <Typography variant="h4" component="h2" textAlign="center" gutterBottom sx={{ fontWeight: 'bold' }}>
@@ -496,25 +441,52 @@ export default function HomePage() {
           <Typography variant="subtitle1" textAlign="center" color="text.secondary" paragraph sx={{ mb: { xs: 3, md: 5 }, maxWidth: '700px', mx: 'auto' }}>
             We&apos;re dedicated to helping you in getting loans through membership cards, with an emphasis on saving your time and money. Get the best results on loans through multiple banks or NBFCs. We are aimed to provide easy quick loan approval.
           </Typography>
-          <Grid container spacing={4} justifyContent="center">
-            {[1, 2, 3].map((item) => ( // Creating 3 placeholder testimonials
-              <Grid size={{ xs: 12, sm: 6, md: 4 }} key={item}>
-                <Card sx={{ display: 'flex', flexDirection: 'column', height: '100%', boxShadow: 3 }}>
-                  <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}> {/* Centering card content */}
-                    <Avatar sx={{ mx: 'auto', mb: 2, bgcolor: 'primary.main' }}>
-                      <PersonIcon />
-                    </Avatar>
-                    <Typography variant="body1" fontStyle="italic" paragraph>
-                      &quot;Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.&quot;
-                    </Typography>
-                    <Typography variant="subtitle2" component="p" sx={{ fontWeight: 'bold' }}>
-                      - Customer Name {item}
-                    </Typography>
-                  </CardContent>
-                </Card>
-              </Grid>
-            ))}
-          </Grid>
+          <TestimonialCarousel
+            testimonials={[
+              {
+                id: '1',
+                name: 'Rajesh Kumar',
+                location: 'Mumbai, Maharashtra',
+                rating: 5,
+                text: 'RupeekX made my loan application process so smooth and hassle-free. I got my personal loan approved within 30 minutes as promised. Highly recommended!'
+              },
+              {
+                id: '2',
+                name: 'Priya Sharma',
+                location: 'Delhi, NCR',
+                rating: 5,
+                text: 'The membership card was worth every penny. The team was very helpful throughout the process, and I got the best interest rate from multiple banks.'
+              },
+              {
+                id: '3',
+                name: 'Amit Patel',
+                location: 'Ahmedabad, Gujarat',
+                rating: 5,
+                text: 'Excellent service! I needed a business loan urgently, and RupeekX delivered exactly what they promised. The documentation process was completely paperless.'
+              },
+              {
+                id: '4',
+                name: 'Sunita Reddy',
+                location: 'Bangalore, Karnataka',
+                rating: 5,
+                text: 'I was skeptical at first, but RupeekX exceeded my expectations. The customer support team was always available to help, and the loan was disbursed quickly.'
+              },
+              {
+                id: '5',
+                name: 'Vikram Singh',
+                location: 'Pune, Maharashtra',
+                rating: 5,
+                text: 'The referral program is amazing! I earned good money by referring friends, and they also got great loan deals. It\'s a win-win situation.'
+              },
+              {
+                id: '6',
+                name: 'Meera Joshi',
+                location: 'Chennai, Tamil Nadu',
+                rating: 5,
+                text: 'RupeekX helped me consolidate my existing loans at a much better interest rate. The entire process was transparent and efficient.'
+              }
+            ]}
+          />
         </Container>
       </Box>
     </React.Fragment>

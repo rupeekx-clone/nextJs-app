@@ -1,30 +1,72 @@
-import mongoose, { Schema, Document, Model } from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
 
 export interface ICashLendingSubscriptionPlan extends Document {
+  plan_id: string;
   name: string;
   description?: string;
   price: number;
   duration_days: number;
-  features?: Record<string, unknown>;
+  features?: Record<string, any>;
   is_active: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
+  created_at: Date;
+  updated_at: Date;
 }
 
-const cashLendingSubscriptionPlanSchema: Schema<ICashLendingSubscriptionPlan> = new Schema(
-  {
-    name: { type: String, required: true, unique: true, trim: true },
-    description: { type: String },
-    price: { type: Number, required: true, min: 0 },
-    duration_days: { type: Number, required: true, min: 1 },
-    features: { type: Schema.Types.Mixed },
-    is_active: { type: Boolean, default: true, required: true },
+const cashLendingSubscriptionPlanSchema: Schema<ICashLendingSubscriptionPlan> = new Schema({
+  plan_id: {
+    type: String,
+    required: true,
+    unique: true,
+    default: () => new mongoose.Types.ObjectId().toString()
   },
-  {
-    timestamps: true,
+  name: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  description: {
+    type: String
+  },
+  price: {
+    type: Number,
+    required: true,
+    min: 0
+  },
+  duration_days: {
+    type: Number,
+    required: true,
+    min: 1
+  },
+  features: {
+    type: Schema.Types.Mixed,
+    default: {}
+  },
+  is_active: {
+    type: Boolean,
+    default: true
   }
-);
+}, {
+  timestamps: true,
+  toJSON: {
+    transform(doc, ret) {
+      ret.id = ret._id;
+      delete ret._id;
+      delete ret.__v;
+      return ret;
+    }
+  }
+});
 
-const CashLendingSubscriptionPlan: Model<ICashLendingSubscriptionPlan> = mongoose.models.CashLendingSubscriptionPlan || mongoose.model<ICashLendingSubscriptionPlan>('CashLendingSubscriptionPlan', cashLendingSubscriptionPlanSchema);
+// Index for active plans
+cashLendingSubscriptionPlanSchema.index({ is_active: 1 });
 
-export default CashLendingSubscriptionPlan; 
+// Instance methods
+cashLendingSubscriptionPlanSchema.methods.getDurationInMonths = function(): number {
+  return Math.round(this.duration_days / 30);
+};
+
+cashLendingSubscriptionPlanSchema.methods.getDailyPrice = function(): number {
+  return this.price / this.duration_days;
+};
+
+export default mongoose.models.CashLendingSubscriptionPlan || mongoose.model<ICashLendingSubscriptionPlan>('CashLendingSubscriptionPlan', cashLendingSubscriptionPlanSchema);

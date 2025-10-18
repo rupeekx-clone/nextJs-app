@@ -1,55 +1,57 @@
-import { NextResponse } from 'next/server';
-import { connectToDatabase } from '@/lib/mongodb'; // Using import alias
+import { NextRequest, NextResponse } from 'next/server';
+import { connectToDatabase } from '@/lib/mongodb';
+import { validateData, enquirySchema } from '@/lib/validation';
+import Enquiry from '@/models/Enquiry';
+import EmailService from '@/lib/emailService';
 
-export async function POST(request: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const body = await request.json();
-    const { name, email, subject, message } = body;
+    const body = await req.json();
 
-    // Basic validation
-    if (!name || !email || !message) {
-      return NextResponse.json({ message: 'Missing required fields (name, email, message).' }, { status: 400 });
-    }
-    
-    // Validate email format (basic)
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json({ message: 'Invalid email format.' }, { status: 400 });
+    // Validate the request body
+    const validation = validateData(enquirySchema, body);
+    if (!validation.success) {
+      return NextResponse.json({
+        error: 'Validation failed',
+        details: validation.errors
+      }, { status: 400 });
     }
 
-    // Sanitize or provide default for optional fields
-    const sanitizedSubject = subject || ''; // Ensure subject is not undefined if it's optional
+    await connectToDatabase();
 
+    // Create new enquiry
+    const enquiry = new Enquiry(validation.data as any);
+    await enquiry.save();
+
+    // Send notification email to admin (optional)
     try {
-      const db = await connectToDatabase();
-      const collection = db.collection('contact_submissions');
-      
-      const submissionData = {
-        name,
-        email,
-        subject: sanitizedSubject,
-        message,
-        submittedAt: new Date(),
-      };
-
-      await collection.insertOne(submissionData);
-
-      console.log('Contact form submission stored in MongoDB:', submissionData);
-      // Return 201 for successful resource creation
-      return NextResponse.json({ message: 'Form submitted successfully and stored!' }, { status: 201 }); 
-
-    } catch (dbError) {
-      console.error('MongoDB Error:', dbError);
-      const errorMessage = dbError instanceof Error ? dbError.message : 'Unknown database error';
-      return NextResponse.json({ message: `Database operation failed: ${errorMessage}` }, { status: 500 });
+      await EmailService.sendEmail({
+        to: process.env.ADMIN_EMAIL || 'admin@rupeekx.com',
+        subject: `New Contact Enquiry from ${validation.data.name}`,
+        html: `
+          <h3>New Contact Enquiry</h3>
+          <p><strong>Name:</strong> ${validation.data.name}</p>
+          <p><strong>Email:</strong> ${validation.data.email}</p>
+          <p><strong>Phone:</strong> ${validation.data.phone_number}</p>
+          <p><strong>Subject:</strong> ${validation.data.subject || 'No subject'}</p>
+          <p><strong>Message:</strong></p>
+          <p>${validation.data.message}</p>
+        `
+      });
+    } catch (emailError) {
+      console.error('Failed to send admin notification email:', emailError);
+      // Don't fail the enquiry if email fails
     }
 
-  } catch (error) { // Catches errors from request.json() or other synchronous parts
-    console.error('API Route Error:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error processing request';
-    if (error instanceof SyntaxError) { // Specifically for JSON parsing errors
-        return NextResponse.json({ message: 'Invalid JSON payload.' }, { status: 400 });
-    }
-    return NextResponse.json({ message: `Error processing request: ${errorMessage}` }, { status: 500 });
+    return NextResponse.json({
+      enquiry_id: enquiry.enquiry_id,
+      message: 'Enquiry submitted successfully. We will get back to you soon.'
+    }, { status: 201 });
+
+  } catch (error) {
+    console.error('Error submitting enquiry:', error);
+    return NextResponse.json({
+      error: 'An unexpected error occurred'
+    }, { status: 500 });
   }
 }

@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 // Interface for User document
 export interface IUser extends Document {
   full_name: string;
+  email: string;
   phone_number: string;
   password?: string; // Optional because it will be removed in toJSON
   user_type: 'customer' | 'cash_lending_customer' | 'admin';
@@ -16,6 +17,8 @@ export interface IUser extends Document {
   phone_otp?: string;
   phone_otp_expires_at?: Date;
   is_phone_verified: boolean;
+  email_verified_at?: Date;
+  phone_verified_at?: Date;
   
   // User status
   status: 'pending_verification' | 'active' | 'suspended';
@@ -32,6 +35,14 @@ const userSchema: Schema<IUser> = new Schema(
       type: String,
       required: [true, 'Full name is required.'],
       trim: true,
+    },
+    email: {
+      type: String,
+      required: [true, 'Email is required.'],
+      unique: true,
+      lowercase: true,
+      trim: true,
+      match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Please fill a valid email address']
     },
     phone_number: {
       type: String,
@@ -81,6 +92,14 @@ const userSchema: Schema<IUser> = new Schema(
       type: Boolean,
       default: false,
       required: true,
+    },
+    email_verified_at: {
+      type: Date,
+      required: false,
+    },
+    phone_verified_at: {
+      type: Date,
+      required: false,
     },
     status: {
       type: String,

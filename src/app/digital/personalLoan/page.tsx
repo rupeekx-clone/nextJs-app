@@ -1,11 +1,12 @@
 'use client'; // For form interactions
 
 import { useState, useEffect, useMemo } from 'react'; // Added useEffect
-import { Container, Typography, Box, TextField, Button, Grid, Paper, FormControl, InputLabel, Select, MenuItem, Alert, Stepper, Step, StepLabel, Slider, IconButton, SelectChangeEvent } from '@mui/material'; // Added SelectChangeEvent
+import { Container, Typography, Box, TextField, Button, Grid, Paper, FormControl, InputLabel, Select, MenuItem, Alert, Stepper, Step, StepLabel, Slider, IconButton, SelectChangeEvent, List, ListItem, Chip, ListItemIcon, ListItemText } from '@mui/material'; // Added SelectChangeEvent
 import { Checkbox, FormControlLabel, Card, CardContent, CardMedia } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import UploadFileIcon from '@mui/icons-material/UploadFile'; // Added UploadFileIcon
+import CheckCircleOutline from '@mui/icons-material/CheckCircleOutline';
 
 
 // Define Steps
@@ -1017,11 +1018,44 @@ export default function PersonalLoanPage() {
           transition: 'opacity 5s ease',
         }}
       />
+      
+      {/* Hero Section */}
+      <Box sx={{ 
+        position: 'relative', 
+        zIndex: 1, 
+        textAlign: 'center', 
+        py: 8, 
+        background: 'linear-gradient(135deg, rgba(25, 118, 210, 0.1) 0%, rgba(156, 39, 176, 0.1) 100%)',
+        mb: 4
+      }}>
+        <Container maxWidth="lg">
+          <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 'bold', mb: 2 }}>
+            Unlock Best Personal Loan Offers for meeting your Capital Requirements
+          </Typography>
+          <Typography variant="h5" component="p" gutterBottom sx={{ color: 'text.secondary', mb: 4 }}>
+            Enjoy an Easy Life With | Instant Paperless Loan
+          </Typography>
+          
+          {/* Key Features */}
+          <Grid container spacing={2} justifyContent="center" sx={{ mb: 4 }}>
+            <Grid size="auto">
+              <Chip label="Best Offers from 15+ lenders" color="primary" variant="outlined" />
+            </Grid>
+            <Grid size="auto">
+              <Chip label="Hassle-Free Documentation" color="primary" variant="outlined" />
+            </Grid>
+            <Grid size="auto">
+              <Chip label="Quick Disbursal" color="primary" variant="outlined" />
+            </Grid>
+          </Grid>
+        </Container>
+      </Box>
+
       {/* Foreground content */}
       <Container maxWidth="lg" sx={{ py: { xs: 3, sm: 4, md: 6 }, position: 'relative', zIndex: 1 }}>
         <Paper elevation={3} sx={{ p: { xs: 2, sm: 3, md: 4 }, borderRadius: 2, boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}>
           <Typography variant="h4" component="h1" textAlign="center" gutterBottom sx={{ fontWeight: 'bold', mb: { xs: 3, md: 4 } }}>
-            Personal Loan Application
+            Apply for Rs. 5 Lakhs Personal Loan in Minutes!
           </Typography>
 
           {/* Responsive Stepper Wrapper */}
@@ -1104,6 +1138,279 @@ export default function PersonalLoanPage() {
             </Box>
           </Box>
         </Paper>
+
+        {/* Additional Information Sections */}
+        <Grid container spacing={4} sx={{ mt: 4 }}>
+          {/* Eligibility Criteria */}
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Card sx={{ height: '100%' }}>
+              <CardContent>
+                <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3 }}>
+                  Salaried Person Eligibility Criteria
+                </Typography>
+                <List>
+                  <ListItem>
+                    <ListItemIcon>
+                      <CheckCircleOutline color="success" />
+                    </ListItemIcon>
+                    <ListItemText primary="Minimum salary Rs. 15,000/- per month" />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <CheckCircleOutline color="success" />
+                    </ListItemIcon>
+                    <ListItemText primary="1 year job stability" />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <CheckCircleOutline color="success" />
+                    </ListItemIcon>
+                    <ListItemText primary="Minimum age 21 years" />
+                  </ListItem>
+                </List>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Card sx={{ height: '100%' }}>
+              <CardContent>
+                <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3 }}>
+                  Self-Employed Person Eligibility Criteria
+                </Typography>
+                <List>
+                  <ListItem>
+                    <ListItemIcon>
+                      <CheckCircleOutline color="success" />
+                    </ListItemIcon>
+                    <ListItemText primary="Minimum 1 year IT return" />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <CheckCircleOutline color="success" />
+                    </ListItemIcon>
+                    <ListItemText primary="1 year business stability" />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <CheckCircleOutline color="success" />
+                    </ListItemIcon>
+                    <ListItemText primary="Minimum age 21 years" />
+                  </ListItem>
+                </List>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Membership Card Benefits */}
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Card sx={{ height: '100%' }}>
+              <CardContent>
+                <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3 }}>
+                  Membership Card Benefits
+                </Typography>
+                <List>
+                  <ListItem>
+                    <ListItemIcon>
+                      <CheckCircleOutline color="primary" />
+                    </ListItemIcon>
+                    <ListItemText primary="Faster loan processing" />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <CheckCircleOutline color="primary" />
+                    </ListItemIcon>
+                    <ListItemText primary="Priority customer support" />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <CheckCircleOutline color="primary" />
+                    </ListItemIcon>
+                    <ListItemText primary="Exclusive loan offers" />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <CheckCircleOutline color="primary" />
+                    </ListItemIcon>
+                    <ListItemText primary="Document assistance" />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <CheckCircleOutline color="primary" />
+                    </ListItemIcon>
+                    <ListItemText primary="CIBIL score protection" />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <CheckCircleOutline color="primary" />
+                    </ListItemIcon>
+                    <ListItemText primary="30% referral rewards" />
+                  </ListItem>
+                </List>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Why RupeekX */}
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Card sx={{ height: '100%' }}>
+              <CardContent>
+                <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3 }}>
+                  Why RupeekX?
+                </Typography>
+                <List>
+                  <ListItem>
+                    <ListItemIcon>
+                      <CheckCircleOutline color="success" />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="Multiple Bank Options"
+                      secondary="Access to 15+ leading banks and NBFCs"
+                    />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <CheckCircleOutline color="success" />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="Best Interest Rates"
+                      secondary="Competitive rates starting from 10.25%"
+                    />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <CheckCircleOutline color="success" />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="Quick Processing"
+                      secondary="Get approved within 30 minutes"
+                    />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <CheckCircleOutline color="success" />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="100% Digital Process"
+                      secondary="Complete your application online"
+                    />
+                  </ListItem>
+                  <ListItem>
+                    <ListItemIcon>
+                      <CheckCircleOutline color="success" />
+                    </ListItemIcon>
+                    <ListItemText 
+                      primary="Expert Support"
+                      secondary="Dedicated customer support team"
+                    />
+                  </ListItem>
+                </List>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+
+        {/* Personal Loan Details */}
+        <Card sx={{ mt: 4 }}>
+          <CardContent>
+            <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 3, textAlign: 'center' }}>
+              What is Personal loan?
+            </Typography>
+            <Typography variant="body1" paragraph sx={{ fontSize: '1.1rem', lineHeight: 1.8 }}>
+              A personal loan is an unsecured loan that you can use for any personal purpose such as debt consolidation, 
+              home renovation, medical emergencies, travel, wedding expenses, or any other financial need. Unlike home 
+              loans or car loans, personal loans don't require any collateral or security.
+            </Typography>
+            
+            <Grid container spacing={3} sx={{ mt: 3 }}>
+              <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                <Box sx={{ textAlign: 'center', p: 2 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 1 }}>
+                    Get Personal Loan - up to ₹15 Lakhs
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    High loan amounts for all your needs
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                <Box sx={{ textAlign: 'center', p: 2 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 1 }}>
+                    Reasonable Interest Rate starting at 10.25%
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Competitive rates for better affordability
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                <Box sx={{ textAlign: 'center', p: 2 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 1 }}>
+                    100% Paperless Procedure
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Complete digital application process
+                  </Typography>
+                </Box>
+              </Grid>
+              <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+                <Box sx={{ textAlign: 'center', p: 2 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 1 }}>
+                    Safe And Secure process
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Bank-level security for your data
+                  </Typography>
+                </Box>
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Card>
+
+        {/* Contact Information */}
+        <Card sx={{ mt: 4, bgcolor: 'grey.50' }}>
+          <CardContent>
+            <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3, textAlign: 'center' }}>
+              Contact Information
+            </Typography>
+            <Grid container spacing={3}>
+              <Grid size={{ xs: 12, md: 4 }}>
+                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
+                  Registered Office Address
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  44, 3rd Floor, Vijayraj Society,<br />
+                  Near Akshar Family Wear,<br />
+                  Singanpore Causeway Road,<br />
+                  Katargam, Surat, Gujarat, India - 395004
+                </Typography>
+              </Grid>
+              <Grid size={{ xs: 12, md: 4 }}>
+                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
+                  Phone Number
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  +91-70263-73808
+                </Typography>
+              </Grid>
+              <Grid size={{ xs: 12, md: 4 }}>
+                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1 }}>
+                  Email Address
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  info@rupeekx.com
+                </Typography>
+              </Grid>
+            </Grid>
+            
+            <Box sx={{ mt: 3, p: 2, bgcolor: 'warning.light', borderRadius: 1 }}>
+              <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.875rem' }}>
+                <strong>Disclaimer:</strong> APR (Annual Percentage Rate) example: For a loan of ₹1,00,000 at 12% p.a. for 12 months, 
+                the EMI would be ₹8,885. Total amount payable: ₹1,06,620. Processing fee and other charges may apply.
+              </Typography>
+            </Box>
+          </CardContent>
+        </Card>
       </Container>
     </Box>
   );

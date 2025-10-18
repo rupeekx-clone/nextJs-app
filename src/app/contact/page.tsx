@@ -1,118 +1,77 @@
-'use client'; // This page needs to be a client component for form handling
+'use client';
 
-import { useState } from 'react';
-import { Container, Typography, TextField, Button, Box, Grid, Alert } from '@mui/material';
+import { Container, Typography, Box, Card, CardContent } from '@mui/material';
+import { Phone, Email, LocationOn } from '@mui/icons-material';
+import ContactForm from '@/components/Forms/ContactForm';
 
 export default function ContactPage() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: '',
-  });
-  const [submitting, setSubmitting] = useState(false);
-  const [responseMessage, setResponseMessage] = useState<string | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setSubmitting(true);
-    setResponseMessage(null);
-    setErrorMessage(null);
-
-    try {
-      const res = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
-      });
-
-      const result = await res.json();
-
-      if (res.ok) {
-        setResponseMessage(result.message || 'Form submitted successfully!');
-        setFormData({ name: '', email: '', subject: '', message: '' }); // Reset form
-      } else {
-        setErrorMessage(result.message || 'An error occurred.');
-      }
-    } catch (error) {
-      console.error('Form submission error:', error);
-      setErrorMessage('An unexpected error occurred. Please try again.');
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
   return (
-    <Container maxWidth="md" sx={{ py: { xs: 4, md: 8 } }}>
+    <Container maxWidth="lg" sx={{ py: { xs: 4, md: 8 } }}>
       <Typography variant="h4" component="h1" gutterBottom textAlign="center" sx={{ fontWeight: 'bold' }}>
         Contact Us
       </Typography>
       <Typography variant="subtitle1" textAlign="center" color="text.secondary" paragraph sx={{ mb: { xs: 3, md: 5 }, maxWidth: '700px', mx: 'auto' }}>
         Have questions or feedback? Fill out the form below to get in touch with us.
       </Typography>
-      <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
-        <Grid container spacing={3}> {/* Increased spacing for better visual separation */}
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField
-              fullWidth
-              label="Name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              aria-describedby="name-helper-text"
-            />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField
-              fullWidth
-              label="Email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              aria-describedby="email-helper-text"
-            />
-          </Grid>
-          <Grid size={{ xs: 12 }}>
-            <TextField
-              fullWidth
-              label="Subject"
-              name="subject"
-              value={formData.subject}
-              onChange={handleChange}
-              aria-describedby="subject-helper-text"
-            />
-          </Grid>
-          <Grid size={{ xs: 12 }}>
-            <TextField
-              fullWidth
-              label="Message"
-              name="message"
-              multiline
-              rows={5} // Increased rows for more space
-              value={formData.message}
-              onChange={handleChange}
-              required
-              aria-describedby="message-helper-text"
-            />
-          </Grid>
-          <Grid size={{ xs: 12 }} sx={{ textAlign: 'center', mt: 2 }}> {/* Added margin top for the button */}
-            <Button type="submit" variant="contained" color="primary" disabled={submitting} size="large">
-              {submitting ? 'Submitting...' : 'Send Message'}
-            </Button>
-          </Grid>
-        </Grid>
+
+      <Box sx={{ display: 'flex', gap: 4, flexDirection: { xs: 'column', md: 'row' } }}>
+        {/* Contact Information */}
+        <Box sx={{ flex: { xs: 1, md: '0 0 300px' } }}>
+          <Typography variant="h6" gutterBottom sx={{ fontWeight: 'bold', mb: 3 }}>
+            Get in touch
+          </Typography>
+          
+          <Card sx={{ mb: 2 }}>
+            <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Phone sx={{ color: '#1976d2' }} />
+              <Box>
+                <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+                  Phone
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  +91-70263-73808
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+
+          <Card sx={{ mb: 2 }}>
+            <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Email sx={{ color: '#1976d2' }} />
+              <Box>
+                <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+                  Email
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  info@rupeekx.com
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+
+          <Card sx={{ mb: 2 }}>
+            <CardContent sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+              <LocationOn sx={{ color: '#1976d2', mt: 0.5 }} />
+              <Box>
+                <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+                  Registered Office
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  44, 3rd Floor, Vijayraj Society,<br />
+                  Near Akshar Family Wear,<br />
+                  Singanpore Causeway Road,<br />
+                  Katargam, Surat, Gujarat, India - 395004
+                </Typography>
+              </Box>
+            </CardContent>
+          </Card>
+        </Box>
+
+        {/* Contact Form */}
+        <Box sx={{ flex: 1 }}>
+          <ContactForm />
+        </Box>
       </Box>
-      {responseMessage && <Alert severity="success" sx={{ mt: 3 }}>{responseMessage}</Alert>}
-      {errorMessage && <Alert severity="error" sx={{ mt: 3 }}>{errorMessage}</Alert>}
     </Container>
   );
 }

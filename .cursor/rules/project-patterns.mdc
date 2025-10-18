@@ -1,0 +1,431 @@
+# Cursor Rules for RupeekX Clone Project
+
+## Project Overview
+This is a Next.js loan application platform (RupeekX clone) with complete authentication, OTP verification, admin dashboard, payment processing, document management, and multi-bank loan processing capabilities.
+
+## Critical Implementation Patterns
+
+### Authentication System
+- **ALWAYS** use `withAuth` HOF for protected API routes
+- **ALWAYS** use `withAdminAuth` HOF for admin-only API routes
+- **NEVER** expose passwords or OTPs in API responses
+- **ALWAYS** hash passwords with bcrypt (salt rounds: 10)
+- **ALWAYS** validate phone numbers with Indian format: `/^[6-9]\d{9}$/`
+- **ALWAYS** use E.164 format for Twilio SMS: `+919876543210`
+- **ALWAYS** implement email verification for user accounts
+
+### Database Patterns
+- **PREFER** Mongoose models when available over native MongoDB driver
+- **ALWAYS** use cached database connection from `src/lib/mongodb.ts`
+- **ALWAYS** exclude sensitive fields in toJSON transform (password, phone_otp)
+- **ALWAYS** use timestamps: true in Mongoose schemas
+- **ALWAYS** validate required fields with proper error messages
+
+### API Route Structure
+```typescript
+// Standard API route pattern
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    
+    // Validation
+    if (!body.requiredField) {
+      return NextResponse.json({ error: 'Missing required field' }, { status: 400 });
+    }
+    
+    // Business logic
+    const result = await processData(body);
+    
+    return NextResponse.json({ result }, { status: 201 });
+  } catch (error) {
+    console.error('API Error:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+```
+
+### Error Handling
+- **ALWAYS** use standardized error response format
+- **ALWAYS** log errors with context (timestamp, URL, user info)
+- **ALWAYS** return appropriate HTTP status codes
+- **NEVER** expose internal error details in production
+
+### Component Patterns
+- **USE** 'use client' directive only when interactivity is needed
+- **PREFER** server components for static content
+- **ALWAYS** wrap with ThemeRegistry for Material-UI components
+- **ALWAYS** use TypeScript interfaces for props
+
+### Material-UI Grid v7 API
+- **ALWAYS** use the new Grid v7 API syntax for MUI v7+
+- **NEVER** use the deprecated `item` prop
+- **ALWAYS** use `size` prop with breakpoint object instead of individual breakpoint props
+
+```tsx
+// ✅ Correct (Grid v7 API)
+<Grid size={{ xs: 12, md: 6 }}>
+<Grid size={{ xs: 12, sm: 6, md: 3 }}>
+<Grid size={{ xs: 12 }}>
+
+// ❌ Incorrect (Deprecated Grid v1 API)
+<Grid item xs={12} md={6}>
+<Grid item xs={12} sm={6} md={3}>
+<Grid item xs={12}>
+```
+
+**Migration Pattern:**
+- Remove `item` prop completely
+- Move all breakpoint props (`xs`, `sm`, `md`, `lg`, `xl`) into `size` object
+- Keep `container` prop unchanged for grid containers
+
+## Environment Variables
+**CRITICAL**: Never commit these to version control:
+- `MONGODB_URI`
+- `ACCESS_TOKEN_SECRET` (32+ characters)
+- `REFRESH_TOKEN_SECRET` (32+ characters)
+- `TWILIO_ACCOUNT_SID`
+- `TWILIO_AUTH_TOKEN`
+- `TWILIO_PHONE_NUMBER`
+- `RAZORPAY_KEY_ID`
+- `RAZORPAY_KEY_SECRET`
+- `RAZORPAY_WEBHOOK_SECRET`
+- `AWS_ACCESS_KEY_ID`
+- `AWS_SECRET_ACCESS_KEY`
+- `AWS_S3_BUCKET_NAME`
+- `AWS_REGION`
+- `SMTP_HOST`
+- `SMTP_PORT`
+- `SMTP_USER`
+- `SMTP_PASS`
+- `SMTP_FROM`
+
+## Code Organization Rules
+
+### File Structure
+- API routes: `src/app/api/[feature]/route.ts`
+- Admin API routes: `src/app/api/admin/[feature]/route.ts`
+- Pages: `src/app/[feature]/page.tsx`
+- Admin pages: `src/app/admin/[feature]/page.tsx`
+- Dashboard pages: `src/app/dashboard/[feature]/page.tsx`
+- Components: `src/components/[Feature]/ComponentName.tsx`
+- Common components: `src/components/Common/ComponentName.tsx`
+- Admin components: `src/components/Admin/ComponentName.tsx`
+- Dashboard components: `src/components/Dashboard/ComponentName.tsx`
+- Utilities: `src/lib/[utility].ts`
+- Models: `src/models/[Model].ts`
+
+### Naming Conventions
+- **Files**: kebab-case for pages, PascalCase for components
+- **Variables**: camelCase
+- **Constants**: UPPER_SNAKE_CASE
+- **Interfaces**: PascalCase with 'I' prefix (e.g., `IUser`)
+- **Types**: PascalCase
+
+### Import Order
+1. React/Next.js imports
+2. Third-party libraries
+3. Internal components
+4. Utilities and types
+5. Relative imports
+
+## Security Rules
+
+### Input Validation
+- **ALWAYS** validate all user inputs
+- **ALWAYS** sanitize data before database operations
+- **ALWAYS** use proper regex patterns for validation
+- **NEVER** trust client-side validation alone
+
+### Authentication
+- **ALWAYS** verify JWT tokens before processing requests
+- **ALWAYS** check user permissions for sensitive operations
+- **ALWAYS** use HTTPS in production
+- **NEVER** store sensitive data in localStorage
+
+### Database Security
+- **ALWAYS** use parameterized queries
+- **ALWAYS** validate ObjectId format before database queries
+- **ALWAYS** implement proper indexing for performance
+- **NEVER** expose database connection strings
+
+## Performance Rules
+
+### Database Queries
+- **ALWAYS** use indexes for frequently queried fields
+- **ALWAYS** limit query results with pagination
+- **ALWAYS** use projection to exclude unnecessary fields
+- **NEVER** use `find()` without limits on large collections
+
+### API Performance
+- **ALWAYS** implement proper error handling
+- **ALWAYS** use connection pooling for database
+- **ALWAYS** cache frequently accessed data
+- **NEVER** block the event loop with synchronous operations
+
+### Frontend Performance
+- **ALWAYS** use dynamic imports for large components
+- **ALWAYS** optimize images and assets
+- **ALWAYS** implement proper loading states
+- **NEVER** load unnecessary data on initial page load
+
+## Business Logic Rules
+
+### User Types
+- `customer`: Standard loan applicants
+- `cash_lending_customer`: Premium subscription users
+- `admin`: Platform administrators
+
+### Loan Application Status
+- `draft`: Initial state
+- `submitted`: User submitted application
+- `under_review`: Admin reviewing
+- `requires_documents`: Need more documents
+- `approved`: Loan approved
+- `rejected`: Loan rejected
+- `disbursed`: Funds disbursed
+- `closed`: Loan closed
+- `cancelled`: Application cancelled
+
+### Membership Card Status
+- `active`: Card is active and benefits available
+- `expired`: Card has expired
+- `cancelled`: Card was cancelled
+
+### Payment Processing
+- **ALWAYS** use Razorpay for payment processing
+- **ALWAYS** verify payment signatures before processing
+- **ALWAYS** handle payment failures gracefully
+- **ALWAYS** send payment confirmation emails
+
+### Document Management
+- **ALWAYS** use AWS S3 for document storage
+- **ALWAYS** generate presigned URLs for secure access
+- **ALWAYS** validate file types and sizes
+- **ALWAYS** implement proper access controls
+
+### Email Notifications
+- **ALWAYS** send email notifications for loan status changes
+- **ALWAYS** use professional email templates
+- **ALWAYS** handle email sending failures gracefully
+- **ALWAYS** log email delivery status
+
+## Development Workflow
+
+### Git Workflow
+- **ALWAYS** create feature branches from main
+- **ALWAYS** write descriptive commit messages
+- **ALWAYS** test changes before committing
+- **NEVER** commit directly to main branch
+
+### Code Review
+- **ALWAYS** review security implications
+- **ALWAYS** check error handling
+- **ALWAYS** verify input validation
+- **ALWAYS** test API endpoints
+
+### Testing
+- **ALWAYS** test authentication flows
+- **ALWAYS** test error scenarios
+- **ALWAYS** test with invalid inputs
+- **NEVER** deploy without testing
+
+## Common Patterns
+
+### JWT Token Generation
+```typescript
+const accessToken = generateAccessToken({
+  userId: user._id.toString(),
+  userType: user.user_type
+});
+```
+
+### Database Connection
+```typescript
+const db = await connectToDatabase();
+const result = await db.collection('users').findOne({ email });
+```
+
+### Protected Route
+```typescript
+const protectedHandler = async (req: NextRequestWithUser) => {
+  const user = req.user; // Available from withAuth
+  // Handler logic
+};
+export const GET = withAuth(protectedHandler);
+```
+
+### Admin Protected Route
+```typescript
+const adminHandler = async (req: NextRequestWithAdmin) => {
+  const admin = req.admin; // Available from withAdminAuth
+  // Admin handler logic
+};
+export const GET = withAdminAuth(adminHandler);
+```
+
+### Payment Processing
+```typescript
+// Create Razorpay order
+const order = await createRazorpayOrder(amount, currency);
+
+// Verify payment
+const isValid = await verifyPayment(paymentData);
+```
+
+### Document Upload
+```typescript
+// Upload to S3
+const result = await uploadToS3(fileBuffer, fileName, contentType);
+
+// Generate presigned URL
+const url = await generatePresignedUrl(s3Key, expiresIn);
+```
+
+### Email Notification
+```typescript
+// Send loan approval email
+await EmailService.sendLoanApprovalNotification(
+  user.email,
+  user.full_name,
+  applicationId,
+  approvedAmount,
+  interestRate,
+  tenureMonths
+);
+```
+
+### Form Validation with Zod
+```typescript
+import { validateData, userRegistrationSchema } from '@/lib/validation';
+
+const validation = validateData(userRegistrationSchema, body);
+if (!validation.success) {
+  return NextResponse.json({
+    error: 'Validation failed',
+    details: validation.errors
+  }, { status: 400 });
+}
+
+const validatedData = validation.data;
+```
+
+### Component Usage
+```typescript
+// Use reusable components
+import { Button, Input, Card, LoadingSpinner } from '@/components/Common';
+import { ContactForm, LoanApplicationForm } from '@/components/Forms';
+import { StatsCard, DataTable, StatusBadge } from '@/components/Admin';
+```
+
+## Anti-Patterns to Avoid
+
+### Security Anti-Patterns
+- ❌ Storing passwords in plain text
+- ❌ Exposing sensitive data in API responses
+- ❌ Not validating user inputs
+- ❌ Using weak JWT secrets
+- ❌ Not implementing rate limiting
+
+### Performance Anti-Patterns
+- ❌ N+1 database queries
+- ❌ Loading all data without pagination
+- ❌ Not using database indexes
+- ❌ Blocking operations in API routes
+- ❌ Not implementing caching
+
+### Code Quality Anti-Patterns
+- ❌ Inconsistent error handling
+- ❌ Not using TypeScript types
+- ❌ Mixing server and client components unnecessarily
+- ❌ Not following naming conventions
+- ❌ Not documenting complex logic
+
+## Project-Specific Notes
+
+### Phone Number Handling
+- Store in Indian format: `9876543210`
+- Convert to E.164 for Twilio: `+919876543210`
+- Validate with: `/^[6-9]\d{9}$/`
+
+### OTP Implementation
+- Generate 6-digit numeric OTP
+- Store with expiration time
+- Send via Twilio SMS
+- Validate within time window
+
+### Membership Benefits
+- Silver Card: 30-minute personal loan processing
+- Gold Card: 48-hour business loan processing
+- Both provide preferential rates and priority support
+
+### Bank Partner Integration
+- Store partner information in `bank_partners` collection
+- Link applications to specific partners
+- Track partner performance and approval rates
+
+## Emergency Procedures
+
+### Security Incident
+1. Immediately revoke compromised tokens
+2. Check logs for suspicious activity
+3. Update secrets and passwords
+4. Notify team and users if necessary
+
+### Database Issues
+1. Check connection status
+2. Verify environment variables
+3. Check MongoDB service status
+4. Review recent code changes
+
+### Performance Issues
+1. Check database query performance
+2. Review API response times
+3. Check for memory leaks
+4. Monitor error rates
+
+## Documentation Requirements
+
+### API Documentation
+- **ALWAYS** document request/response formats
+- **ALWAYS** include example requests
+- **ALWAYS** document error responses
+- **ALWAYS** specify required fields
+
+### Code Documentation
+- **ALWAYS** document complex business logic
+- **ALWAYS** explain non-obvious decisions
+- **ALWAYS** document API integrations
+- **ALWAYS** update documentation with code changes
+
+## Quality Assurance
+
+### Before Deployment
+- [ ] All tests passing
+- [ ] Security review completed
+- [ ] Performance testing done
+- [ ] Documentation updated
+- [ ] Environment variables configured
+- [ ] Database migrations applied
+
+### Post-Deployment
+- [ ] Monitor error rates
+- [ ] Check performance metrics
+- [ ] Verify functionality
+- [ ] Monitor user feedback
+- [ ] Check security logs
+
+## Support and Maintenance
+
+### Regular Tasks
+- Monitor application performance
+- Review security logs
+- Update dependencies
+- Backup database
+- Review user feedback
+
+### Troubleshooting
+- Check application logs
+- Verify environment configuration
+- Test database connectivity
+- Review recent changes
+- Check third-party service status

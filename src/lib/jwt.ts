@@ -22,6 +22,7 @@ if (REFRESH_TOKEN_SECRET === 'default-refresh-secret-key-for-dev-must-be-32-char
 
 export interface AuthPayload extends JwtPayload {
   userId: string;
+  email: string;
   userType: string;
   // You can add other relevant, non-sensitive user details here
 }

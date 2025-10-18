@@ -1,30 +1,108 @@
-import mongoose, { Schema, Document, Model, Types } from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IStaticContent extends Document {
+  content_id: string;
   slug: string;
   title: string;
   content_body: string;
   meta_description?: string;
-  last_updated_by?: Types.ObjectId;
+  last_updated_by?: string;
   is_published: boolean;
-  createdAt?: Date;
-  updatedAt?: Date;
+  created_at: Date;
+  updated_at: Date;
 }
 
-const staticContentSchema: Schema<IStaticContent> = new Schema(
-  {
-    slug: { type: String, required: true, unique: true, trim: true },
-    title: { type: String, required: true },
-    content_body: { type: String, required: true },
-    meta_description: { type: String },
-    last_updated_by: { type: Schema.Types.ObjectId, ref: 'User' },
-    is_published: { type: Boolean, default: true, required: true },
+const staticContentSchema: Schema<IStaticContent> = new Schema({
+  content_id: {
+    type: String,
+    required: true,
+    unique: true,
+    default: () => new mongoose.Types.ObjectId().toString()
   },
-  {
-    timestamps: true,
+  slug: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true,
+    trim: true,
+    validate: {
+      validator: function(v: string) {
+        return /^[a-z0-9-]+$/.test(v);
+      },
+      message: 'Slug must contain only lowercase letters, numbers, and hyphens'
+    }
+  },
+  title: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  content_body: {
+    type: String,
+    required: true
+  },
+  meta_description: {
+    type: String,
+    maxlength: 500,
+    trim: true
+  },
+  last_updated_by: {
+    type: String,
+    ref: 'User'
+  },
+  is_published: {
+    type: Boolean,
+    default: true
   }
-);
+}, {
+  timestamps: true,
+  toJSON: {
+    transform(doc, ret) {
+      ret.id = ret._id;
+      delete ret._id;
+      delete ret.__v;
+      return ret;
+    }
+  }
+});
 
-const StaticContent: Model<IStaticContent> = mongoose.models.StaticContent || mongoose.model<IStaticContent>('StaticContent', staticContentSchema);
+// Indexes
+staticContentSchema.index({ slug: 1 });
+staticContentSchema.index({ is_published: 1 });
+staticContentSchema.index({ last_updated_by: 1 });
 
-export default StaticContent; 
+// Pre-save hook to update last_updated_by
+staticContentSchema.pre('save', function(next) {
+  if (this.isModified() && !this.isNew) {
+    // This would be set by the API route when updating
+    // this.last_updated_by = req.user.userId;
+  }
+  next();
+});
+
+// Instance methods
+staticContentSchema.methods.isPublished = function(): boolean {
+  return this.is_published;
+};
+
+staticContentSchema.methods.getExcerpt = function(maxLength: number = 200): string {
+  if (this.content_body.length <= maxLength) {
+    return this.content_body;
+  }
+  return this.content_body.substring(0, maxLength) + '...';
+};
+
+staticContentSchema.methods.getWordCount = function(): number {
+  return this.content_body.split(/\s+/).length;
+};
+
+// Static methods
+staticContentSchema.statics.findBySlug = function(slug: string) {
+  return this.findOne({ slug, is_published: true });
+};
+
+staticContentSchema.statics.findPublished = function() {
+  return this.find({ is_published: true }).sort({ updated_at: -1 });
+};
+
+export default mongoose.models.StaticContent || mongoose.model<IStaticContent>('StaticContent', staticContentSchema);
