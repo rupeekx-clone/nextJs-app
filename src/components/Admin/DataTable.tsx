@@ -78,7 +78,7 @@ const DataTable: React.FC<DataTableProps> = ({
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const allIds = data.map(getRowId);
+      const allIds = data.map(getRowId).filter((id): id is string => id !== undefined);
       onSelectionChange?.(allIds);
     } else {
       onSelectionChange?.([]);
@@ -169,7 +169,7 @@ const DataTable: React.FC<DataTableProps> = ({
             ) : (
               data.map((row) => {
                 const rowId = getRowId(row);
-                const isSelected = selectedRows.includes(rowId);
+                const isSelected = selectedRows.includes(rowId as string);
                 
                 return (
                   <TableRow
@@ -183,7 +183,7 @@ const DataTable: React.FC<DataTableProps> = ({
                       <TableCell padding="checkbox">
                         <Checkbox
                           checked={isSelected}
-                          onChange={() => handleSelectRow(rowId)}
+                          onChange={() => handleSelectRow(rowId as string)}
                           onClick={(e) => e.stopPropagation()}
                         />
                       </TableCell>
@@ -198,7 +198,7 @@ const DataTable: React.FC<DataTableProps> = ({
                         size="small"
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleMenuOpen(e, rowId);
+                          handleMenuOpen(e, rowId as string);
                         }}
                       >
                         <MoreVert />

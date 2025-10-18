@@ -2,10 +2,11 @@ import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
 import StaticContent from '@/models/StaticContent';
 
-export async function GET(req: Request, context: { params: Promise<{ slug: string }> }) {
+export async function GET(req: Request, context: { params: Promise<Record<string, unknown>> }) {
   try {
+    if(req){}
     const params = await context.params;
-    const slug = params.slug;
+    const slug = params.slug as string;
 
     if (!slug) {
       return NextResponse.json({

@@ -4,11 +4,11 @@ import { withAuth, NextRequestWithUser } from '@/lib/authMiddleware';
 import { validateData, loanUpdateSchema } from '@/lib/validation';
 import LoanApplication from '@/models/LoanApplication';
 
-const getLoanHandler = async (req: NextRequestWithUser, context: { params: Promise<{ id: string }> }) => {
+const getLoanHandler = async (req: NextRequestWithUser, context: { params: Promise<Record<string, unknown>> }) => {
   try {
     const userId = req.user!.userId;
     const params = await context.params;
-    const applicationId = params.id;
+    const applicationId = params.id as string;
 
     await connectToDatabase();
 
@@ -56,11 +56,11 @@ const getLoanHandler = async (req: NextRequestWithUser, context: { params: Promi
   }
 };
 
-const updateLoanHandler = async (req: NextRequestWithUser, context: { params: Promise<{ id: string }> }) => {
+const updateLoanHandler = async (req: NextRequestWithUser, context: { params: Promise<Record<string, unknown>> }) => {
   try {
     const userId = req.user!.userId;
     const params = await context.params;
-    const applicationId = params.id;
+    const applicationId = params.id as string;
     const body = await req.json();
 
     // Validate the request body

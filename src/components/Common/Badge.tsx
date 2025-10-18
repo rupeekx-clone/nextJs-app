@@ -8,7 +8,7 @@ interface BadgeProps {
   color?: 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning';
   variant?: 'filled' | 'outlined';
   size?: 'small' | 'medium';
-  icon?: React.ReactNode;
+  icon?: React.ReactElement;
 }
 
 const Badge: React.FC<BadgeProps> = ({

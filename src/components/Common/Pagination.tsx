@@ -37,7 +37,8 @@ const Pagination: React.FC<PaginationProps> = ({
     onPageChange(page);
   };
 
-  const handleItemsPerPageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleItemsPerPageChange = (event: any) => {
     if (onItemsPerPageChange) {
       onItemsPerPageChange(Number(event.target.value));
     }
