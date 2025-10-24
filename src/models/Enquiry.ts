@@ -11,6 +11,12 @@ export interface IEnquiry extends Document {
   assigned_to_user_id?: string;
   created_at: Date;
   updated_at: Date;
+  // Instance methods
+  isNewEnquiry(): boolean;
+  isInProgress(): boolean;
+  isResolved(): boolean;
+  canBeAssigned(): boolean;
+  assignTo(userId: string): void;
 }
 
 const enquirySchema: Schema<IEnquiry> = new Schema({
@@ -80,7 +86,7 @@ enquirySchema.index({ created_at: -1 });
 enquirySchema.index({ email: 1 });
 
 // Instance methods
-enquirySchema.methods.isNew = function(): boolean {
+enquirySchema.methods.isNewEnquiry = function(): boolean {
   return this.status === 'new';
 };
 
