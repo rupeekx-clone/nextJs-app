@@ -9,6 +9,9 @@ import LoadingSpinner from '@/components/Common/LoadingSpinner';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useAppSelector } from '@/store/hooks';
+import { adminActions } from '@/actions/admin';
+import { LoaderKeys } from '@/actions/shared/constants';
 
 const adminLoginSchema = z.object({
   email: z.string().email('Invalid email format'),
@@ -18,9 +21,9 @@ const adminLoginSchema = z.object({
 type AdminLoginFormData = z.infer<typeof adminLoginSchema>;
 
 export default function AdminLoginPage() {
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const isLoading = useAppSelector(state => state.ui.activeLoaders[LoaderKeys.ADMIN_LOADING] || false);
 
   const {
     register,
@@ -31,39 +34,19 @@ export default function AdminLoginPage() {
   });
 
   const onSubmit = async (data: AdminLoginFormData) => {
-    setLoading(true);
     setError(null);
 
-    try {
-      const response = await fetch('/api/admin/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
+    const result = await adminActions.login.execute(data);
 
-      const result = await response.json();
-
-      if (response.ok) {
-        // Store admin tokens
-        localStorage.setItem('adminAccessToken', result.accessToken);
-        localStorage.setItem('adminRefreshToken', result.refreshToken);
-        
-        // Redirect to admin dashboard
-        router.push('/admin');
-      } else {
-        setError(result.error || 'Login failed');
-      }
-    } catch (err) {
-      console.error('Admin login error:', err);
-      setError('An unexpected error occurred');
-    } finally {
-      setLoading(false);
+    if (result.success) {
+      // Redirect to admin dashboard
+      router.push('/admin');
+    } else {
+      setError(result.error || 'Login failed');
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <Container maxWidth="sm" sx={{ py: 8, display: 'flex', justifyContent: 'center' }}>
         <LoadingSpinner />
@@ -118,7 +101,7 @@ export default function AdminLoginPage() {
           variant="primary"
           fullWidth
           size="large"
-          loading={loading}
+          loading={isLoading}
         >
           Sign In
         </Button>

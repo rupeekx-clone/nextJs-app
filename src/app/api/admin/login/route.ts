@@ -39,13 +39,13 @@ export async function POST(req: NextRequest) {
     // Generate tokens
     const accessToken = generateAccessToken({
       userId: (admin._id as { toString(): string }).toString(),
-      email: admin.email,
+      email: admin.email || '',
       userType: admin.user_type,
     });
 
     const refreshToken = generateRefreshToken({
       userId: (admin._id as { toString(): string }).toString(),
-      email: admin.email,
+      email: admin.email || '',
       userType: admin.user_type,
     });
 

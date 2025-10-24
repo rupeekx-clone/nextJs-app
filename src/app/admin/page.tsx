@@ -11,6 +11,9 @@ import {
 } from '@mui/icons-material';
 import StatsCard from '@/components/Admin/StatsCard';
 import LoadingSpinner from '@/components/Common/LoadingSpinner';
+import { useAppSelector } from '@/store/hooks';
+import { adminActions } from '@/actions/admin';
+import { LoaderKeys } from '@/actions/shared/constants';
 
 interface DashboardStats {
   totalUsers: number;
@@ -30,8 +33,8 @@ interface DashboardStats {
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const isLoading = useAppSelector(state => state.ui.activeLoaders[LoaderKeys.ADMIN_LOADING] || false);
 
   useEffect(() => {
     fetchDashboardStats();
@@ -39,25 +42,29 @@ export default function AdminDashboard() {
 
   const fetchDashboardStats = async () => {
     try {
-      setLoading(true);
+      setError(null);
       
-      const response = await fetch('/api/admin/dashboard/stats', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('adminAccessToken')}`,
-        },
-      });
+      const result = await adminActions.getDashboardStats.execute();
       
-      if (response.ok) {
-        const data = await response.json();
-        setStats(data);
+      if (result.success && result.data) {
+        // Map API response to component state structure
+        setStats({
+          totalUsers: result.data.stats.totalUsers,
+          pendingApplications: result.data.stats.pendingApplications,
+          activeMemberships: 0, // Not provided by API, set default
+          monthlyRevenue: result.data.stats.monthlyRevenue,
+          userGrowth: 0, // Not provided by API, set default
+          approvalRate: result.data.stats.totalApplications > 0 
+            ? (result.data.stats.approvedApplications / result.data.stats.totalApplications) * 100 
+            : 0,
+          recentActivities: [], // Not provided by API, set default
+        });
       } else {
-        throw 'Failed to fetch dashboard stats';
+        setError(result.error || 'Failed to load dashboard data');
       }
     } catch (err) {
       console.error('Dashboard stats fetch error:', err);
-      setError(typeof err === 'string' ? err : 'Failed to load dashboard data');
-    } finally {
-      setLoading(false);
+      setError('Failed to load dashboard data');
     }
   };
 
@@ -95,7 +102,7 @@ export default function AdminDashboard() {
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <LoadingSpinner />

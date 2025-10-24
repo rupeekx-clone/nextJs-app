@@ -5,12 +5,12 @@ import jwt, { JwtPayload, Secret, SignOptions } from 'jsonwebtoken';
 // Example .env.local:
 // ACCESS_TOKEN_SECRET=your-access-token-secret-key-of-at-least-32-characters
 // REFRESH_TOKEN_SECRET=your-refresh-token-secret-key-of-at-least-32-characters
-// ACCESS_TOKEN_EXPIRATION=15m
+// ACCESS_TOKEN_EXPIRATION=7d
 // REFRESH_TOKEN_EXPIRATION=7d
 
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET || 'default-access-secret-key-for-dev-must-be-32-chars';
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || 'default-refresh-secret-key-for-dev-must-be-32-chars';
-const ACCESS_TOKEN_EXPIRATION = process.env.ACCESS_TOKEN_EXPIRATION || '15m';
+const ACCESS_TOKEN_EXPIRATION = process.env.ACCESS_TOKEN_EXPIRATION || '7d';
 const REFRESH_TOKEN_EXPIRATION = process.env.REFRESH_TOKEN_EXPIRATION || '7d';
 
 if (ACCESS_TOKEN_SECRET === 'default-access-secret-key-for-dev-must-be-32-chars' && process.env.NODE_ENV === 'production') {

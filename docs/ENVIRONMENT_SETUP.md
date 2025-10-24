@@ -33,8 +33,8 @@ ACCESS_TOKEN_SECRET=your-super-secure-access-token-secret-key-here-min-32-chars
 REFRESH_TOKEN_SECRET=your-super-secure-refresh-token-secret-key-here-min-32-chars
 
 # JWT token expiration times (optional - defaults provided)
-# ACCESS_TOKEN_EXPIRES_IN=15m
-# REFRESH_TOKEN_EXPIRES_IN=7d
+# ACCESS_TOKEN_EXPIRATION=7d  # Changed from 15m to 7d for mobile auth
+# REFRESH_TOKEN_EXPIRATION=7d
 
 # ===========================================
 # RAZORPAY PAYMENT GATEWAY
@@ -50,6 +50,10 @@ RAZORPAY_KEY_SECRET=your_razorpay_key_secret_here
 TWILIO_ACCOUNT_SID=your_twilio_account_sid_here
 TWILIO_AUTH_TOKEN=your_twilio_auth_token_here
 TWILIO_PHONE_NUMBER=+1234567890
+
+# OTP Configuration
+OTP_LENGTH=6
+OTP_VALIDITY_MINUTES=10
 
 # ===========================================
 # EMAIL SERVICE (SMTP)

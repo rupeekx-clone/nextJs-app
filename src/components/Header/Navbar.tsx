@@ -101,7 +101,9 @@ const Navbar: React.FC = () => {
                   <List component="div" disablePadding>
                     {item.children.map((child) => (
                       <ListItem disablePadding key={child.label}>
-                        <Link href={child.path || '#'} passHref legacyBehavior>
+                        <Link href={child.path || '#'}>
+                          {/* @next-codemod-error This Link previously used the now removed `legacyBehavior` prop, and has a child that might not be an anchor. The codemod bailed out of lifting the child props to the Link. Check that the child component does not render an anchor, and potentially move the props manually to Link. */
+                          }
                           <ListItemButton component="a" sx={{ pl: 4 }}>
                             <ListItemText primary={child.label} />
                           </ListItemButton>
@@ -113,7 +115,9 @@ const Navbar: React.FC = () => {
               </>
             ) : (
               <ListItem disablePadding>
-                <Link href={item.path || '#'} passHref legacyBehavior>
+                <Link href={item.path || '#'}>
+                  {/* @next-codemod-error This Link previously used the now removed `legacyBehavior` prop, and has a child that might not be an anchor. The codemod bailed out of lifting the child props to the Link. Check that the child component does not render an anchor, and potentially move the props manually to Link. */
+                  }
                   <ListItemButton component="a">
                     <ListItemText primary={item.label} />
                   </ListItemButton>

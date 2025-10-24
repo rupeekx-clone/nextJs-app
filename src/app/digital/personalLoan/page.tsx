@@ -7,6 +7,9 @@ import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import UploadFileIcon from '@mui/icons-material/UploadFile'; // Added UploadFileIcon
 import CheckCircleOutline from '@mui/icons-material/CheckCircleOutline';
+import { useAppSelector } from '@/store/hooks';
+import { loanActions } from '@/actions/loan';
+import { LoaderKeys } from '@/actions/shared/constants';
 
 
 // Define Steps
@@ -783,8 +786,8 @@ const initialFormData = {
 export default function PersonalLoanPage() {
   const [activeStep, setActiveStep] = useState(0);
   const [formData, setFormData] = useState(initialFormData);
-  const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
+  const isLoading = useAppSelector(state => state.ui.activeLoaders[LoaderKeys.LOAN_LOADING] || false);
 
   // --- Cross-fade background logic ---
   const bgImages = useMemo(() => [
@@ -893,14 +896,12 @@ export default function PersonalLoanPage() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setIsLoading(true);
     setMessage(null);
     console.log("Submitting Data:", formData);
 
     const token = localStorage.getItem('accessToken');
     if (!token) {
       setMessage({ type: 'error', text: 'Authentication token not found. Please login again.' });
-      setIsLoading(false);
       return;
     }
 
@@ -908,7 +909,7 @@ export default function PersonalLoanPage() {
 
     const submissionData = {
       ...otherFormData,
-      loan_type: 'personal',
+      loan_type: 'personal' as const,
       amount_requested: formData.loanAmount,
       tenure_months_requested: formData.tenure === 'custom' ? parseInt(formData.customTenure, 10) : parseInt(formData.tenure, 10),
       documents_submitted: {
@@ -944,28 +945,17 @@ export default function PersonalLoanPage() {
 
     if (isNaN(submissionData.amount_requested) || submissionData.amount_requested <= 0) {
       setMessage({ type: 'error', text: 'Invalid loan amount. Please review Step 1.' });
-      setIsLoading(false);
       return;
     }
     if (isNaN(submissionData.tenure_months_requested) || submissionData.tenure_months_requested <= 0) {
       setMessage({ type: 'error', text: 'Invalid loan tenure. Please review Step 1.' });
-      setIsLoading(false);
       return;
     }
 
     try {
-      const response = await fetch('/api/loans/apply', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify(submissionData),
-      });
+      const result = await loanActions.apply.execute(submissionData);
 
-      const result = await response.json();
-
-      if (response.ok) {
+      if (result.success) {
         setMessage({ type: 'success', text: result.message || 'Application submitted successfully! You will be redirected shortly.' });
         setFormData(initialFormData); // Reset form
         setTimeout(() => {
@@ -973,13 +963,11 @@ export default function PersonalLoanPage() {
           setMessage(null);
         }, 3000);
       } else {
-        setMessage({ type: 'error', text: result.message || `Submission failed (Status: ${response.status}). Please try again.` });
+        setMessage({ type: 'error', text: result.error || 'Submission failed. Please try again.' });
       }
     } catch (error) {
       console.error('Loan application submission error:', error);
       setMessage({ type: 'error', text: 'An unexpected error occurred during submission. Please try again.' });
-    } finally {
-      setIsLoading(false);
     }
   };
 

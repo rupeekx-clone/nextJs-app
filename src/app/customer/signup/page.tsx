@@ -1,9 +1,12 @@
 'use client';
 
-import { Container, Typography, Box, TextField, Button, Grid, Paper, Link as MuiLink, FormControlLabel, Checkbox } from '@mui/material';
+import { Container, Typography, Box, TextField, Grid, Paper, Link as MuiLink, FormControlLabel, Checkbox } from '@mui/material';
 import NextLink from 'next/link';
 import { useState } from 'react';
-import { useAxios } from '@/lib/useAxios';
+import { useAppSelector } from '@/store/hooks';
+import { authActions } from '@/actions/auth';
+import { LoaderKeys } from '@/actions/shared/constants';
+import LoadingButton from '@/components/Common/LoadingButton';
 import AuthBackgroundRotator from '@/components/AuthBackgroundRotator';
 
 export default function CustomerSignupPage() {
@@ -20,7 +23,8 @@ export default function CustomerSignupPage() {
     agreeTerms: false
   });
   const [success, setSuccess] = useState<string | null>(null);
-  const { loading, error, sendRequest } = useAxios();
+  const [error, setError] = useState<string | null>(null);
+  const isLoading = useAppSelector(state => state.ui.activeLoaders[LoaderKeys.AUTH_LOADING] || false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -33,35 +37,31 @@ export default function CustomerSignupPage() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSuccess(null);
+    setError(null);
 
     // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
       return;
     }
 
     // Validate terms agreement
     if (!formData.agreeTerms) {
+      setError('Please agree to the terms and conditions');
       return;
     }
 
-    try {
-      const { ...registrationData } = formData;
-      const result = await sendRequest({
-        method: 'POST',
-        url: '/auth/register',
-        data: registrationData,
-      });
-      
-      if (result.message === 'User registered successfully') {
-        setSuccess('Registration successful! Redirecting to login...');
-        localStorage.setItem('accessToken', result.access_token);
-        setTimeout(() => {
-          window.location.href = '/customer';
-        }, 2000);
-      }
-    } catch {
-      setSuccess(null);
-      // Error is handled by the hook
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { confirmPassword, agreeTerms, ...registrationData } = formData;
+    const result = await authActions.register.execute(registrationData);
+    
+    if (result.success) {
+      setSuccess('Registration successful! Redirecting to login...');
+      setTimeout(() => {
+        window.location.href = '/customer';
+      }, 2000);
+    } else {
+      setError(result.error || 'Registration failed. Please try again.');
     }
   };
 
@@ -263,15 +263,17 @@ export default function CustomerSignupPage() {
               </Typography>
             )}
 
-            <Button
+            <LoadingButton
               type="submit"
               fullWidth
               variant="contained"
+              loading={isLoading}
+              loadingText="Creating Account..."
               sx={{ mt: 3, mb: 2, py: 1.5 }}
-              disabled={loading || !formData.agreeTerms || formData.password !== formData.confirmPassword}
+              disabled={!formData.agreeTerms || formData.password !== formData.confirmPassword}
             >
-              {loading ? 'Creating Account...' : 'Sign Up'}
-            </Button>
+              Sign Up
+            </LoadingButton>
 
             <Grid container>
               <Grid size={{ xs: 12 }}>

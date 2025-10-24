@@ -32,11 +32,12 @@ import {
   Login,
   Dashboard,
   Logout,
-  Phone,
-  Email,
+  Person,
 } from '@mui/icons-material';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { logout } from '@/store/slices/authSlice';
 
 interface NavItem {
   label: string;
@@ -48,16 +49,6 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: 'Home', path: '/' },
-  { 
-    label: 'Company', 
-    path: '/company',
-    children: [
-      { label: 'About Us', path: '/company' },
-      { label: 'Our Mission', path: '/company#mission' },
-      { label: 'Our Vision', path: '/company#vision' },
-      { label: 'Our Values', path: '/company#values' },
-    ]
-  },
   {
     label: 'Products',
     children: [
@@ -74,8 +65,6 @@ const navItems: NavItem[] = [
       { label: 'Subscription Plan', path: '/subscription/cashlending' },
     ],
   },
-  { label: 'FAQs', path: '/faqs' },
-  { label: 'Contact Us', path: '/contact' },
 ];
 
 const Header: React.FC = () => {
@@ -84,30 +73,15 @@ const Header: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerOpenMenus, setDrawerOpenMenus] = useState<{ [key: string]: boolean }>({});
   const [userMenuAnchor, setUserMenuAnchor] = useState<null | HTMLElement>(null);
-  // const [searchQuery, setSearchQuery] = useState('');
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userName, setUserName] = useState('');
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
   const router = useRouter();
-  // const pathname = usePathname();
+  const dispatch = useAppDispatch();
 
-  // Check if user is logged in
-  useEffect(() => {
-    const token = localStorage.getItem('accessToken');
-    const user = localStorage.getItem('user');
-    setIsLoggedIn(!!token);
-    if (user) {
-      try {
-        const userData = JSON.parse(user);
-        setUserName(userData.full_name || 'User');
-      } catch (error) {
-        console.error('Error parsing user data:', error);
-      }
-    }
-  }, []);
+  // Get auth state from Redux
+  const { user, isAuthenticated } = useAppSelector(state => state.auth);
 
   // Handle scroll effect
   useEffect(() => {
@@ -145,11 +119,14 @@ const Header: React.FC = () => {
   };
 
   const handleLogout = () => {
+    // Clear localStorage
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
-    setIsLoggedIn(false);
-    setUserName('');
+    
+    // Dispatch Redux logout action
+    dispatch(logout());
+    
     handleUserMenuClose();
     router.push('/');
   };
@@ -162,7 +139,7 @@ const Header: React.FC = () => {
   // };
 
   const handleLogin = () => {
-    router.push('/customer');
+    router.push('/customer/mobile-login');
   };
 
   const handleDashboard = () => {
@@ -192,15 +169,15 @@ const Header: React.FC = () => {
       <Divider />
       
       {/* User Section */}
-      {isLoggedIn ? (
+      {isAuthenticated ? (
         <Box sx={{ p: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
             <Avatar sx={{ bgcolor: 'primary.main' }}>
-              {userName.charAt(0).toUpperCase()}
+              {user?.full_name?.charAt(0).toUpperCase() || 'U'}
             </Avatar>
             <Box>
               <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-                {userName}
+                {user?.full_name || 'User'}
               </Typography>
               <Typography variant="caption" color="text.secondary">
                 Welcome back!
@@ -252,7 +229,9 @@ const Header: React.FC = () => {
                   <List component="div" disablePadding>
                     {item.children.map((child) => (
                       <ListItem disablePadding key={child.label}>
-                        <Link href={child.path || '#'} passHref legacyBehavior>
+                        <Link href={child.path || '#'}>
+                          {/* @next-codemod-error This Link previously used the now removed `legacyBehavior` prop, and has a child that might not be an anchor. The codemod bailed out of lifting the child props to the Link. Check that the child component does not render an anchor, and potentially move the props manually to Link. */
+                          }
                           <ListItemButton component="a" sx={{ pl: 4 }}>
                             <ListItemText primary={child.label} />
                           </ListItemButton>
@@ -264,7 +243,9 @@ const Header: React.FC = () => {
               </>
             ) : (
               <ListItem disablePadding>
-                <Link href={item.path || '#'} passHref legacyBehavior>
+                <Link href={item.path || '#'}>
+                  {/* @next-codemod-error This Link previously used the now removed `legacyBehavior` prop, and has a child that might not be an anchor. The codemod bailed out of lifting the child props to the Link. Check that the child component does not render an anchor, and potentially move the props manually to Link. */
+                  }
                   <ListItemButton component="a">
                     <ListItemText primary={item.label} />
                   </ListItemButton>
@@ -274,27 +255,6 @@ const Header: React.FC = () => {
           </React.Fragment>
         ))}
       </List>
-      
-      <Divider />
-      
-      {/* Contact Info */}
-      <Box sx={{ p: 2 }}>
-        <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>
-          Contact Us
-        </Typography>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-          <Phone sx={{ fontSize: 16, color: 'text.secondary' }} />
-          <Typography variant="body2" color="text.secondary">
-            +91-70263-73808
-          </Typography>
-        </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Email sx={{ fontSize: 16, color: 'text.secondary' }} />
-          <Typography variant="body2" color="text.secondary">
-            info@blumiq.com
-          </Typography>
-        </Box>
-      </Box>
     </Box>
   );
 
@@ -318,13 +278,21 @@ const Header: React.FC = () => {
           minHeight: { xs: 56, md: 64 }
         }}>
           {/* Logo */}
-          <Link href="/" passHref legacyBehavior>
-            <Box sx={{ 
+          <Box 
+            sx={{ 
               display: 'flex', 
               alignItems: 'center', 
               cursor: 'pointer',
               textDecoration: 'none'
-            }}>
+            }}
+            onClick={() => {
+              if (isAuthenticated) {
+                router.push('/dashboard');
+              } else {
+                router.push('/');
+              }
+            }}
+          >
               <Box 
                 component="img"
                 src="/logo.svg"
@@ -336,7 +304,6 @@ const Header: React.FC = () => {
               />
               <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main' }}>Blumiq</Typography>
             </Box>
-          </Link>
 
           {/* Desktop Navigation */}
           {!isMobile && (
@@ -442,7 +409,7 @@ const Header: React.FC = () => {
             )} */}
 
             {/* Notifications */}
-            {isLoggedIn && (
+            {isAuthenticated && (
               <IconButton color="inherit">
                 <Badge badgeContent={3} color="error">
                   <Notifications />
@@ -451,14 +418,14 @@ const Header: React.FC = () => {
             )}
 
             {/* User Menu */}
-            {isLoggedIn ? (
+            {isAuthenticated ? (
               <>
                 <IconButton
                   onClick={handleUserMenuOpen}
                   sx={{ ml: 1 }}
                 >
                   <Avatar sx={{ width: 32, height: 32, bgcolor: 'primary.main' }}>
-                    {userName.charAt(0).toUpperCase()}
+                    {user?.full_name?.charAt(0).toUpperCase() || 'U'}
                   </Avatar>
                 </IconButton>
                 <Menu
@@ -476,12 +443,16 @@ const Header: React.FC = () => {
                 >
                   <Box sx={{ p: 2, borderBottom: '1px solid', borderColor: 'divider' }}>
                     <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-                      {userName}
+                      {user?.full_name || 'User'}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
                       Welcome back!
                     </Typography>
                   </Box>
+                  <MenuItem onClick={() => { router.push('/dashboard/profile'); handleUserMenuClose(); }}>
+                    <Person sx={{ mr: 1 }} />
+                    Profile Settings
+                  </MenuItem>
                   <MenuItem onClick={() => { handleDashboard(); handleUserMenuClose(); }}>
                     <Dashboard sx={{ mr: 1 }} />
                     Dashboard
@@ -522,7 +493,6 @@ const Header: React.FC = () => {
           </Box>
         </Toolbar>
       </AppBar>
-
       {/* Mobile Drawer */}
       <Drawer
         anchor="right"
@@ -536,7 +506,6 @@ const Header: React.FC = () => {
       >
         {renderDrawerNav()}
       </Drawer>
-
       {/* Spacer for fixed header */}
       <Box sx={{ height: { xs: 56, md: 64 } }} />
     </>

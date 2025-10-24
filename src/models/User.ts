@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 // Interface for User document
 export interface IUser extends Document {
   full_name: string;
-  email: string;
+  email?: string;
   phone_number: string;
   password?: string; // Optional because it will be removed in toJSON
   user_type: 'customer' | 'cash_lending_customer' | 'admin';
@@ -12,6 +12,7 @@ export interface IUser extends Document {
   address_line2?: string;
   city?: string;
   pincode?: string;
+  profile_picture_url?: string;
   
   // OTP and Verification fields
   phone_otp?: string;
@@ -38,8 +39,9 @@ const userSchema: Schema<IUser> = new Schema(
     },
     email: {
       type: String,
-      required: [true, 'Email is required.'],
+      required: false,
       unique: true,
+      sparse: true, // Allows multiple null values for unique constraint
       lowercase: true,
       trim: true,
       match: [/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Please fill a valid email address']
@@ -54,7 +56,7 @@ const userSchema: Schema<IUser> = new Schema(
     },
     password: {
       type: String,
-      required: [true, 'Password is required.'],
+      required: false,
       select: false, // Do not return password by default
     },
     user_type: {
@@ -75,6 +77,10 @@ const userSchema: Schema<IUser> = new Schema(
       trim: true,
     },
     pincode: {
+      type: String,
+      trim: true,
+    },
+    profile_picture_url: {
       type: String,
       trim: true,
     },
@@ -134,7 +140,7 @@ const userSchema: Schema<IUser> = new Schema(
   }
 );
 
-// Pre-save hook to hash password
+// Pre-save hook to hash password (only if password exists)
 userSchema.pre<IUser>('save', async function (next) {
   if (!this.isModified('password') || !this.password) {
     return next();
@@ -153,7 +159,7 @@ userSchema.methods.comparePassword = async function (
   candidatePassword: string
 ): Promise<boolean> {
   if (!this.password) {
-    return false;
+    return false; // No password set for this user
   }
   return bcrypt.compare(candidatePassword, this.password);
 };

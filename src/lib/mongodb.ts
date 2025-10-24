@@ -10,22 +10,52 @@ export async function connectToDatabase(): Promise<Db> {
   }
 
   console.log(`Attempting to connect to MongoDB at ${MONGODB_URI}`);
-  const client = new MongoClient(MONGODB_URI);
+  
+  // Enhanced connection options for better timeout handling
+  const client = new MongoClient(MONGODB_URI, {
+    serverSelectionTimeoutMS: 30000, // 30 seconds
+    connectTimeoutMS: 30000, // 30 seconds
+    socketTimeoutMS: 30000, // 30 seconds
+    maxPoolSize: 10, // Maintain up to 10 socket connections
+    minPoolSize: 2, // Maintain a minimum of 2 socket connections
+    maxIdleTimeMS: 30000, // Close connections after 30 seconds of inactivity
+  });
 
   try {
     await client.connect();
+    
+    // Test the connection with a ping
+    await client.db("admin").command({ ping: 1 });
+    console.log("MongoDB connection ping successful");
+    
     // If the database name is part of the MONGODB_URI, client.db() will use it.
     // Otherwise, you can pass the database name directly, e.g., client.db("blumiq_db")
     const dbName = MONGODB_URI.split('/').pop()?.split('?')[0]; // Basic parsing to get DB name from URI
-    const db = client.db(dbName); 
+    const finalDbName = dbName && dbName !== '' ? dbName : 'blumiq_db'; // Default to blumiq_db if no name in URI
+    const db = client.db(finalDbName); 
     console.log(`Successfully connected to MongoDB database: ${db.databaseName}.`);
+    
+    // Test database access with a simple operation
+    await db.listCollections().toArray();
+    console.log("Database access verified");
+    
     cachedDb = db;
     return db;
   } catch (error) {
     console.error("Failed to connect to MongoDB", error);
-    // It's often better to let the application crash or handle this more gracefully
-    // depending on the use case, rather than just throwing the error again.
-    // For now, we re-throw to make it clear the connection failed.
+    console.error("Connection URI:", MONGODB_URI.replace(/\/\/.*@/, '//***:***@')); // Hide credentials in logs
+    
+    // Provide helpful error messages
+    if (error instanceof Error) {
+      if (error.message.includes('timeout')) {
+        console.error("Connection timeout - check your network connection and MongoDB server status");
+      } else if (error.message.includes('authentication')) {
+        console.error("Authentication failed - check your MongoDB credentials");
+      } else if (error.message.includes('ENOTFOUND') || error.message.includes('ECONNREFUSED')) {
+        console.error("Cannot reach MongoDB server - check the connection string and server status");
+      }
+    }
+    
     throw error;
   }
 }

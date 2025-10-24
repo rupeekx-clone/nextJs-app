@@ -247,6 +247,37 @@ sequenceDiagram
     A-->>C: User profile
 ```
 
+### Mobile OTP Authentication Flow
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant A as Mobile Auth API
+    participant J as JWT Service
+    participant D as Database
+    participant T as Twilio
+    
+    C->>A: POST /api/auth/mobile-auth (phone_number)
+    A->>D: Check if user exists
+    
+    alt User exists
+        A->>D: Update OTP fields
+    else User doesn't exist
+        A->>D: Create new user (phone only)
+    end
+    
+    A->>T: Send OTP (+91 + phone)
+    T-->>A: OTP sent
+    A-->>C: OTP sent confirmation
+    
+    C->>A: POST /api/auth/verify-mobile-otp (phone + OTP)
+    A->>D: Verify OTP + expiry
+    A->>D: Mark phone verified + active status
+    A->>J: Generate 7-day tokens
+    J-->>A: Access + Refresh tokens
+    A-->>C: Login success + tokens + user data
+```
+
 ### Authentication Middleware Pattern
 
 ```typescript
@@ -568,84 +599,173 @@ if (!pincodeRegex.test(pincode)) {
 
 ## State Management Patterns
 
-### Local State with React Hooks
+### Centralized API Actions Pattern
+
+The application uses a centralized action system for all API calls with automatic Redux integration:
 
 ```typescript
-// Form state management
-const [formData, setFormData] = useState({
-  email: '',
-  phone: '',
-  password: ''
-});
+// Action usage in components
+import { authActions } from '@/actions/auth';
+import { userActions } from '@/actions/user';
 
-const [loading, setLoading] = useState(false);
-const [errors, setErrors] = useState<Record<string, string>>({});
+// Authentication example
+const result = await authActions.sendMobileOtp.execute({ phone_number: '9876543210' });
+if (result.success) {
+  setSuccess(result.message);
+} else {
+  setError(result.error);
+}
 
-// Form submission handler
-const handleSubmit = async (e: FormEvent) => {
-  e.preventDefault();
-  setLoading(true);
-  setErrors({});
-  
-  try {
-    const response = await fetch('/api/auth/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData)
+// User profile example
+const profileResult = await userActions.getProfile.execute();
+if (profileResult.success) {
+  setProfileData(profileResult.data);
+}
+```
+
+### Action Architecture
+
+```typescript
+// actions/shared/actionFactory.ts
+export function createAction<TRequest, TResponse>(config: ActionConfig) {
+  return {
+    async execute(data?: TRequest): Promise<ActionResult<TResponse>> {
+      const dispatch = store.dispatch;
+      
+      try {
+        // Auto-manage loading state
+        dispatch(setLoader({ key: config.loaderKey, loading: true }));
+        
+        // Make API request with automatic token injection
+        const response = await apiClient.request({
+          method: config.method,
+          url: config.url,
+          data: data,
+        });
+        
+        // Auto-dispatch success actions to Redux
+        if (config.onSuccess) {
+          config.onSuccess(response, dispatch);
+        }
+        
+        return { success: true, data: response, message: response?.message };
+      } catch (error) {
+        return { success: false, error: error.message };
+      } finally {
+        dispatch(setLoader({ key: config.loaderKey, loading: false }));
+      }
+    },
+  };
+}
+```
+
+### API Client with Middleware
+
+```typescript
+// lib/apiClient.ts - Centralized HTTP client
+class ApiClient {
+  private instance: AxiosInstance;
+
+  constructor() {
+    this.instance = axios.create({
+      baseURL: '/api',
+      timeout: 30000,
     });
     
-    if (!response.ok) {
-      const errorData = await response.json();
-      setErrors(errorData.details || { general: errorData.error });
-      return;
-    }
-    
-    // Handle success
-  } catch (error) {
-    setErrors({ general: 'An unexpected error occurred' });
-  } finally {
-    setLoading(false);
+    this.setupInterceptors();
   }
-};
+
+  private setupInterceptors() {
+    // Auto-inject auth tokens
+    this.instance.interceptors.request.use((config) => {
+      const token = localStorage.getItem('accessToken');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    });
+
+    // Handle 401 redirects
+    this.instance.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response?.status === 401) {
+          localStorage.clear();
+          window.location.href = '/customer/mobile-login';
+        }
+        return Promise.reject(error);
+      }
+    );
+  }
+}
 ```
 
-### API Integration Pattern
+### Loading State Management
 
 ```typescript
-// Custom hook for API calls
-export const useAxios = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  
-  const makeRequest = async (url: string, options: RequestInit = {}) => {
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const response = await fetch(url, {
-        headers: {
-          'Content-Type': 'application/json',
-          ...options.headers
-        },
-        ...options
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      return await response.json();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
-  
-  return { makeRequest, loading, error };
-};
+// actions/shared/constants.ts
+export const LoaderKeys = {
+  AUTH_LOADING: 'AUTH_LOADING',
+  USER_LOADING: 'USER_LOADING',
+  PROFILE_PICTURE_UPLOAD: 'PROFILE_PICTURE_UPLOAD',
+} as const;
+
+// Usage in components
+const isLoading = useAppSelector(state => 
+  state.ui.activeLoaders[LoaderKeys.AUTH_LOADING] || false
+);
 ```
+
+### Action Definition Pattern
+
+```typescript
+// actions/auth/actions.ts
+export const sendMobileOtp = createAction<MobileAuthRequest, MobileAuthResponse>({
+  method: 'POST',
+  url: '/auth/mobile-auth',
+  loaderKey: LoaderKeys.AUTH_LOADING,
+});
+
+export const verifyMobileOtp = createAction<VerifyMobileOtpRequest, VerifyMobileOtpResponse>({
+  method: 'POST',
+  url: '/auth/verify-mobile-otp',
+  loaderKey: LoaderKeys.AUTH_LOADING,
+  onSuccess: (data, dispatch) => {
+    // Auto-store tokens and dispatch to Redux
+    localStorage.setItem('accessToken', data.tokens.accessToken);
+    dispatch(loginSuccess({ user: data.user, tokens: data.tokens }));
+  },
+});
+```
+
+### TypeScript Integration
+
+```typescript
+// actions/auth/types.ts
+export interface MobileAuthRequest {
+  phone_number: string;
+}
+
+export interface MobileAuthResponse {
+  success: boolean;
+  message: string;
+}
+
+// Full type safety for requests and responses
+const result = await authActions.sendMobileOtp.execute({ 
+  phone_number: '9876543210' // TypeScript validates this structure
+});
+```
+
+### Benefits of Action Pattern
+
+✅ **Clean Component Code** - No API logic in components
+✅ **Automatic Loading States** - Managed via Redux
+✅ **Automatic Redux Integration** - Success actions auto-dispatched
+✅ **Type Safety** - Full TypeScript coverage
+✅ **Centralized Error Handling** - Consistent error returns
+✅ **Token Management** - Automatic auth header injection
+✅ **Testability** - Actions can be tested independently
 
 ## Payment Integration Patterns
 

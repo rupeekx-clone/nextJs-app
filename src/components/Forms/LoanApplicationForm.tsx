@@ -7,6 +7,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Input from '../Common/Input';
 import Button from '../Common/Button';
+import { useAppSelector } from '@/store/hooks';
+import { loanActions } from '@/actions/loan';
+import { LoaderKeys } from '@/actions/shared/constants';
 // import { validateData, loanApplicationSchema } from '@/lib/validation';
 
 const loanFormSchema = z.object({
@@ -32,9 +35,9 @@ const LoanApplicationForm: React.FC<LoanApplicationFormProps> = ({
   onSubmit, 
   userMembership 
 }) => {
-  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const isLoading = useAppSelector(state => state.ui.activeLoaders[LoaderKeys.LOAN_LOADING] || false);
 
   const {
     register,
@@ -54,26 +57,17 @@ const LoanApplicationForm: React.FC<LoanApplicationFormProps> = ({
   const selectedLoanType = watch('loan_type');
 
   const handleFormSubmit = async (data: LoanFormData) => {
-    setLoading(true);
     setError(null);
 
     try {
       if (onSubmit) {
         await onSubmit(data);
       } else {
-        // Default API call
-        const response = await fetch('/api/loans/apply', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-          },
-          body: JSON.stringify(data),
-        });
+        // Default API call using actions
+        const result = await loanActions.apply.execute(data);
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || 'Failed to submit loan application');
+        if (!result.success) {
+          throw new Error(result.error || 'Failed to submit loan application');
         }
       }
 
@@ -81,8 +75,6 @@ const LoanApplicationForm: React.FC<LoanApplicationFormProps> = ({
       reset();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -206,15 +198,15 @@ const LoanApplicationForm: React.FC<LoanApplicationFormProps> = ({
         </Grid>
 
         <Grid size={{ xs: 12 }}>
-          <Button
-            type="submit"
-            variant="primary"
-            loading={loading}
-            fullWidth
-            size="large"
-          >
-            Submit Loan Application
-          </Button>
+        <Button
+          type="submit"
+          variant="primary"
+          loading={isLoading}
+          fullWidth
+          size="large"
+        >
+          Submit Loan Application
+        </Button>
         </Grid>
       </Grid>
     </Box>

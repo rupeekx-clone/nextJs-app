@@ -2,32 +2,39 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Container, Typography, Box, TextField, Button, Paper } from "@mui/material";
-import { useAxios } from "@/lib/useAxios";
+import { authActions } from "@/actions/auth";
 import AuthBackgroundRotator from '@/components/AuthBackgroundRotator';
 
 export default function ForgotPasswordPage() {
   const [mobile, setMobile] = useState("");
   const [success, setSuccess] = useState<string | null>(null);
-  const { loading, error, sendRequest } = useAxios();
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSuccess(null);
+    setError(null);
+    setLoading(true);
+
     try {
-      const result = await sendRequest({
-        method: "POST",
-        url: "/auth/forgot-password",
-        data: { phone_number: mobile },
+      const result = await authActions.forgotPassword.execute({
+        phone_number: mobile,
       });
+
       if (result.success) {
         setSuccess("OTP sent! Redirecting to verification...");
         setTimeout(() => {
           router.push(`/customer/verify-otp?mobile=${encodeURIComponent(mobile)}&reset=1`);
         }, 1200);
+      } else {
+        setError(result.error || 'Failed to send OTP. Please try again.');
       }
     } catch {
-      setSuccess(null);
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 

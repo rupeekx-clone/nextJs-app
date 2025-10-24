@@ -1,11 +1,44 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, Box, Grid, Card, CardContent, Button, Chip, Paper, LinearProgress, Divider } from '@mui/material';
-import { ArrowBack, CloudUpload, Download, Delete, CheckCircle, Error, Info } from '@mui/icons-material';
+import { 
+  Container, 
+  Typography, 
+  Box, 
+  Grid, 
+  Button, 
+  Chip, 
+  Paper, 
+  LinearProgress, 
+  List,
+  ListItem,
+  ListItemText,
+  ListItemSecondaryAction,
+  IconButton,
+  Collapse,
+  Divider,
+  Alert,
+  Card,
+  CardContent,
+} from '@mui/material';
+import { 
+  ArrowBack, 
+  CloudUpload, 
+  Download, 
+  Delete, 
+  CheckCircle, 
+  Error, 
+  Info,
+  ExpandMore,
+  ExpandLess,
+  Description,
+} from '@mui/icons-material';
 import DocumentUpload from '@/components/Dashboard/DocumentUpload';
 import LoadingSpinner from '@/components/Common/LoadingSpinner';
 import { useRouter } from 'next/navigation';
+import { useAppSelector } from '@/store/hooks';
+import { documentActions } from '@/actions/document';
+import { LoaderKeys } from '@/actions/shared/constants';
 
 interface Document {
   id: string;
@@ -30,22 +63,37 @@ interface DocumentType {
 export default function DocumentsPage() {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [documentTypes, setDocumentTypes] = useState<DocumentType[]>([]);
-  const [loading, setLoading] = useState(true);
-  // const [error, setError] = useState<string | null>(null);
-  // const [uploading, setUploading] = useState(false);
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const router = useRouter();
+  const isLoading = useAppSelector(state => state.ui.activeLoaders[LoaderKeys.DOCUMENT_LOADING] || false);
+
+  const toggleExpanded = (docTypeId: string) => {
+    const newExpanded = new Set(expandedItems);
+    if (newExpanded.has(docTypeId)) {
+      newExpanded.delete(docTypeId);
+    } else {
+      newExpanded.add(docTypeId);
+    }
+    setExpandedItems(newExpanded);
+  };
 
   const fetchDocuments = async () => {
     try {
-      const response = await fetch('/api/documents', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-      });
+      const result = await documentActions.getMyDocuments.execute();
       
-      if (response.ok) {
-        const data = await response.json();
-        setDocuments(data.documents || []);
+      if (result.success && result.data) {
+        // Map API response to component Document interface
+        const mappedDocuments = (result.data.documents || []).map(doc => ({
+          id: doc._id,
+          type: doc.document_type,
+          name: doc.file_name,
+          url: doc.file_url,
+          uploaded_at: doc.uploaded_at,
+          verified: doc.status === 'approved',
+          size: doc.file_size,
+          status: doc.status as 'uploaded' | 'verified' | 'rejected' | 'pending',
+        }));
+        setDocuments(mappedDocuments);
       }
     } catch (err) {
       console.error('Error fetching documents:', err);
@@ -123,8 +171,6 @@ export default function DocumentsPage() {
       ]);
     } catch (err) {
       console.error('Error fetching document types:', err);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -199,7 +245,7 @@ export default function DocumentsPage() {
   }, []);
 
 
-  if (loading) {
+  if (isLoading) {
     return (
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <LoadingSpinner />
@@ -249,107 +295,156 @@ export default function DocumentsPage() {
       </Box>
 
       <Grid container spacing={3}>
-        {/* Document Types */}
+        {/* Document List */}
         <Grid size={{ xs: 12, lg: 8 }}>
           <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 3 }}>
-            Required Documents
+            Document List
           </Typography>
           
-          <Grid container spacing={2}>
-            {documentTypes.map((docType) => {
+          <Paper sx={{ overflow: 'hidden' }}>
+            <List sx={{ p: 0 }}>
+              {documentTypes.map((docType, index) => {
               const uploadedDoc = documents.find(doc => doc.type === docType.id);
               const isRequired = docType.required;
+                const isExpanded = expandedItems.has(docType.id);
+                const hasUploadedDoc = !!uploadedDoc;
               
               return (
-                <Grid size={{ xs: 12, sm: 6, md: 4 }} key={docType.id}>
-                  <Card 
+                  <React.Fragment key={docType.id}>
+                    <ListItem
                     sx={{ 
-                      height: '100%',
-                      border: isRequired ? '2px solid' : '1px solid',
-                      borderColor: isRequired ? 'primary.main' : 'divider',
-                      position: 'relative'
-                    }}
-                  >
+                        borderLeft: isRequired ? '4px solid' : '4px solid transparent',
+                        borderLeftColor: isRequired ? 'primary.main' : 'transparent',
+                        '&:hover': {
+                          backgroundColor: 'action.hover',
+                        },
+                        cursor: 'pointer',
+                      }}
+                      onClick={() => toggleExpanded(docType.id)}
+                    >
+                      <Box sx={{ display: 'flex', alignItems: 'center', mr: 2 }}>
+                        <Description sx={{ color: 'primary.main', mr: 1 }} />
+                      </Box>
+                      
+                      <ListItemText
+                        primary={
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                              {docType.name}
+                            </Typography>
                     {isRequired && (
                       <Chip 
                         label="Required" 
                         size="small" 
                         color="primary" 
-                        sx={{ position: 'absolute', top: 8, right: 8 }}
-                      />
-                    )}
-                    
-                    <CardContent sx={{ pt: isRequired ? 4 : 2 }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                        <CloudUpload sx={{ mr: 1, color: 'primary.main' }} />
-                        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                          {docType.name}
-                        </Typography>
-                      </Box>
-                      
-                      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                        {docType.description}
-                      </Typography>
-                      
-                      <Typography variant="caption" color="text.secondary" sx={{ mb: 2, display: 'block' }}>
-                        Accepted formats: {docType.accepted_formats.join(', ').toUpperCase()}
-                      </Typography>
-                      
-                      <Typography variant="caption" color="text.secondary" sx={{ mb: 2, display: 'block' }}>
-                        Max size: {docType.max_size_mb}MB
-                      </Typography>
-                      
-                      {uploadedDoc ? (
-                        <Box>
-                          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                            {getDocumentStatusIcon(uploadedDoc.status)}
+                                variant="outlined"
+                              />
+                            )}
+                            {hasUploadedDoc && (
                             <Chip 
                               label={uploadedDoc.status} 
                               size="small" 
                               color={getDocumentStatusColor(uploadedDoc.status) as 'default' | 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning'}
-                              sx={{ ml: 1 }}
+                                icon={getDocumentStatusIcon(uploadedDoc.status)}
                             />
+                            )}
                           </Box>
-                          
-                          <Typography variant="body2" sx={{ fontWeight: 'medium', mb: 1 }}>
-                            {uploadedDoc.name}
-                          </Typography>
-                          
-                          <Typography variant="caption" color="text.secondary" sx={{ mb: 2, display: 'block' }}>
-                            {formatFileSize(uploadedDoc.size)} • {new Date(uploadedDoc.uploaded_at).toLocaleDateString()}
-                          </Typography>
-                          
-                          <Box sx={{ display: 'flex', gap: 1 }}>
-                            <Button
-                              size="small"
-                              startIcon={<Download />}
-                              onClick={() => handleDownloadDocument(uploadedDoc)}
-                            >
-                              Download
-                            </Button>
-                            <Button
-                              size="small"
-                              color="error"
-                              startIcon={<Delete />}
-                              onClick={() => handleDeleteDocument(uploadedDoc.id)}
-                            >
-                              Delete
-                            </Button>
+                        }
+                        secondary={
+                          <Box>
+                            <Typography variant="body2" color="text.secondary">
+                              {docType.description}
+                            </Typography>
+                            {hasUploadedDoc && (
+                              <Typography variant="caption" color="text.secondary">
+                                {uploadedDoc.name} • {formatFileSize(uploadedDoc.size)} • {new Date(uploadedDoc.uploaded_at).toLocaleDateString()}
+                              </Typography>
+                            )}
                           </Box>
+                        }
+                      />
+                      
+                      <ListItemSecondaryAction>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          {hasUploadedDoc && (
+                            <>
+                              <IconButton
+                                size="small"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDownloadDocument(uploadedDoc);
+                                }}
+                                color="primary"
+                              >
+                                <Download />
+                              </IconButton>
+                              <IconButton
+                                size="small"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeleteDocument(uploadedDoc.id);
+                                }}
+                                color="error"
+                              >
+                                <Delete />
+                              </IconButton>
+                            </>
+                          )}
+                          <IconButton
+                            size="small"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleExpanded(docType.id);
+                            }}
+                          >
+                            {isExpanded ? <ExpandLess /> : <ExpandMore />}
+                          </IconButton>
                         </Box>
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                    
+                    <Collapse in={isExpanded} timeout="auto" unmountOnExit>
+                      <Box sx={{ px: 3, pb: 2, bgcolor: 'grey.50' }}>
+                        <Divider sx={{ mb: 2 }} />
+                        
+                        <Typography variant="subtitle2" gutterBottom>
+                          Document Requirements
+                        </Typography>
+                        
+                        <Box sx={{ mb: 2 }}>
+                          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                            <strong>Accepted formats:</strong> {docType.accepted_formats.join(', ').toUpperCase()}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            <strong>Maximum size:</strong> {docType.max_size_mb}MB
+                          </Typography>
+                        </Box>
+                        
+                        {hasUploadedDoc ? (
+                          <Alert severity="success" sx={{ mb: 2 }}>
+                            Document uploaded successfully. Status: {uploadedDoc.status}
+                          </Alert>
                       ) : (
+                          <Box>
+                            <Typography variant="subtitle2" gutterBottom>
+                              Upload Document
+                            </Typography>
                         <DocumentUpload
                           documentType={docType.id}
                           acceptedFormats={docType.accepted_formats}
                           maxSizeMB={docType.max_size_mb}
                         />
+                          </Box>
                       )}
-                    </CardContent>
-                  </Card>
-                </Grid>
+                      </Box>
+                    </Collapse>
+                    
+                    {index < documentTypes.length - 1 && <Divider />}
+                  </React.Fragment>
               );
             })}
-          </Grid>
+            </List>
+          </Paper>
         </Grid>
 
         {/* Uploaded Documents Summary */}

@@ -7,6 +7,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import Input from '../Common/Input';
 import Button from '../Common/Button';
+import { useAppSelector } from '@/store/hooks';
+import { contactActions } from '@/actions/contact';
+import { LoaderKeys } from '@/actions/shared/constants';
 // import { validateData, enquirySchema } from '@/lib/validation';
 
 const contactFormSchema = z.object({
@@ -24,9 +27,9 @@ interface ContactFormProps {
 }
 
 const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
-  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const isLoading = useAppSelector(state => state.ui.activeLoaders[LoaderKeys.CONTACT_LOADING] || false);
 
   const {
     register,
@@ -38,25 +41,17 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
   });
 
   const handleFormSubmit = async (data: ContactFormData) => {
-    setLoading(true);
     setError(null);
 
     try {
       if (onSubmit) {
         await onSubmit(data);
       } else {
-        // Default API call
-        const response = await fetch('/api/contact', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-        });
+        // Default API call using actions
+        const result = await contactActions.submitEnquiry.execute(data);
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || 'Failed to submit enquiry');
+        if (!result.success) {
+          throw new Error(result.error || 'Failed to submit enquiry');
         }
       }
 
@@ -64,8 +59,6 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
       reset();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -169,7 +162,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ onSubmit }) => {
         <Button
           type="submit"
           variant="primary"
-          loading={loading}
+          loading={isLoading}
           fullWidth
           size="large"
         >

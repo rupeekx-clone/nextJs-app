@@ -2,7 +2,7 @@
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Container, Typography, Box, TextField, Button, Paper } from "@mui/material";
-import { useAxios } from "@/lib/useAxios";
+import { authActions } from "@/actions/auth";
 import AuthBackgroundRotator from '@/components/AuthBackgroundRotator';
 
 function ResetPasswordForm() {
@@ -12,35 +12,46 @@ function ResetPasswordForm() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [success, setSuccess] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
-  const { loading, error, sendRequest } = useAxios();
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSuccess(null);
     setFormError(null);
+    setError(null);
+    setLoading(true);
+
     if (password !== confirmPassword) {
       setFormError("Passwords do not match.");
+      setLoading(false);
       return;
     }
     if (password.length < 8) {
       setFormError("Password must be at least 8 characters long.");
+      setLoading(false);
       return;
     }
+
     try {
-      const result = await sendRequest({
-        method: "POST",
-        url: "/auth/reset-password",
-        data: { phone_number: mobile, new_password: password },
+      const result = await authActions.resetPassword.execute({
+        phone_number: mobile,
+        new_password: password,
       });
+
       if (result.success) {
         setSuccess("Password reset successful! Redirecting to login...");
         setTimeout(() => {
           router.push("/customer");
         }, 1200);
+      } else {
+        setError(result.error || 'Failed to reset password. Please try again.');
       }
     } catch {
-      setSuccess(null);
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 

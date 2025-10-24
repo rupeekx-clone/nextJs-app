@@ -17,6 +17,9 @@ import {
 } from '@mui/icons-material';
 import { useRouter, usePathname } from 'next/navigation';
 import LoadingSpinner from '@/components/Common/LoadingSpinner';
+import { useAppSelector } from '@/store/hooks';
+import { adminActions } from '@/actions/admin';
+import { LoaderKeys } from '@/actions/shared/constants';
 
 const DRAWER_WIDTH = 240;
 
@@ -38,10 +41,10 @@ interface AdminLayoutProps {
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [loading, setLoading] = useState(true);
   const [admin, setAdmin] = useState<{ full_name: string; email: string; role: string } | null>(null);
   const router = useRouter();
   const pathname = usePathname();
+  const isLoading = useAppSelector(state => state.ui.activeLoaders[LoaderKeys.ADMIN_LOADING] || false);
 
   const checkAdminAuth = useCallback(async () => {
     try {
@@ -52,15 +55,14 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       }
 
       // Verify token and get admin info
-      const response = await fetch('/api/admin/profile', {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
+      const result = await adminActions.getProfile.execute();
 
-      if (response.ok) {
-        const adminData = await response.json();
-        setAdmin(adminData);
+      if (result.success && result.data) {
+        setAdmin({
+          full_name: result.data.email, // Use email as name since full_name is not available
+          email: result.data.email,
+          role: result.data.role,
+        });
       } else {
         localStorage.removeItem('adminAccessToken');
         localStorage.removeItem('adminRefreshToken');
@@ -69,8 +71,6 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     } catch (error) {
       console.error('Admin auth check error:', error);
       router.push('/admin/login');
-    } finally {
-      setLoading(false);
     }
   }, [router]);
 
@@ -145,7 +145,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     </Box>
   );
 
-  if (loading) {
+  if (isLoading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
         <LoadingSpinner />

@@ -2,7 +2,7 @@
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Container, Typography, Box, TextField, Button, Paper } from "@mui/material";
-import { useAxios } from "@/lib/useAxios";
+import { authActions } from "@/actions/auth";
 import AuthBackgroundRotator from "@/components/AuthBackgroundRotator";
 
 function VerifyOtpForm() {
@@ -11,18 +11,22 @@ function VerifyOtpForm() {
   const isReset = searchParams.get("reset") === "1";
   const [otp, setOtp] = useState("");
   const [success, setSuccess] = useState<string | null>(null);
-  const { loading, error, sendRequest } = useAxios();
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSuccess(null);
+    setError(null);
+    setLoading(true);
+
     try {
-      const result = await sendRequest({
-        method: "POST",
-        url: "/auth/verify-otp",
-        data: { phone_number: mobile, otp_entered: otp },
+      const result = await authActions.verifyOtp.execute({
+        phone_number: mobile,
+        otp_entered: otp,
       });
+
       if (result.success) {
         setSuccess("OTP verified!");
         setTimeout(() => {
@@ -32,9 +36,13 @@ function VerifyOtpForm() {
             router.push("/customer");
           }
         }, 1200);
+      } else {
+        setError(result.error || 'Invalid OTP. Please try again.');
       }
     } catch {
-      setSuccess(null);
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 

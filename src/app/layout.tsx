@@ -2,9 +2,8 @@ import * as React from 'react';
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import ThemeRegistry from "@/components/ThemeRegistry/ThemeRegistry";
-import Header from '@/components/Layout/Header';
-import Footer from '@/components/Layout/Footer';
-import { Box } from '@mui/material';
+import ReduxProvider from "@/components/Providers/ReduxProvider";
+import LayoutWrapper from '@/components/Layout/LayoutWrapper';
 import "./globals.css";
 
 const geistSans = Geist({
@@ -44,15 +43,13 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body>
+        <ReduxProvider>
         <ThemeRegistry>
-          <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-            <Header />
-            <Box component="main" sx={{ flexGrow: 1 }}>
+          <LayoutWrapper>
               {children}
-            </Box>
-            <Footer />
-          </Box>
+          </LayoutWrapper>
         </ThemeRegistry>
+        </ReduxProvider>
       </body>
     </html>
   );

@@ -42,9 +42,19 @@ interface LoanApplication {
 }
 
 interface UserProfile {
+  _id: string;
   full_name: string;
-  email: string;
+  email?: string;
   phone_number: string;
+  address_line1?: string;
+  address_line2?: string;
+  city?: string;
+  pincode?: string;
+  profile_picture_url?: string;
+  email_verified_at?: string;
+  phone_verified_at?: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export default function LoanDetailPage({ params }: { params: Promise<{ id: string }> }) {

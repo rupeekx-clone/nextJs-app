@@ -110,7 +110,7 @@ MONGODB_URI=mongodb://localhost:27017/Blumiq_clone_db
 # JWT Configuration
 ACCESS_TOKEN_SECRET=your-access-token-secret-key-of-at-least-32-characters
 REFRESH_TOKEN_SECRET=your-refresh-token-secret-key-of-at-least-32-characters
-ACCESS_TOKEN_EXPIRATION=15m
+ACCESS_TOKEN_EXPIRATION=7d
 REFRESH_TOKEN_EXPIRATION=7d
 
 # Twilio Configuration
@@ -222,7 +222,7 @@ REFRESH_TOKEN_EXPIRATION=7d
 ```bash
 NODE_ENV=production
 MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/Blumiq_prod
-ACCESS_TOKEN_EXPIRATION=15m
+ACCESS_TOKEN_EXPIRATION=7d
 REFRESH_TOKEN_EXPIRATION=7d
 ```
 
@@ -295,7 +295,7 @@ export default mongoose.models.User || mongoose.model<IUser>('User', userSchema)
 // src/lib/jwt.ts
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET || 'default-secret';
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || 'default-refresh-secret';
-const ACCESS_TOKEN_EXPIRATION = process.env.ACCESS_TOKEN_EXPIRATION || '15m';
+const ACCESS_TOKEN_EXPIRATION = process.env.ACCESS_TOKEN_EXPIRATION || '7d';
 const REFRESH_TOKEN_EXPIRATION = process.env.REFRESH_TOKEN_EXPIRATION || '7d';
 
 export const generateAccessToken = (payload: AuthPayload): string => {
@@ -595,4 +595,57 @@ npm test
     "*.{js,jsx,ts,tsx}": ["eslint --fix", "git add"]
   }
 }
+```
+
+## Mobile OTP Authentication
+
+### New API Endpoints
+
+#### Mobile Authentication
+- **Endpoint**: `POST /api/auth/mobile-auth`
+- **Purpose**: Unified login/signup with mobile number
+- **Features**: Auto-creates users, sends OTP via Twilio
+- **Response**: Success confirmation with phone number
+
+#### Mobile OTP Verification
+- **Endpoint**: `POST /api/auth/verify-mobile-otp`
+- **Purpose**: Verify OTP and complete authentication
+- **Features**: 7-day access tokens, user activation
+- **Response**: JWT tokens and user data
+
+### Frontend Pages
+
+#### Mobile Login Page
+- **Path**: `/customer/mobile-login`
+- **Features**: Phone number input, validation, OTP request
+- **UI**: Material-UI components with responsive design
+
+#### Mobile OTP Verification Page
+- **Path**: `/customer/mobile-verify`
+- **Features**: OTP input, countdown timer, resend functionality
+- **UI**: Masked phone display, success/error handling
+
+### Configuration Updates
+
+#### JWT Token Expiration
+- **Access Token**: Extended from 15 minutes to 7 days
+- **Refresh Token**: Remains 7 days
+- **Rationale**: Reduced login friction for mobile users
+
+#### User Model Changes
+- **Email Field**: Made optional (sparse unique index)
+- **Password Field**: Made optional
+- **Phone Number**: Remains required and unique
+- **Backwards Compatibility**: Existing users unaffected
+
+### Environment Variables
+
+```bash
+# OTP Configuration
+OTP_LENGTH=6
+OTP_VALIDITY_MINUTES=10
+
+# JWT Configuration (Updated)
+ACCESS_TOKEN_EXPIRATION=7d
+REFRESH_TOKEN_EXPIRATION=7d
 ```

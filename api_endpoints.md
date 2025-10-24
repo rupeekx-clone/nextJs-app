@@ -128,26 +128,103 @@
     *   `400 Bad Request`: `{ "error": "Invalid or expired verification token" }`
     *   `500 Internal Server Error`: `{ "error": "An unexpected error occurred" }`
 
-### 6. Verify Phone (Conceptual)
-*   **Description:** Verify user's phone using an OTP sent to their phone number.
+### 6. Mobile Authentication (Unified Login/Signup)
+*   **Description:** Send OTP to mobile number for authentication. Creates new user if doesn't exist, sends OTP to existing users.
 *   **HTTP Method:** `POST`
-*   **Path:** `/api/auth/verify-phone`
-*   **Authentication:** User Token Required (or a temporary token if verifying during registration flow)
+*   **Path:** `/api/auth/mobile-auth`
+*   **Authentication:** None
 *   **Request Body (JSON):**
     ```json
     {
+      "phone_number": "string (required, 10-digit Indian mobile number)"
+    }
+    ```
+*   **Success Response (200 OK):**
+    ```json
+    {
+      "success": true,
+      "message": "OTP sent successfully to your mobile number.",
+      "phone_number": "9876543210"
+    }
+    ```
+*   **Error Responses:**
+    *   `400 Bad Request`: `{ "success": false, "message": "Invalid phone number format. Please enter a valid 10-digit Indian mobile number." }`
+    *   `500 Internal Server Error`: `{ "success": false, "message": "Failed to send OTP. Please try again or contact support." }`
+
+### 7. Verify Mobile OTP
+*   **Description:** Verify OTP and complete mobile authentication. Returns 7-day access token.
+*   **HTTP Method:** `POST`
+*   **Path:** `/api/auth/verify-mobile-otp`
+*   **Authentication:** None
+*   **Request Body (JSON):**
+    ```json
+    {
+      "phone_number": "string (required, 10-digit Indian mobile number)",
       "otp": "string (required, 6 digits)"
     }
     ```
 *   **Success Response (200 OK):**
     ```json
     {
-      "message": "Phone number verified successfully"
+      "success": true,
+      "message": "Login successful! Welcome to Blumiq.",
+      "tokens": {
+        "accessToken": "string (jwt, 7-day expiry)",
+        "refreshToken": "string (jwt, 7-day expiry)"
+      },
+      "user": {
+        "user_id": "uuid",
+        "full_name": "string",
+        "phone_number": "9876543210",
+        "user_type": "customer",
+        "is_phone_verified": true,
+        "status": "active",
+        "created_at": "timestamp",
+        "updated_at": "timestamp"
+      }
     }
     ```
 *   **Error Responses:**
-    *   `400 Bad Request`: `{ "error": "Invalid or expired OTP" }`
-    *   `500 Internal Server Error`: `{ "error": "An unexpected error occurred" }`
+    *   `400 Bad Request`: `{ "success": false, "message": "Invalid OTP. Please check and try again." }`
+    *   `400 Bad Request`: `{ "success": false, "message": "OTP has expired. Please request a new one." }`
+    *   `404 Not Found`: `{ "success": false, "message": "User not found. Please request OTP again." }`
+    *   `500 Internal Server Error`: `{ "success": false, "message": "An unexpected error occurred during verification. Please try again." }`
+
+### 8. Verify Phone (Legacy)
+*   **Description:** Verify user's phone using an OTP sent to their phone number (legacy endpoint).
+*   **HTTP Method:** `POST`
+*   **Path:** `/api/auth/verify-otp`
+*   **Authentication:** User Token Required (or a temporary token if verifying during registration flow)
+*   **Request Body (JSON):**
+    ```json
+    {
+      "phone_number": "string (required)",
+      "otp_entered": "string (required, 6 digits)"
+    }
+    ```
+*   **Success Response (200 OK):**
+    ```json
+    {
+      "success": true,
+      "message": "Phone verified successfully. Logged in.",
+      "tokens": {
+        "accessToken": "string (jwt)",
+        "refreshToken": "string (jwt)"
+      },
+      "user": {
+        "user_id": "uuid",
+        "full_name": "string",
+        "phone_number": "string",
+        "user_type": "string",
+        "is_phone_verified": true,
+        "status": "active"
+      }
+    }
+    ```
+*   **Error Responses:**
+    *   `400 Bad Request`: `{ "success": false, "message": "Invalid OTP." }`
+    *   `400 Bad Request`: `{ "success": false, "message": "OTP has expired. Please request a new one." }`
+    *   `500 Internal Server Error`: `{ "success": false, "message": "An unexpected error occurred during OTP verification." }`
 
 ---
 ## Endpoint Group: User Profile

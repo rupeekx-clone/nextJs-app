@@ -1,249 +1,337 @@
 'use client';
 
-import { Container, Typography, Box, Grid, Button, List, ListItem, ListItemIcon, ListItemText, Paper, Card, CardContent, Stepper, Step, StepLabel } from '@mui/material';
-import { CheckCircleOutline, Star, Security, Speed, TrendingUp } from '@mui/icons-material';
+import { 
+  Container, 
+  Typography, 
+  Box, 
+  Grid, 
+  Button, 
+  List, 
+  ListItem, 
+  ListItemIcon, 
+  ListItemText, 
+  Paper, 
+  Card, 
+  CardContent, 
+  Stepper, 
+  Step, 
+  StepLabel,
+  Divider,
+  Alert,
+  Checkbox,
+  FormControlLabel,
+  Chip,
+} from '@mui/material';
+import { 
+  CheckCircleOutline, 
+  ArrowBack,
+  ArrowForward,
+  CreditCard,
+  Receipt,
+} from '@mui/icons-material';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import LoadingButton from '@/components/Common/LoadingButton';
 
 export default function SilverMembershipCardPage() {
   const router = useRouter();
-  const [isPurchasing, setIsPurchasing] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
-  const features = [
-    "Access to Personal Loans up to ₹15 Lacs",
-    "Quick Approval Process (target within 30 minutes)",
-    "Streamlined application with minimal paperwork",
-    "Competitive interest rates",
-    "Exclusive offers and discounts for members",
-    "Dedicated customer support"
-  ];
+  const steps = ['Review Details', 'Payment', 'Confirmation'];
 
-  const processSteps = [
-    { label: "Purchase Membership", description: "Buy Silver Membership Card" },
-    { label: "Complete Profile", description: "Fill in your personal details" },
-    { label: "Upload Documents", description: "Submit required documents" },
-    { label: "Get Pre-approved", description: "Receive loan offers" },
-    { label: "Choose Best Offer", description: "Select the best loan option" },
-    { label: "Get Loan Disbursed", description: "Receive funds in your account" }
-  ];
+  const membershipDetails = {
+    name: 'Silver Membership Card',
+    originalPrice: 2999,
+    discountedPrice: 677,
+    validity: '4 years',
+    benefits: [
+      "Access to Personal Loans up to ₹15 Lacs",
+      "Quick Approval Process (target within 30 minutes)",
+      "Streamlined application with minimal paperwork",
+      "Competitive interest rates",
+      "Exclusive offers and discounts for members",
+      "Dedicated customer support"
+    ]
+  };
 
-  const benefits = [
-    "Document handling and verification",
-    "Profile matching with best banks",
-    "Time-saving process",
-    "CIBIL score protection",
-    "Expert guidance throughout",
-    "Transparent process"
-  ];
 
-  const handlePurchase = async () => {
-    setIsPurchasing(true);
-    try {
-      // Here you would integrate with Razorpay payment gateway
-      // For now, just simulate the process
-      console.log('Initiating Silver Membership Card purchase...');
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Redirect to payment or success page
-      router.push('/subscription/cashlending');
-    } catch (error) {
-      console.error('Purchase failed:', error);
-    } finally {
-      setIsPurchasing(false);
+  const handleNext = () => {
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(currentStep + 1);
     }
   };
 
-  return (
-    <Container maxWidth="lg" sx={{ py: { xs: 4, md: 8 } }}>
-      {/* Hero Section */}
-      <Box sx={{ textAlign: 'center', mb: 6 }}>
-        <Typography variant="h2" component="h1" gutterBottom sx={{ fontWeight: 'bold', mb: 2 }}>
-          Silver Membership Card
-        </Typography>
-        <Typography variant="h5" component="p" gutterBottom sx={{ color: 'text.secondary', mb: 3 }}>
-          Silver Membership Card for Personal Loan Candidate
-        </Typography>
-        <Typography variant="body1" paragraph sx={{ fontSize: '1.1rem', lineHeight: 1.8, maxWidth: 800, mx: 'auto' }}>
-          Get Personal Loan of up to ₹10 Lakhs in just 30 minutes with our Silver Membership Card. 
-          Enjoy exclusive benefits and faster processing for all your personal loan needs.
-        </Typography>
-      </Box>
+  const handleBack = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
 
-      {/* Pricing Section */}
-      <Card sx={{ mb: 6, textAlign: 'center', border: '2px solid', borderColor: 'primary.main' }}>
-        <CardContent sx={{ p: 4 }}>
-          <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 2 }}>
-            Special Offer - Limited Time!
-          </Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2, mb: 3 }}>
-            <Typography variant="h6" sx={{ textDecoration: 'line-through', color: 'text.secondary' }}>
-              Rs. 2999.00
+  const handlePayment = async () => {
+    setIsProcessing(true);
+    try {
+      // Here you would integrate with Razorpay payment gateway
+      console.log('Processing payment...');
+      
+      // Simulate payment processing
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      
+      // Move to confirmation step
+      setCurrentStep(2);
+    } catch (error) {
+      console.error('Payment failed:', error);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleComplete = () => {
+    router.push('/dashboard');
+  };
+
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 0:
+        return (
+          <Box>
+            <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3 }}>
+              Review Membership Details
             </Typography>
-            <Typography variant="h3" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
-              Rs. 677.00 only
-            </Typography>
-          </Box>
-          <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-            One-time payment • Valid for 4 years • No hidden charges
-          </Typography>
-          <Button 
-            variant="contained" 
-            color="primary" 
-            size="large" 
-            onClick={handlePurchase}
-            disabled={isPurchasing}
-            sx={{ px: 6, py: 2, fontSize: '1.1rem' }}
-          >
-            {isPurchasing ? 'Processing...' : 'GET NOW'}
-          </Button>
-        </CardContent>
-      </Card>
-
-      {/* Six Simple Steps */}
-      <Box sx={{ mb: 6 }}>
-        <Typography variant="h4" sx={{ fontWeight: 'bold', textAlign: 'center', mb: 4 }}>
-          Six simple steps to get loan
-        </Typography>
-        <Paper sx={{ p: 4 }}>
-          <Stepper activeStep={-1} alternativeLabel>
-            {processSteps.map((step, index) => (
-              <Step key={index}>
-                <StepLabel>
-                  <Box sx={{ textAlign: 'center' }}>
-                    <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
-                      {step.label}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {step.description}
-                    </Typography>
-                  </Box>
-                </StepLabel>
-              </Step>
-            ))}
-          </Stepper>
-        </Paper>
-      </Box>
-
-      {/* Benefits Grid */}
-      <Box sx={{ mb: 6 }}>
-        <Typography variant="h4" sx={{ fontWeight: 'bold', textAlign: 'center', mb: 4 }}>
-          Card Benefits
-        </Typography>
-        <Grid container spacing={3}>
-          {benefits.map((benefit, index) => (
-            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={index}>
-              <Card sx={{ height: '100%', textAlign: 'center' }}>
-                <CardContent sx={{ p: 3 }}>
-                  <CheckCircleOutline sx={{ fontSize: 40, color: 'primary.main', mb: 2 }} />
-                  <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
-                    {benefit}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      </Box>
-
-      {/* Features Section */}
-      <Box sx={{ mb: 6 }}>
-        <Typography variant="h4" sx={{ fontWeight: 'bold', textAlign: 'center', mb: 4 }}>
-          Why Choose Silver Membership Card?
-        </Typography>
-        <Grid container spacing={4}>
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Card sx={{ height: '100%' }}>
+            
+            <Card sx={{ mb: 3 }}>
               <CardContent>
-                <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3 }}>
-                  Key Features
+                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
+                  {membershipDetails.name}
+                    </Typography>
+                
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                  <Typography variant="h6" sx={{ textDecoration: 'line-through', color: 'text.secondary' }}>
+                    ₹{membershipDetails.originalPrice}
+        </Typography>
+                  <Typography variant="h4" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
+                    ₹{membershipDetails.discountedPrice}
+                  </Typography>
+                  <Chip label="77% OFF" color="error" />
+      </Box>
+
+                <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+                  One-time payment • Valid for {membershipDetails.validity} • No hidden charges
+        </Typography>
+                
+                <Divider sx={{ my: 2 }} />
+                
+                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', mb: 2 }}>
+                  What&apos;s Included:
                 </Typography>
                 <List>
-                  {features.map((feature, index) => (
+                  {membershipDetails.benefits.map((benefit, index) => (
                     <ListItem key={index} disablePadding>
                       <ListItemIcon sx={{ minWidth: 32 }}>
                         <CheckCircleOutline color="primary" />
                       </ListItemIcon>
-                      <ListItemText primary={feature} />
+                      <ListItemText primary={benefit} />
                     </ListItem>
                   ))}
                 </List>
               </CardContent>
             </Card>
-          </Grid>
+          </Box>
+        );
+        
+      case 1:
+        return (
+          <Box>
+            <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3 }}>
+              Payment Details
+            </Typography>
           
-          <Grid size={{ xs: 12, md: 6 }}>
-            <Card sx={{ height: '100%' }}>
+            <Grid container spacing={3}>
+              <Grid size={{ xs: 12, md: 8 }}>
+                <Card>
               <CardContent>
-                <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3 }}>
-                  What You Get
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
+                      Payment Method
+                    </Typography>
+                    
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+                      <CreditCard sx={{ color: 'primary.main' }} />
+                      <Typography variant="body1">
+                        Razorpay Secure Payment Gateway
                 </Typography>
-                <List>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Star color="warning" />
-                    </ListItemIcon>
-                    <ListItemText 
-                      primary="Premium Support"
-                      secondary="Dedicated customer support team"
+                    </Box>
+                    
+                    <Alert severity="info" sx={{ mb: 3 }}>
+                      Your payment is secured with bank-level encryption. We accept all major credit/debit cards, UPI, net banking, and wallets.
+                    </Alert>
+                    
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={termsAccepted}
+                          onChange={(e) => setTermsAccepted(e.target.checked)}
+                        />
+                      }
+                      label="I agree to the Terms and Conditions and Privacy Policy"
                     />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Security color="success" />
-                    </ListItemIcon>
-                    <ListItemText 
-                      primary="Secure Process"
-                      secondary="Bank-level security for your data"
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Speed color="info" />
-                    </ListItemIcon>
-                    <ListItemText 
-                      primary="Fast Processing"
-                      secondary="Quick approval within 30 minutes"
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <TrendingUp color="primary" />
-                    </ListItemIcon>
-                    <ListItemText 
-                      primary="Best Rates"
-                      secondary="Competitive interest rates"
-                    />
-                  </ListItem>
-                </List>
+                  </CardContent>
+                </Card>
+              </Grid>
+              
+              <Grid size={{ xs: 12, md: 4 }}>
+                <Card sx={{ position: 'sticky', top: 20 }}>
+                  <CardContent>
+                    <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
+                      Order Summary
+                    </Typography>
+                    
+                    <Box sx={{ mb: 2 }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                        <Typography variant="body2">Membership</Typography>
+                        <Typography variant="body2">₹{membershipDetails.originalPrice}</Typography>
+                      </Box>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                        <Typography variant="body2" color="success.main">Discount</Typography>
+                        <Typography variant="body2" color="success.main">-₹{membershipDetails.originalPrice - membershipDetails.discountedPrice}</Typography>
+                      </Box>
+                      <Divider sx={{ my: 1 }} />
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>Total</Typography>
+                        <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
+                          ₹{membershipDetails.discountedPrice}
+                        </Typography>
+                      </Box>
+                    </Box>
+                    
+                    <Typography variant="caption" color="text.secondary">
+                      Valid for {membershipDetails.validity}
+                    </Typography>
               </CardContent>
             </Card>
           </Grid>
         </Grid>
       </Box>
-
-      {/* Final CTA Section */}
-      <Card sx={{ textAlign: 'center', bgcolor: 'primary.main', color: 'white' }}>
-        <CardContent sx={{ p: 6 }}>
-          <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 2 }}>
-            Upgrade your dream
+        );
+        
+      case 2:
+        return (
+          <Box sx={{ textAlign: 'center' }}>
+            <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 3 }}>
+              Payment Successful!
+            </Typography>
+            
+            <Card sx={{ maxWidth: 500, mx: 'auto', mb: 3 }}>
+              <CardContent>
+                <CheckCircleOutline sx={{ fontSize: 80, color: 'success.main', mb: 2 }} />
+                
+                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2 }}>
+                  Welcome to Silver Membership!
+                </Typography>
+                
+                <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+                  Your membership has been activated successfully. You can now access all premium features and apply for personal loans.
+                </Typography>
+                
+                <Box sx={{ bgcolor: 'grey.50', p: 2, borderRadius: 1, mb: 3 }}>
+                  <Typography variant="body2" color="text.secondary">
+                    <strong>Order ID:</strong> SM-{Date.now()}
           </Typography>
-          <Typography variant="h6" sx={{ mb: 4, opacity: 0.9 }}>
-            Don&apos;t let financial constraints hold you back. Get your Silver Membership Card today and unlock the door to your dreams.
+                  <Typography variant="body2" color="text.secondary">
+                    <strong>Valid Until:</strong> {new Date(Date.now() + 4 * 365 * 24 * 60 * 60 * 1000).toLocaleDateString()}
           </Typography>
+                </Box>
+                
           <Button 
             variant="contained" 
-            color="secondary" 
             size="large" 
-            onClick={handlePurchase}
-            disabled={isPurchasing}
-            sx={{ px: 6, py: 2, fontSize: '1.1rem' }}
+                  startIcon={<Receipt />}
+                  sx={{ mb: 2 }}
           >
-            {isPurchasing ? 'Processing...' : 'Purchase Now - ₹677 Only'}
+                  Download Receipt
           </Button>
         </CardContent>
       </Card>
+          </Box>
+        );
+        
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <Container maxWidth="lg" sx={{ py: { xs: 4, md: 8 } }}>
+      {/* Header */}
+      <Box sx={{ textAlign: 'center', mb: 4 }}>
+        <Typography variant="h3" component="h1" gutterBottom sx={{ fontWeight: 'bold' }}>
+          {membershipDetails.name}
+        </Typography>
+        <Typography variant="h6" color="text.secondary">
+          Complete your purchase in 3 simple steps
+        </Typography>
+      </Box>
+
+      {/* Stepper */}
+      <Paper sx={{ p: 3, mb: 4 }}>
+        <Stepper activeStep={currentStep} alternativeLabel>
+          {steps.map((label) => (
+            <Step key={label}>
+              <StepLabel>{label}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+      </Paper>
+
+      {/* Step Content */}
+      <Paper sx={{ p: 4, mb: 4 }}>
+        {renderStepContent()}
+      </Paper>
+
+      {/* Navigation Buttons */}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Button
+          variant="outlined"
+          startIcon={<ArrowBack />}
+          onClick={handleBack}
+          disabled={currentStep === 0}
+        >
+          Back
+        </Button>
+
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          {currentStep === 0 && (
+            <Button
+              variant="contained"
+              endIcon={<ArrowForward />}
+              onClick={handleNext}
+            >
+              Proceed to Payment
+            </Button>
+          )}
+          
+          {currentStep === 1 && (
+            <LoadingButton
+              variant="contained"
+              loading={isProcessing}
+              loadingText="Processing Payment..."
+              onClick={handlePayment}
+              disabled={!termsAccepted}
+            >
+              Pay ₹{membershipDetails.discountedPrice}
+            </LoadingButton>
+          )}
+          
+          {currentStep === 2 && (
+            <Button
+              variant="contained"
+              onClick={handleComplete}
+            >
+              Go to Dashboard
+            </Button>
+          )}
+        </Box>
+      </Box>
     </Container>
   );
 }

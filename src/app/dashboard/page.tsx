@@ -8,14 +8,26 @@ import MembershipStatus from '@/components/Dashboard/MembershipStatus';
 import QuickActions from '@/components/Dashboard/QuickActions';
 import LoadingSpinner from '@/components/Common/LoadingSpinner';
 import { useRouter } from 'next/navigation';
+import { useAppSelector } from '@/store/hooks';
+import { userActions } from '@/actions/user';
+import { membershipActions } from '@/actions/membership';
+import { loanActions } from '@/actions/loan';
+import { LoaderKeys } from '@/actions/shared/constants';
 
 interface UserProfile {
-  user_id: string;
+  _id: string;
   full_name: string;
-  email: string;
+  email?: string;
   phone_number: string;
-  user_type: string;
+  address_line1?: string;
+  address_line2?: string;
+  city?: string;
+  pincode?: string;
+  profile_picture_url?: string;
+  email_verified_at?: string;
+  phone_verified_at?: string;
   created_at: string;
+  updated_at: string;
 }
 
 interface Membership {
@@ -54,9 +66,14 @@ export default function DashboardPage() {
   const [membership, setMembership] = useState<Membership | null>(null);
   const [applications, setApplications] = useState<LoanApplication[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const isLoading = useAppSelector(state => 
+    state.ui.activeLoaders[LoaderKeys.USER_LOADING] || 
+    state.ui.activeLoaders[LoaderKeys.MEMBERSHIP_LOADING] || 
+    state.ui.activeLoaders[LoaderKeys.LOAN_LOADING] || 
+    false
+  );
 
   useEffect(() => {
     fetchDashboardData();
@@ -64,49 +81,54 @@ export default function DashboardPage() {
 
   const fetchDashboardData = async () => {
     try {
-      setLoading(true);
+      setError(null);
       
       // Fetch user profile
-      const profileResponse = await fetch('/api/users/profile', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-      });
-      
-      if (!profileResponse.ok) {
+      const profileResult = await userActions.getProfile.execute();
+      if (profileResult.success && profileResult.data) {
+        // Map API response to component UserProfile interface
+        setUser({
+          _id: profileResult.data._id,
+          full_name: profileResult.data.full_name,
+          email: profileResult.data.email,
+          phone_number: profileResult.data.phone_number,
+          address_line1: profileResult.data.address_line1,
+          address_line2: profileResult.data.address_line2,
+          city: profileResult.data.city,
+          pincode: profileResult.data.pincode,
+          profile_picture_url: profileResult.data.profile_picture_url,
+          email_verified_at: profileResult.data.email_verified_at,
+          phone_verified_at: profileResult.data.phone_verified_at,
+          created_at: profileResult.data.created_at,
+          updated_at: profileResult.data.updated_at,
+        });
+      } else {
         throw new Error('Failed to fetch user profile');
       }
-      
-      const profileData = await profileResponse.json();
-      setUser(profileData);
 
       // Fetch membership
-      try {
-        const membershipResponse = await fetch('/api/memberships/me', {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-          },
-        });
-        
-        if (membershipResponse.ok) {
-          const membershipData = await membershipResponse.json();
-          setMembership(membershipData);
-        }
-      } catch {
-        // Membership not found is okay
-        console.log('No active membership found');
+      const membershipResult = await membershipActions.getMyMembership.execute();
+      if (membershipResult.success && membershipResult.data?.membership) {
+        setMembership(membershipResult.data.membership);
       }
 
       // Fetch loan applications
-      const applicationsResponse = await fetch('/api/loans', {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
-        },
-      });
-      
-      if (applicationsResponse.ok) {
-        const applicationsData = await applicationsResponse.json();
-        setApplications(applicationsData.data || []);
+      const applicationsResult = await loanActions.getMyApplications.execute();
+      if (applicationsResult.success && applicationsResult.data) {
+        // Map API response to component LoanApplication interface
+        const mappedApplications = (applicationsResult.data.applications || []).map(app => ({
+          application_id: app._id,
+          loan_type: app.loan_type,
+          amount_requested: app.amount_requested,
+          amount_approved: app.amount_approved,
+          status: app.status,
+          application_date: app.application_date,
+          bank_partner: app.bank_partner,
+          interest_rate: app.interest_rate,
+          tenure_months: app.tenure_months_approved || app.tenure_months_requested,
+          processing_fee: app.processing_fee,
+        }));
+        setApplications(mappedApplications);
       }
 
       // Mock notifications for now - in real app, fetch from API
@@ -132,8 +154,6 @@ export default function DashboardPage() {
     } catch (err) {
       console.error('Dashboard data fetch error:', err);
       setError(err instanceof Error ? err.message : 'Failed to load dashboard data');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -172,7 +192,7 @@ export default function DashboardPage() {
   };
 
   const handleReferralShare = () => {
-    const referralLink = `${window.location.origin}/customer?ref=${user?.user_id}`;
+    const referralLink = `${window.location.origin}/customer?ref=${user?._id}`;
     navigator.clipboard.writeText(referralLink);
     // Show success message
   };
@@ -192,7 +212,7 @@ export default function DashboardPage() {
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <LoadingSpinner />
@@ -250,7 +270,7 @@ export default function DashboardPage() {
               <Person sx={{ fontSize: 40, mr: 2, color: 'primary.main' }} />
               <Box>
                 <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-                  {user?.user_type === 'customer' ? 'Standard' : 'Premium'}
+                  Standard
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   Account Type
