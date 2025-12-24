@@ -1109,7 +1109,7 @@ export default function PersonalLoanPage() {
                   type="submit"
                   sx={{ px: 3, py: 1 }}
                 >
-                  {isLoading ? 'Submitting...' : 'Pay ₹499 &amp; See All Offers'}
+                  {isLoading ? 'Submitting...' : 'Pay ₹499 & See All Offers'}
                 </Button>
               ) : (
                 <Button

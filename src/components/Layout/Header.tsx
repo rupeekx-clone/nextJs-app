@@ -142,6 +142,7 @@ const Header: React.FC = () => {
     router.push('/customer/mobile-login');
   };
 
+
   const handleDashboard = () => {
     router.push('/dashboard');
   };
@@ -151,7 +152,7 @@ const Header: React.FC = () => {
     <Box sx={{ width: 300 }} role="presentation">
       <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Box 
+          {/* <Box 
             component="img"
             src="/logo.svg"
             alt="Blumiq"
@@ -159,7 +160,7 @@ const Header: React.FC = () => {
           />
           <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
             Blumiq
-          </Typography>
+          </Typography> */}
         </Box>
         <IconButton onClick={() => setDrawerOpen(false)}>
           <CloseIcon />
@@ -169,50 +170,9 @@ const Header: React.FC = () => {
       <Divider />
       
       {/* User Section */}
-      {isAuthenticated ? (
-        <Box sx={{ p: 2 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-            <Avatar sx={{ bgcolor: 'primary.main' }}>
-              {user?.full_name?.charAt(0).toUpperCase() || 'U'}
-            </Avatar>
-            <Box>
-              <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-                {user?.full_name || 'User'}
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                Welcome back!
-              </Typography>
-            </Box>
-          </Box>
-          <Button
-            variant="contained"
-            fullWidth
-            startIcon={<Dashboard />}
-            onClick={() => {
-              handleDashboard();
-              setDrawerOpen(false);
-            }}
-          >
-            Dashboard
-          </Button>
-        </Box>
-      ) : (
-        <Box sx={{ p: 2 }}>
-          <Button
-            variant="contained"
-            fullWidth
-            startIcon={<Login />}
-            onClick={() => {
-              handleLogin();
-              setDrawerOpen(false);
-            }}
-          >
-            Login
-          </Button>
-        </Box>
-      )}
       
-      <Divider />
+      
+      {/* <Divider /> */}
       
       <List>
         {navItems.map((item) => (
@@ -254,6 +214,51 @@ const Header: React.FC = () => {
             )}
           </React.Fragment>
         ))}
+
+<Divider />
+
+        {isAuthenticated ? (
+        <Box sx={{ p: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+            <Avatar sx={{ bgcolor: 'primary.main' }}>
+              {user?.full_name?.charAt(0).toUpperCase() || 'U'}
+            </Avatar>
+            <Box>
+              <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
+                {user?.full_name || 'User'}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                Welcome back!
+              </Typography>
+            </Box>
+          </Box>
+          <Button
+            variant="contained"
+            fullWidth
+            startIcon={<Dashboard />}
+            onClick={() => {
+              handleDashboard();
+              setDrawerOpen(false);
+            }}
+          >
+            Dashboard
+          </Button>
+        </Box>
+      ) : (
+        <Box sx={{ p: 2 }}>
+          <Button
+            variant="contained"
+            fullWidth
+            startIcon={<Login />}
+            onClick={() => {
+              handleLogin();
+              setDrawerOpen(false);
+            }}
+          >
+            Login
+          </Button>
+        </Box>
+      )}
       </List>
     </Box>
   );
@@ -262,13 +267,16 @@ const Header: React.FC = () => {
     <>
       <AppBar 
         position="fixed" 
-        elevation={isScrolled ? 4 : 0}
+        elevation={4}
         sx={{
-          backgroundColor: isScrolled ? alpha(theme.palette.background.paper, 0.95) : 'background.paper',
-          backdropFilter: isScrolled ? 'blur(10px)' : 'none',
+          backgroundColor: alpha(theme.palette.background.paper, 0.95),
+          backdropFilter:'blur(10px)',
           borderBottom: '1px solid',
           borderColor: 'divider',
           transition: 'all 0.3s ease',
+          left: 0,
+          // right: 3,
+          width: '100vw',
         }}
       >
         <Toolbar sx={{ 
@@ -382,31 +390,13 @@ const Header: React.FC = () => {
           )}
 
           {/* Right Side Actions */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            {/* Search */}
-            {/* {!isMobile && (
-              <Box component="form" onSubmit={handleSearch}>
-                <TextField
-                  size="small"
-                  placeholder="Search..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <Search sx={{ fontSize: 20 }} />
-                      </InputAdornment>
-                    ),
-                  }}
-                  sx={{
-                    width: 200,
-                    '& .MuiOutlinedInput-root': {
-                      borderRadius: 2,
-                    },
-                  }}
-                />
-              </Box>
-            )} */}
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: 1,
+            flexShrink: 0,
+            minWidth: 0, // Allow flex items to shrink if needed
+          }}>
 
             {/* Notifications */}
             {isAuthenticated && (
@@ -418,7 +408,7 @@ const Header: React.FC = () => {
             )}
 
             {/* User Menu */}
-            {isAuthenticated ? (
+            {/* {isAuthenticated ? (
               <>
                 <IconButton
                   onClick={handleUserMenuOpen}
@@ -472,20 +462,21 @@ const Header: React.FC = () => {
                   textTransform: 'none',
                   borderRadius: 2,
                   px: 3,
+                  // display: { xs: 'none', lg: 'flex' }, // Hide on mobile since drawer has login
                 }}
               >
                 Login
               </Button>
-            )}
+            )} */}
 
             {/* Mobile Menu Button */}
             {isMobile && (
               <IconButton
-                edge="end"
+                // edge="end"
                 color="inherit"
-                aria-label="menu"
+                // aria-label="menu"
                 onClick={handleDrawerToggle}
-                sx={{ ml: 1 }}
+                sx={{  color: 'black' }}
               >
                 <MenuIcon />
               </IconButton>
